@@ -1002,3 +1002,87 @@ mock-first，不接真实 LLM。
 每个核心模块需要测试（Agent、API、RAG、Tools）。
 完成后更新 DEV_STATUS.md 和 CHANGELOG.md。
 ```
+
+---
+
+## 15. Initialization Readiness Checklist
+
+本章节用于 Module 6 项目初始化前检查。所有项目必须满足以下条件后才能开始初始化。
+
+### 15.1 文档准备
+
+| # | 文档 | 状态 | 说明 |
+|---|------|------|------|
+| 1 | `docs/PROJECT_CONTEXT.md` | ✅ 已完成 | 项目背景和定位 |
+| 2 | `docs/PRD.md` | ✅ 已完成 | 产品需求文档 |
+| 3 | `docs/DESIGN.md` | ✅ 已完成 | 设计文档 |
+| 4 | `docs/TECHNICAL_SPEC.md` | ✅ 已完成 | 技术规格文档 |
+| 5 | `docs/DEV_RULES.md` | ✅ 已完成 | 开发规则 |
+| 6 | `docs/DEV_STATUS.md` | ✅ 已完成 | 开发状态 |
+
+### 15.2 范围准备
+
+| # | 范围 | 状态 | 说明 |
+|---|------|------|------|
+| 1 | Current MVP Scope 明确 | ✅ | PRD.md 第 3 节，20 项 |
+| 2 | Future Possible Scope 不进入当前 MVP | ✅ | PRD.md 第 4 节，15 项 |
+| 3 | Permanent Safety Boundaries 明确 | ✅ | PRD.md 第 5 节，11 项 |
+| 4 | Explicit Non-goals 明确 | ✅ | PRD.md 第 6 节，7 项 |
+
+### 15.3 技术准备
+
+| # | 技术 | 状态 | 说明 |
+|---|------|------|------|
+| 1 | 后端使用 FastAPI + Pydantic v2 | ✅ | 技术栈已锁定 |
+| 2 | 前端使用 Next.js + React + TypeScript + Tailwind | ✅ | 技术栈已锁定 |
+| 3 | 后端 Python 使用 Conda 环境 `customerops-agent` | ✅ | 环境规则已确认 |
+| 4 | MVP mock-first | ✅ | 不调用真实 LLM |
+| 5 | 不接真实 LLM | ✅ | mock 响应 |
+| 6 | 不接真实业务系统 | ✅ | mock tools |
+
+### 15.4 初始化必须创建
+
+Module 6 初始化时**必须创建**以下内容：
+
+| # | 内容 | 说明 |
+|---|------|------|
+| 1 | `backend/` 基础目录 | 按 TECHNICAL_SPEC.md 目录结构创建 |
+| 2 | `frontend/` 基础目录 | 按 TECHNICAL_SPEC.md 目录结构创建 |
+| 3 | `README.md` | 项目说明和启动指南 |
+| 4 | `.env.example` | 环境变量示例，无真实密钥 |
+| 5 | `.gitignore` | Git 忽略规则 |
+| 6 | `backend/requirements.txt` | Python 依赖 |
+| 7 | Health API | `GET /health` 返回 200 |
+| 8 | 前端首页占位 | `/` 页面可以打开 |
+| 9 | 基础测试 | `test_health.py` 通过 |
+
+### 15.5 初始化禁止
+
+Module 6 初始化时**禁止**以下行为：
+
+| # | 禁止 | 说明 |
+|---|------|------|
+| 1 | 不实现完整业务逻辑 | 初始化只搭骨架 |
+| 2 | 不实现完整 Agent | Agent 在 Goal 模式实现 |
+| 3 | 不接真实 LLM | mock-first |
+| 4 | 不接真实电商平台 | mock tools |
+| 5 | 不写真实 API Key | `.env.example` 无真实密钥 |
+| 6 | 不把 Future Scope 提前塞进初始化 | 保持初始化轻量 |
+| 7 | 不跳过测试 | 至少有 health test |
+| 8 | 不跳过 Git commit | 初始化完成后必须 commit |
+
+### 15.6 初始化验收
+
+Module 6 完成后**必须满足**以下条件：
+
+| # | 验收项 | 说明 |
+|---|--------|------|
+| 1 | Git working tree 初始前干净 | 初始化前无未提交更改 |
+| 2 | Conda 环境创建或初始化命令明确 | README 有说明 |
+| 3 | 后端 health API 可运行 | `GET /health` 返回 200 |
+| 4 | 前端首页可运行 | `/` 页面可以打开 |
+| 5 | pytest 至少有 health test | `test_health.py` 通过 |
+| 6 | README 有启动说明 | 前后端分别如何启动 |
+| 7 | `.gitignore` 正确 | 忽略 .env, node_modules, venv 等 |
+| 8 | `.env.example` 存在且无真实密钥 | 环境变量示例 |
+| 9 | Git commit 完成 | `chore: initialize project structure` |

@@ -25,6 +25,37 @@
 ### Fixed
 - 无
 
+## [0.0.6] - Development Rules and Initialization Checklist
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 5 开发规矩 / Git 策略 / 初始化前检查，为后续项目初始化和 Goal 模式开发建立最终规则。
+
+### Changed
+
+- Updated `docs/DEV_RULES.md`
+  - 新增 Goal 模式开发总规则（11 条）
+  - 新增 Claude / AI 开发前必读文档列表（6 个文档）
+  - 新增 Claude 每轮输出要求（6 项）
+  - 新增分层职责规则（8 层职责定义）
+  - 强化 Git 策略规则（8 个 checkpoint 节点）
+  - 新增推荐提交信息规范（8 种场景）
+  - 新增禁止提交内容清单（12 项）
+
+- Updated `docs/TECHNICAL_SPEC.md`
+  - 新增 Initialization Readiness Checklist 章节（第 15 节）
+  - 文档准备检查（6 项）
+  - 范围准备检查（4 项）
+  - 技术准备检查（6 项）
+  - 初始化必须创建（9 项）
+  - 初始化禁止（8 项）
+  - 初始化验收（9 项）
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：Module 5 Development Rules, Git Strategy, and Initialization Checklist completed
+  - 已完成：开发规矩、AI 协作规则、Git 策略、初始化检查清单
+  - 下一步：Module 6 项目初始化
+
 ## [0.0.5.1] - Conda Environment Rule
 
 **发布日期**：2026-06-11
@@ -356,6 +387,7 @@
 - [x] v0.0.3 - PRD Generation（PRD 生成与固化）
 - [x] v0.0.4 - Product Design and User Flow（产品设计与页面流程）
 - [x] v0.0.5 - Technical Foundation Planning（技术地基准备）
+- [x] v0.0.6 - Development Rules and Initialization Checklist（开发规矩和初始化检查）
 
 ### v0.1.x - 设计阶段
 - [x] v0.1.0 - Architecture Design（技术架构设计）— 已在 v0.0.5 完成
