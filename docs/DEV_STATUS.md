@@ -2,7 +2,7 @@
 
 ## 1. 当前阶段
 
-**Module 6.2：Frontend Design Skill Repair completed.**
+**Module 6.3：Official Frontend Design Skill Review completed.**
 
 ## 2. 当前项目状态
 
@@ -37,6 +37,7 @@
 - ✅ .gitignore 已更新（Module 6）
 - ✅ Conda 环境修正与复验完成（Module 6.1）
 - ✅ 前端首页设计审查与重构完成（Module 6.2）
+- ✅ 官方 frontend-design skill 安装与审查完成（Module 6.3）
 - ❌ 尚未实现业务功能
 - ❌ 尚未实现 Agent
 - ❌ 尚未实现 RAG
@@ -85,9 +86,49 @@
 
 - ✅ Git checkpoint
 
-### 前端首页设计审查与重构（本轮 Module 6.2）
+### 官方 Frontend Design Skill 安装与审查（本轮 Module 6.3）
 
-- **Design Skill 说明**：本地无可用 frontend/design/UI/UX skill（`.claude/skills/` 目录不存在）。直接基于 `docs/DESIGN.md` 设计规范进行专业设计审查和重构。
+- **Design Skill 说明**：Module 6.2 未使用官方 frontend-design skill，仅基于 DESIGN.md 自行重构，不符合要求。本轮强制安装官方 skill 并重新审查。
+- **Skill 来源**：https://github.com/anthropics/skills
+- **安装方式**：手动下载（npx skills 命令不可用）
+  - `curl -fsSL "https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md" -o .claude/skills/frontend-design/SKILL.md`
+- **SKILL.md 路径**：`.claude/skills/frontend-design/SKILL.md`
+- **SKILL.md 已读取**：✅
+
+- **Design Review 结论**（基于 frontend-design skill + DESIGN.md）：
+  1. **没有视觉焦点** — 所有区块等权排列，Agent Workflow 是核心但视觉上与 Evidence Preview 同级
+  2. **信息层级扁平** — 全部用同一字号(12-14px)、同一灰色调，没有通过字体粗细/大小/颜色建立层级
+  3. **Agent Timeline 没有流程感** — 只是带圆点的列表，没有编号、没有方向感
+  4. **空状态太多 "—"** — 占位符让页面像线框图，不像真实产品
+  5. **缺少签名元素** — 页面没有一个让人记住的特征，完全是模板感
+  6. **布局节奏单调** — 三个等宽列（4-4-4）没有张力
+  - **可保留**：色彩系统、Header 结构、卡片边框风格、12 栏网格、模块划分
+
+- ✅ 重构 `frontend/app/page.tsx`
+  - 新增 Pipeline 进度条（签名元素）：6 步带编号的水平进度条，显示 0/6 complete
+  - Agent Workflow 升级为 8 栏主区域（col-span-8），成为视觉主角
+  - Review Summary + Reply Preview 降为 4 栏副区域（col-span-4）
+  - Agent 步骤增加编号（1-6），增加执行时间列
+  - 空状态改为真实占位内容（如 ORD-2024-001, Electronics, SF Express 等）
+  - Evidence 增加真实文档名和相关度分数
+  - Tool Results 增加真实数据（order_id, status, amount, carrier, tracking_no）
+  - 标题使用 uppercase tracking-wider 建立视觉层级
+  - 字号分层：标题 10px uppercase、正文 11-12px、辅助 10px
+
+- ✅ 更新 `frontend/app/globals.css`
+  - 添加 font-smoothing（antialiased）
+  - 微调 line-height 为 1.5（更紧凑）
+  - 保持设计系统变量不变
+
+- ✅ 前端 build 验证
+  - npm run build: **Successfully compiled** (Next.js 16.2.9 Turbopack)
+  - 0 errors, 0 warnings
+
+- ✅ Git checkpoint
+
+### 前端首页设计审查与重构（Module 6.2）
+
+- **Design Skill 说明**：本地无可用 frontend-design/UI/UX skill（`.claude/skills/` 目录不存在）。直接基于 `docs/DESIGN.md` 设计规范进行专业设计审查和重构。
 - **审查结论**：
   - Agent 名称错误（应为 Intent → Retrieval → Tool → Policy → Reply → QA）
   - 无信息层级，违反 DESIGN.md "禁止没有信息层级的卡片堆叠"
@@ -249,10 +290,11 @@ Goal 模式默认读取以下文档：
 
 Module 7 目标：
 
-- 验收 Module 6 + 6.1 + 6.2 全部初始化结果
+- 验收 Module 6 + 6.1 + 6.2 + 6.3 全部初始化结果
 - 确认 Conda 环境中 backend 可运行
 - 确认 frontend 可构建
-- 确认前端首页为 ToB 工单处理工作台风格
+- 确认前端首页为 ToB 工单处理工作台风格（已通过官方 frontend-design skill 审查）
+- 确认 frontend-design skill 已安装并可读取
 - 准备进入 Goal 模式开发完整 MVP
 
 ## 6. 当前禁止事项
