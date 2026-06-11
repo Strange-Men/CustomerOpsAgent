@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**Module 6：Project Initialization completed.**
+**Module 6.1：Conda Environment Fix and Initialization Revalidation completed.**
 
 ## 2. 当前项目状态
 
-**状态：项目基础结构已初始化**
+**状态：项目基础结构已初始化，Conda 环境已修正验证**
 
 - ✅ 项目上下文文档已建立
 - ✅ 开发规则文档已建立
@@ -32,9 +32,10 @@
 - ✅ backend health test 已创建（Module 6）
 - ✅ frontend Next.js 基础结构已初始化（Module 6）
 - ✅ 前端首页占位 UI 已创建（Module 6）
-- ✅ README.md 已创建（Module 6）
+- ✅ README.md 已创建（Module 6），已补充 Conda 路径指引（Module 6.1）
 - ✅ .env.example 已创建（Module 6）
 - ✅ .gitignore 已更新（Module 6）
+- ✅ Conda 环境修正与复验完成（Module 6.1）
 - ❌ 尚未实现业务功能
 - ❌ 尚未实现 Agent
 - ❌ 尚未实现 RAG
@@ -42,7 +43,48 @@
 
 ## 3. 已完成内容
 
-### 项目初始化（本轮 Module 6）
+### Conda 环境修正与初始化复验（本轮 Module 6.1）
+
+- **M6 问题**：Module 6 后端验证时使用了系统 Python 3.11.5，未使用 Conda 环境，违反项目规则。
+- **修正措施**：在 Conda 环境中重新执行全部后端验证。
+
+- ✅ Conda 路径发现
+  - 找到 Conda：`E:\Conda\Scripts\conda.exe`
+  - Conda 版本：25.9.1
+
+- ✅ Conda 环境创建
+  - 环境名：`customerops-agent`
+  - 创建命令：`conda create -n customerops-agent python=3.11 -y --override-channels -c conda-forge -c defaults`
+  - 环境路径：`E:\Conda\envs\customerops-agent`
+
+- ✅ Conda 环境 Python 验证
+  - Python 版本：3.11.15 (conda-forge)
+  - Python executable：`E:\Conda\envs\customerops-agent\python.exe`
+  - 确认来自 Conda 环境，非系统 Python
+
+- ✅ 后端依赖安装（在 Conda 环境中）
+  - `pip install -r backend/requirements.txt` 成功
+  - fastapi, uvicorn, pydantic, pytest, ruff, httpx 等全部安装
+
+- ✅ 后端测试复验（在 Conda 环境中）
+  - pytest backend: **2/2 passed**
+  - 平台：win32 -- Python 3.11.15, pytest-9.0.3
+
+- ✅ 后端代码检查复验（在 Conda 环境中）
+  - ruff check backend: **All checks passed**
+
+- ✅ 前端 build 复验
+  - npm install: 成功
+  - npm run build: **Successfully compiled** (Next.js 16.2.9 Turbopack)
+
+- ✅ README.md 更新
+  - 补充 Windows + E 盘 Conda 路径说明
+  - 补充完整 Conda 命令示例
+  - 说明路径可替换
+
+- ✅ Git checkpoint
+
+### 项目初始化（Module 6）
 
 - ✅ backend FastAPI 项目结构初始化
   - `backend/app/` 目录结构（api / core / agents / schemas / services / rag / tools / data）
@@ -165,9 +207,9 @@ Goal 模式默认读取以下文档：
 
 Module 7 目标：
 
-- 验收 Module 6 初始化结果
-- 确认 backend / frontend 可运行
-- 确认测试通过
+- 验收 Module 6 + 6.1 全部初始化结果
+- 确认 Conda 环境中 backend 可运行
+- 确认 frontend 可构建
 - 准备进入 Goal 模式开发完整 MVP
 
 ## 6. 当前禁止事项

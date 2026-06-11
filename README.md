@@ -25,14 +25,79 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 
 ## 技术栈
 
-- **后端**: Python, FastAPI
-- **AI**: LangGraph, LangChain
-- **数据**: Pydantic, SQLite
-- **前端**: 待定
+- **后端**: Python 3.11 (Conda), FastAPI, Pydantic v2
+- **AI**: LangGraph, LangChain (待实现)
+- **数据**: SQLite (待实现)
+- **前端**: Next.js 16, TypeScript, Tailwind CSS
+
+## 快速开始
+
+### 前置要求
+
+- [Conda](https://docs.conda.io/) (Miniconda / Anaconda)
+- Node.js 18+
+- npm
+
+### 后端环境（必须使用 Conda）
+
+> **⚠️ 后端 Python 必须使用 Conda 环境，不允许使用系统 Python 或 venv。**
+
+#### 1. 查找 Conda 路径
+
+如果 `conda` 不在 PATH 中，需要使用完整路径调用。常见路径：
+
+| 安装位置 | 路径 |
+|---------|------|
+| E 盘自定义 | `E:\Conda\Scripts\conda.exe` |
+| E 盘 Miniconda | `E:\Miniconda3\Scripts\conda.exe` |
+| D 盘 Miniconda | `D:\Miniconda3\Scripts\conda.exe` |
+| 用户目录 | `%USERPROFILE%\miniconda3\Scripts\conda.exe` |
+
+本机 Conda 路径：`E:\Conda\Scripts\conda.exe`
+
+#### 2. 创建 Conda 环境
+
+```powershell
+& "E:\Conda\Scripts\conda.exe" create -n customerops-agent python=3.11 -y
+```
+
+> 将 `E:\Conda\Scripts\conda.exe` 替换为你的实际 Conda 路径。
+
+#### 3. 安装后端依赖
+
+```powershell
+& "E:\Conda\Scripts\conda.exe" run -n customerops-agent python -m pip install -r backend/requirements.txt
+```
+
+#### 4. 运行后端测试
+
+```powershell
+& "E:\Conda\Scripts\conda.exe" run -n customerops-agent python -m pytest backend
+```
+
+#### 5. 运行代码检查
+
+```powershell
+& "E:\Conda\Scripts\conda.exe" run -n customerops-agent python -m ruff check backend
+```
+
+#### 6. 启动后端服务
+
+```powershell
+& "E:\Conda\Scripts\conda.exe" run -n customerops-agent uvicorn app.main:app --app-dir backend --reload
+```
+
+### 前端
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
 
 ## 开发进度
 
-当前处于 Step 0.1：项目上下文初始化阶段
+当前处于 Module 6.1：Conda 环境修正与初始化复验阶段
 
 详见 [开发状态](docs/DEV_STATUS.md)
 

@@ -25,6 +25,34 @@
 ### Fixed
 - 无
 
+## [0.0.7.1] - Conda Environment Fix
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 6.1 修正后端验证环境，从系统 Python 切换到 Conda 环境，补充 Windows Conda 路径指引。
+
+### Changed
+
+- Revalidated backend initialization using the customerops-agent Conda environment
+  - M6 问题：最初后端验证使用了系统 Python 3.11.5，已修正为 Conda 环境
+  - Conda 路径：`E:\Conda\Scripts\conda.exe`（conda 25.9.1）
+  - 环境名：`customerops-agent`（新建）
+  - Python 版本：3.11.15 (conda-forge)
+  - Python executable：`E:\Conda\envs\customerops-agent\python.exe`
+  - pytest: 2/2 passed
+  - ruff: All checks passed
+  - frontend build: Successfully compiled (Next.js 16.2.9)
+
+- Added Windows Conda path guidance to README
+  - 补充 Conda 路径查找表格
+  - 补充完整 Conda 命令示例（create / pip install / pytest / ruff / uvicorn）
+  - 说明路径可替换
+
+- Updated development status with Conda environment verification results
+  - `docs/DEV_STATUS.md` 更新为 Module 6.1 completed
+  - 记录 M6 问题、修正措施、验证结果
+  - 下一步进入 Module 7
+
 ## [0.0.7] - Project Initialization
 
 **发布日期**：2026-06-11
@@ -433,6 +461,7 @@
 - [x] v0.0.5 - Technical Foundation Planning（技术地基准备）
 - [x] v0.0.6 - Development Rules and Initialization Checklist（开发规矩和初始化检查）
 - [x] v0.0.7 - Project Initialization（项目初始化）
+- [x] v0.0.7.1 - Conda Environment Fix（Conda 环境修正与复验）
 
 ### v0.1.x - 设计阶段
 - [x] v0.1.0 - Architecture Design（技术架构设计）— 已在 v0.0.5 完成
