@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**Module 6.1：Conda Environment Fix and Initialization Revalidation completed.**
+**Module 6.2：Frontend Design Skill Repair completed.**
 
 ## 2. 当前项目状态
 
-**状态：项目基础结构已初始化，Conda 环境已修正验证**
+**状态：项目基础结构已初始化，前端首页已重构为 ToB 工单处理工作台**
 
 - ✅ 项目上下文文档已建立
 - ✅ 开发规则文档已建立
@@ -36,6 +36,7 @@
 - ✅ .env.example 已创建（Module 6）
 - ✅ .gitignore 已更新（Module 6）
 - ✅ Conda 环境修正与复验完成（Module 6.1）
+- ✅ 前端首页设计审查与重构完成（Module 6.2）
 - ❌ 尚未实现业务功能
 - ❌ 尚未实现 Agent
 - ❌ 尚未实现 RAG
@@ -81,6 +82,47 @@
   - 补充 Windows + E 盘 Conda 路径说明
   - 补充完整 Conda 命令示例
   - 说明路径可替换
+
+- ✅ Git checkpoint
+
+### 前端首页设计审查与重构（本轮 Module 6.2）
+
+- **Design Skill 说明**：本地无可用 frontend/design/UI/UX skill（`.claude/skills/` 目录不存在）。直接基于 `docs/DESIGN.md` 设计规范进行专业设计审查和重构。
+- **审查结论**：
+  - Agent 名称错误（应为 Intent → Retrieval → Tool → Policy → Reply → QA）
+  - 无信息层级，违反 DESIGN.md "禁止没有信息层级的卡片堆叠"
+  - 缺少必要模块：Review Summary、Evidence Preview、Tool Results Preview、QA/Human Review 状态
+  - 内容空洞，全是灰色占位 box
+  - 按钮禁用 + "待接入" 标签，暗示页面不可用
+  - 无导航结构（无 sidebar、nav tab）
+  - 布局过空，不像信息密集运营后台
+  - 整体感觉是 Next.js 初始模板
+
+- ✅ 重构 `frontend/app/page.tsx`
+  - 新增 Header：项目名 + Tickets/Eval 导航 + Mock Mode 状态 + 版本号
+  - Ticket Intake 区域：Customer Message + Order ID + Product Type + Analyze 按钮 + Quick tickets
+  - Agent Workflow 区域：6 个 Agent 正确名称（Intent/Retrieval/Tool/Policy/Reply/QA）+ 垂直时间线
+  - Review Summary 区域：Final Result + Risk Level + QA Score + Human Review 状态 + Ticket ID
+  - Reply Preview 区域：回复草稿占位
+  - Evidence Preview 区域：3 个 policy document 占位 + 来源 + 相关度
+  - Tool Results 区域：get_order + get_logistics 两个工具结果面板
+  - QA / Human Review 区域：QA Score + Risks + Suggestion + Risk List
+
+- ✅ 重构 `frontend/app/globals.css`
+  - 完整设计系统变量（bg, surface, border, text, accent, status colors）
+  - 状态色：success #16A34A, warning #D97706, error #DC2626, info #2563EB
+  - 系统字体栈（-apple-system, Segoe UI, Microsoft YaHei, PingFang SC）
+  - 滚动条样式
+  - 状态脉冲动画
+
+- ✅ 更新 `frontend/app/layout.tsx`
+  - 移除 Google Fonts 依赖（网络不可达）
+  - 使用系统字体 fallback
+  - 更新 metadata
+
+- ✅ 前端 build 验证
+  - npm run build: **Successfully compiled** (Next.js 16.2.9 Turbopack)
+  - 0 errors, 0 warnings
 
 - ✅ Git checkpoint
 
@@ -207,9 +249,10 @@ Goal 模式默认读取以下文档：
 
 Module 7 目标：
 
-- 验收 Module 6 + 6.1 全部初始化结果
+- 验收 Module 6 + 6.1 + 6.2 全部初始化结果
 - 确认 Conda 环境中 backend 可运行
 - 确认 frontend 可构建
+- 确认前端首页为 ToB 工单处理工作台风格
 - 准备进入 Goal 模式开发完整 MVP
 
 ## 6. 当前禁止事项

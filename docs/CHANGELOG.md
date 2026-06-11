@@ -25,6 +25,40 @@
 ### Fixed
 - 无
 
+## [0.0.7.2] - Frontend Design Skill Repair
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 6.2 使用 frontend/design skill 对首页进行设计审查和重构，将 AI demo 风格的占位页优化为专业 ToB 工单处理工作台。
+
+### Changed
+
+- Used frontend/design skill to review and refine the placeholder homepage
+  - 本地无可用 frontend/design/UI/UX skill（`.claude/skills/` 目录不存在）
+  - 直接基于 `docs/DESIGN.md` 设计规范进行专业设计审查
+  - 审查结论：Agent 名称错误、无信息层级、缺少必要模块、内容空洞、无导航结构、整体像模板页
+
+- Reworked homepage into a ToB support ticket workflow console
+  - 新增 Header：项目名 + Tickets/Eval 导航 + Mock Mode 状态指示 + 版本号
+  - Ticket Intake：Customer Message + Order ID + Product Type + Analyze 按钮 + Quick tickets 快捷标签
+  - Agent Workflow：6 个 Agent 正确名称垂直时间线（Intent → Retrieval → Tool → Policy → Reply → QA）
+  - Review Summary：Final Result / Risk Level / QA Score 三栏 + Human Review 状态 + Ticket ID
+  - Reply Preview：回复草稿占位区域
+  - Evidence Preview：3 个 policy document 占位卡片（来源 + 相关度）
+  - Tool Results：get_order + get_logistics 两个工具结果面板（键值对格式）
+  - QA / Human Review：QA Score + Risks Detected + Suggestion + Risk List
+
+- Reduced AI-demo visual style
+  - 移除大面积空白和灰色占位 box
+  - 使用 DESIGN.md 规范的企业蓝主色 + 状态色体系
+  - 信息密集型布局，12 栏栅格系统
+  - 细边框白色卡片，无渐变无玻璃拟态
+  - 系统字体栈（移除 Google Fonts 网络依赖）
+
+- Updated development status
+  - `docs/DEV_STATUS.md` 更新为 Module 6.2 completed
+  - 记录 design skill 使用情况、审查结论、重构结果
+
 ## [0.0.7.1] - Conda Environment Fix
 
 **发布日期**：2026-06-11
@@ -462,6 +496,7 @@
 - [x] v0.0.6 - Development Rules and Initialization Checklist（开发规矩和初始化检查）
 - [x] v0.0.7 - Project Initialization（项目初始化）
 - [x] v0.0.7.1 - Conda Environment Fix（Conda 环境修正与复验）
+- [x] v0.0.7.2 - Frontend Design Skill Repair（前端首页设计审查与重构）
 
 ### v0.1.x - 设计阶段
 - [x] v0.1.0 - Architecture Design（技术架构设计）— 已在 v0.0.5 完成
