@@ -60,6 +60,7 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | `docs/PROJECT_CONTEXT.md` | 项目背景和定位（本文件） |
 | `docs/PRD.md` | 产品需求文档（MVP 范围、安全边界、非目标） |
 | `docs/DESIGN.md` | 设计文档（页面、组件、用户流程） |
+| `docs/TECHNICAL_SPEC.md` | 技术规格文档（技术栈、API 契约、Schema、目录结构、Agent 设计） |
 | `docs/DEV_RULES.md` | 开发规则（架构、安全、禁止事项） |
 | `docs/DEV_STATUS.md` | 开发状态（当前阶段、已完成、下一步） |
 | `docs/CHANGELOG.md` | 变更记录 |

@@ -25,6 +25,41 @@
 ### Fixed
 - 无
 
+## [0.0.5] - Technical Foundation Planning
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 4 技术地基准备阶段，完成技术栈锁定、模块设计、API 契约、Schema 定义、Mock 数据规划等核心技术文档。
+
+### Added
+
+- Added `docs/TECHNICAL_SPEC.md` - 技术规格文档
+  - 技术目标定义
+  - Fixed Stack（Python 3.11+ / FastAPI / Pydantic v2 / Next.js / React / TypeScript / Tailwind CSS）+ Future Replaceable Stack（LangGraph / 真实 LLM / Chroma / PostgreSQL / Docker）
+  - 非功能需求（安全 / 性能 / 可用性 / 成本）
+  - 项目目录结构设计（backend + frontend 完整目录树）
+  - 后端模块设计（API / Service / Agent / RAG / Tools / Core 六层）
+  - 前端模块设计（3 页面 + 15 组件 + lib / types）
+  - Agent 工作流设计（6 Agent 固定线性流程 + 输入输出 + 失败处理 + 实现方式）
+  - API 契约（6 个接口：health / examples / tickets analyze / tickets get / evals cases / evals run）
+  - Pydantic Schema 设计（14 个核心 Schema 字段定义）
+  - Mock 数据设计（mock_orders / mock_logistics / eval_cases）
+  - Knowledge Base 设计（6 篇 Markdown 知识库）
+  - 测试计划（11 类测试 + 验收标准）
+  - 项目初始化要求（11 项）
+  - Goal 模式技术指令摘要
+
+### Changed
+
+- Updated `docs/PROJECT_CONTEXT.md`
+  - Goal 模式上下文文档列表新增 `docs/TECHNICAL_SPEC.md`
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：Module 4 Technical Foundation Planning completed
+  - 已完成：技术地基规划全部内容
+  - 下一步：Module 5 开发规矩 / Git 策略 / 初始化前检查
+  - 更新禁止事项
+
 ## [0.0.4.1] - Documentation Consolidation and Scope Correction
 
 **发布日期**：2026-06-11
@@ -296,11 +331,12 @@
 - [x] v0.0.2 - Idea Validation and MVP Scope（想法验证 + MVP 收窄）
 - [x] v0.0.3 - PRD Generation（PRD 生成与固化）
 - [x] v0.0.4 - Product Design and User Flow（产品设计与页面流程）
+- [x] v0.0.5 - Technical Foundation Planning（技术地基准备）
 
 ### v0.1.x - 设计阶段
-- [ ] v0.1.0 - Architecture Design（技术架构设计）
+- [x] v0.1.0 - Architecture Design（技术架构设计）— 已在 v0.0.5 完成
 - [x] v0.1.1 - UI/UX Design（UI/UX 设计）— 已在 v0.0.4 完成
-- [ ] v0.1.2 - Schema Design（数据与 Schema 设计）
+- [x] v0.1.2 - Schema Design（数据与 Schema 设计）— 已在 v0.0.5 完成
 
 ### v0.2.x - 核心功能
 - [ ] v0.2.0 - Core Agents（核心 Agent 实现）
