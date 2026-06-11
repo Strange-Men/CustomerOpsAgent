@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**Module 6.3：Official Frontend Design Skill Review completed.**
+**Pre-MVP Readiness Audit completed. 可以进入 Goal 模式 MVP 开发。**
 
 ## 2. 当前项目状态
 
-**状态：项目基础结构已初始化，前端首页已重构为 ToB 工单处理工作台**
+**状态：9 步准备审查通过，工程初始化验证通过，准备进入 Goal 模式 MVP 开发**
 
 - ✅ 项目上下文文档已建立
 - ✅ 开发规则文档已建立
@@ -45,7 +45,18 @@
 
 ## 3. 已完成内容
 
-### Conda 环境修正与初始化复验（本轮 Module 6.1）
+### Pre-MVP Readiness Audit（本轮）
+
+- ✅ 9 步准备审查全部通过（Step 1-9）
+- ✅ 工程准备审查全部通过（Conda / Backend / Frontend / Tests / Build / Git）
+- ✅ 修复 README.md 开发进度过时问题
+- ✅ 修复 README.md 技术栈描述不准确问题
+- ✅ 修复 README.md 文档链接不完整问题
+- ✅ 创建 docs/PRE_MVP_READINESS.md 审查报告
+- ✅ 全部 9 项 Goal Mode Entry Conditions 满足
+- ✅ 结论：Ready for Goal Mode MVP Development
+
+### Conda 环境修正与初始化复验（Module 6.1）
 
 - **M6 问题**：Module 6 后端验证时使用了系统 Python 3.11.5，未使用 Conda 环境，违反项目规则。
 - **修正措施**：在 Conda 环境中重新执行全部后端验证。
@@ -283,26 +294,25 @@ Goal 模式默认读取以下文档：
 | `docs/DEV_RULES.md` | 开发规则（含 Goal 模式规则、Git 策略） |
 | `docs/DEV_STATUS.md` | 开发状态（本文件） |
 | `docs/CHANGELOG.md` | 变更记录 |
+| `docs/PRE_MVP_READINESS.md` | Pre-MVP 审查报告（9 步审查 + 工程准备审查） |
 
 ## 5. 下一步
 
-**进入 Module 7：初始化验收与 Goal 模式准备。**
+**进入 Goal 模式 MVP 开发。**
 
-Module 7 目标：
+Goal 模式首轮目标：
 
-- 验收 Module 6 + 6.1 + 6.2 + 6.3 全部初始化结果
-- 确认 Conda 环境中 backend 可运行
-- 确认 frontend 可构建
-- 确认前端首页为 ToB 工单处理工作台风格（已通过官方 frontend-design skill 审查）
-- 确认 frontend-design skill 已安装并可读取
-- 准备进入 Goal 模式开发完整 MVP
+- 实现 backend 核心 Schema（Pydantic models）
+- 实现 mock data（mock_orders.json / mock_logistics.json / eval_cases.json）
+- 实现 knowledge_base（6 篇 Markdown 政策文档）
+- 遵守 PRD.md Current MVP Scope（20 项）
+- 遵守 DEV_RULES.md Goal 模式 11 条规则
+- 不实现 Future Scope / 不突破 Safety Boundaries
 
 ## 6. 当前禁止事项
 
-- ❌ 不写业务代码
-- ❌ 不实现 Agent
-- ❌ 不实现 RAG
-- ❌ 不实现 Tools
-- ❌ 不接真实 LLM
-- ❌ 不扩大 MVP
-- ❌ 不突破 Permanent Safety Boundaries
+- ❌ 不实现 Future Scope（LangGraph / 真实 LLM / 向量库 / Docker / 真实 API）
+- ❌ 不突破 Permanent Safety Boundaries（PRD.md 第 5 节，11 项）
+- ❌ 不扩大 MVP Scope（如需扩展必须先更新 PRD.md）
+- ❌ 不把项目做成普通聊天机器人页面
+- ❌ 不把核心逻辑堆到一个大文件（单文件不超过 300 行）

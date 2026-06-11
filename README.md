@@ -19,6 +19,9 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 ## 文档
 
 - [项目上下文](docs/PROJECT_CONTEXT.md)
+- [产品需求文档](docs/PRD.md)
+- [设计文档](docs/DESIGN.md)
+- [技术规格文档](docs/TECHNICAL_SPEC.md)
 - [开发规则](docs/DEV_RULES.md)
 - [开发状态](docs/DEV_STATUS.md)
 - [变更记录](docs/CHANGELOG.md)
@@ -26,8 +29,8 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 ## 技术栈
 
 - **后端**: Python 3.11 (Conda), FastAPI, Pydantic v2
-- **AI**: LangGraph, LangChain (待实现)
-- **数据**: SQLite (待实现)
+- **AI**: mock-first / rule-based (MVP)，LangGraph (Future)
+- **数据**: JSON file (MVP)
 - **前端**: Next.js 16, TypeScript, Tailwind CSS
 
 ## 快速开始
@@ -97,9 +100,9 @@ npm run dev
 
 ## 开发进度
 
-当前处于 Module 6.1：Conda 环境修正与初始化复验阶段
+Pre-MVP Readiness Audit completed. 准备进入 Goal 模式 MVP 开发。
 
-详见 [开发状态](docs/DEV_STATUS.md)
+详见 [开发状态](docs/DEV_STATUS.md) | [Pre-MVP 审查报告](docs/PRE_MVP_READINESS.md)
 
 ## 许可证
 

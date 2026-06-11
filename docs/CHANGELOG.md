@@ -25,6 +25,34 @@
 ### Fixed
 - 无
 
+## [0.0.8] - Pre-MVP Readiness Audit
+
+**发布日期**：2026-06-11
+
+**版本说明**：Pre-MVP Readiness Audit，审查 M0-M6 是否严格符合"开发前 9 步准备"，验证工程准备状态，修复文档不一致问题。
+
+### Added
+
+- Added `docs/PRE_MVP_READINESS.md` — Pre-MVP 审查报告
+  - 9-Step Checklist 全部 Pass
+  - Engineering Readiness Checklist 全部 Pass
+  - Goal Mode Entry Conditions 全部满足
+  - 结论：Ready for Goal Mode MVP Development
+
+### Changed
+
+- Updated `README.md`
+  - 修正开发进度为 "Pre-MVP Readiness Audit completed"
+  - 修正技术栈描述（AI 改为 mock-first / rule-based，数据改为 JSON file）
+  - 补充文档链接（新增 PRD / DESIGN / TECHNICAL_SPEC）
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：Pre-MVP Readiness Audit completed
+  - 新增 Pre-MVP 审查完成记录
+  - 更新下一步为 Goal 模式 MVP 开发
+  - 更新禁止事项为 Goal 模式规则
+  - 核心文档列表新增 PRE_MVP_READINESS.md
+
 ## [0.0.7.3] - Official Frontend Design Skill Review
 
 **发布日期**：2026-06-11
