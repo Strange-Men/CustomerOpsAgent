@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**Module 4：Technical Foundation Planning completed.**
+**Module 4.1：Conda Environment Rule Added.**
 
 ## 2. 当前项目状态
 
-**状态：技术地基规划完成**
+**状态：Conda 环境规则已补充**
 
 - ✅ 项目上下文文档已建立
 - ✅ 开发规则文档已建立
@@ -21,6 +21,7 @@
 - ✅ MVP / Future Scope / Permanent Safety Boundaries 区分完成
 - ✅ 历史文档归档完成（docs/archive/planning/）
 - ✅ 技术地基规划完成（docs/TECHNICAL_SPEC.md）
+- ✅ Conda 环境规则补充（Module 4.1）
 - ❌ 尚未初始化项目代码
 - ❌ 尚未实现业务功能
 
@@ -41,6 +42,17 @@
 - ✅ 测试计划（11 类测试）
 - ✅ 项目初始化要求
 - ✅ Goal 模式技术指令摘要
+- ✅ Conda 环境规则补充（Module 4.1）
+
+### Conda 环境规则补充（Module 4.1）
+
+- ✅ 明确后端 Python 使用 Conda 环境
+- ✅ 明确环境名 customerops-agent
+- ✅ 明确 Python 3.11
+- ✅ 明确不使用全局 Python / base 环境安装依赖
+- ✅ 明确后续初始化时需要写入 README 和启动流程
+- ✅ 更新开发规则文档（DEV_RULES.md）
+- ✅ 更新技术规格文档（TECHNICAL_SPEC.md）
 
 ### 历史模块（已归档）
 

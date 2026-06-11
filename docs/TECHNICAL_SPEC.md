@@ -951,6 +951,40 @@ MVP 使用本地 Markdown 文件作为知识库，存放在 `backend/data/knowle
 | 10 | 不提交密钥 | .env 不在 Git 中 |
 | 11 | 初始化后必须 Git commit | commit message: "feat: init project structure" |
 
+### Python Environment（Conda）
+
+后端 Python 环境**必须使用 Conda 虚拟环境**管理。
+
+| 规则 | 说明 |
+|------|------|
+| 环境管理工具 | Conda（已安装） |
+| 推荐环境名 | `customerops-agent` |
+| 推荐 Python 版本 | 3.11 |
+| 禁止使用全局 Python | 不允许直接使用系统全局 Python 安装项目依赖 |
+| 禁止默认使用 venv | 不使用 Python 内置 venv，统一使用 Conda |
+| 依赖管理 | requirements.txt（pip），后续可增加 environment.yml |
+| README 必须说明 | Conda 环境创建和启动步骤 |
+
+**后续初始化时应创建 Conda 环境**：
+
+```bash
+conda create -n customerops-agent python=3.11
+conda activate customerops-agent
+```
+
+**后端依赖安装和常用命令**（均需在 Conda 环境激活后执行）：
+
+```bash
+conda activate customerops-agent
+cd backend
+pip install -r requirements.txt
+pytest
+ruff check .
+uvicorn app.main:app --reload
+```
+
+> **注意**：以上命令仅为后续初始化时的参考示例，当前不执行。不创建 requirements.txt，不安装依赖，不创建 Conda 环境。
+
 ---
 
 ## 14. Goal 模式技术指令摘要

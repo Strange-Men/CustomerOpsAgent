@@ -250,7 +250,53 @@ Schemas 层 (schemas/)
 - ❌ 不接入真实 LLM（初期使用 mock 响应）
 - ❌ 不做生产级部署
 
-### 11.4 代码禁止
+### 11.4 开发环境禁止
+- ❌ 不允许在 base 环境直接安装项目依赖
+- ❌ 不允许使用系统全局 Python 安装项目依赖
+- ❌ 不允许默认使用 venv，必须使用 Conda
+- ❌ 不允许手动安装依赖但不写入 requirements.txt 或 environment.yml
+
+## 12. Python 开发环境规则（Conda）
+
+### 12.1 Conda 环境要求
+- 后端 Python 开发**必须先激活 Conda 环境**
+- 推荐环境名：`customerops-agent`
+- 推荐 Python 版本：3.11
+- 禁止在 base 环境或系统全局 Python 中安装项目依赖
+
+### 12.2 依赖管理
+- 所有依赖必须记录在 `requirements.txt` 或后续 `environment.yml` 中
+- 不能只手动 pip install 不记录
+- 安装依赖前必须确认已激活正确的 Conda 环境
+
+### 12.3 Claude 协作规则
+- Claude 运行 Python 命令前，必须先确认当前 Conda 环境
+- 若环境出现问题，优先检查：Conda 环境 → Python 版本 → 依赖版本
+- 不要盲目改代码，先排查环境问题
+
+### 12.4 常用命令参考
+
+```bash
+# 创建环境
+conda create -n customerops-agent python=3.11
+
+# 激活环境
+conda activate customerops-agent
+
+# 安装依赖（在 backend/ 目录下）
+pip install -r requirements.txt
+
+# 运行测试
+pytest
+
+# 代码检查
+ruff check .
+
+# 启动后端
+uvicorn app.main:app --reload
+```
+
+### 11.5 代码禁止
 - ❌ 不允许硬编码配置
 - ❌ 不允许魔法数字
 - ❌ 不允许重复代码

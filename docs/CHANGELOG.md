@@ -25,6 +25,30 @@
 ### Fixed
 - 无
 
+## [0.0.5.1] - Conda Environment Rule
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 4.1 补充 Python Conda 环境开发规则，明确后端 Python 必须使用 Conda 虚拟环境管理。
+
+### Changed
+
+- Updated `docs/TECHNICAL_SPEC.md`
+  - 新增 Python Environment（Conda）章节
+  - 明确推荐环境名 `customerops-agent`、Python 3.11
+  - 明确禁止使用全局 Python 和 venv
+  - 添加后续初始化时的 Conda 环境创建和常用命令示例
+
+- Updated `docs/DEV_RULES.md`
+  - 新增 Python 开发环境规则（Conda）章节
+  - 明确 Conda 环境要求、依赖管理、Claude 协作规则
+  - 新增开发环境禁止项（禁止 base 环境安装依赖、禁止全局 Python、禁止 venv）
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：Module 4.1 Conda Environment Rule Added
+  - 已完成：Conda 环境规则补充
+  - 下一步：Module 5 开发规矩 / Git 策略 / 初始化前检查
+
 ## [0.0.5] - Technical Foundation Planning
 
 **发布日期**：2026-06-11
