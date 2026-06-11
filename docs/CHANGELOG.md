@@ -25,6 +25,212 @@
 ### Fixed
 - 无
 
+## [0.0.4.1] - Documentation Consolidation and Scope Correction
+
+**发布日期**：2026-06-11
+
+**版本说明**：文档收敛与 PRD 范围修正，将阶段性文档整合为核心文档，明确 MVP / Future Scope / Permanent Safety Boundaries 区分。
+
+### Changed
+
+- Consolidated PRD-related documents into `docs/PRD.md`
+  - 合并自：01_IDEA、02_IDEA_PRESSURE_TEST、03_IDEA_DECISION、04_PRD_DRAFT、05_PRD_REVIEW、06_PRD_FINAL、MVP_SCOPE、PROJECT_SCOPE
+  - 明确 Current MVP Scope（20 项）
+  - 明确 MVP Out of Scope but Future Possible（15 项）
+  - 明确 Permanent Safety Boundaries（11 项）
+  - 明确 Explicit Non-goals（7 项）
+  - 明确后续版本路线（MVP → V1 → V2 → V3 → V4）
+
+- Consolidated design-related documents into `docs/DESIGN.md`
+  - 合并自：07_DESIGN_GUIDE、08_PAGE_PLAN、09_USER_FLOW、FRONTEND_DESIGN_REFERENCE
+  - 明确 MVP 页面（3 个 + 1 个可选）
+  - 明确 Future Pages（6 个）
+  - 保留 15 个核心组件定义
+  - 保留 9 个用户流程
+  - 保留视觉基调和禁止风格
+
+- Archived planning documents under `docs/archive/planning/`
+  - 01_IDEA.md → archive
+  - 02_IDEA_PRESSURE_TEST.md → archive
+  - 03_IDEA_DECISION.md → archive
+  - 04_PRD_DRAFT.md → archive
+  - 05_PRD_REVIEW.md → archive
+  - 06_PRD_FINAL.md → archive
+  - MVP_SCOPE.md → archive
+  - PROJECT_SCOPE.md → archive
+  - 07_DESIGN_GUIDE.md → archive
+  - 08_PAGE_PLAN.md → archive
+  - 09_USER_FLOW.md → archive
+  - FRONTEND_DESIGN_REFERENCE.md → archive
+
+- Updated `docs/PROJECT_CONTEXT.md`
+  - 新增 Goal 模式上下文规则：核心文档列表 + archive 说明
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：Document consolidation and PRD scope correction completed
+  - 已完成：文档收敛、PRD 合并、Design 合并、范围区分、历史归档
+  - 下一步：Module 4 技术地基准备
+  - 更新禁止事项
+
+## [0.0.4] - Product Design and User Flow
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 3 产品设计与页面流程阶段，完成设计基调定义、页面结构规划、核心用户流程设计和前端设计参考整理。
+
+### Added
+
+- Added `docs/07_DESIGN_GUIDE.md` - 产品设计指南
+  - 设计定位：ToB 客服运营后台，不是聊天机器人
+  - 视觉风格：企业蓝主色、4px 基础网格、白色卡片 + 细边框
+  - 信息层级：8 级优先级定义
+  - 组件设计：15 个核心组件的设计原则（TicketInput、AgentTimeline、EvidencePanel 等）
+  - 响应式原则：桌面端为主，1280px / 1024px 断点
+
+- Added `docs/08_PAGE_PLAN.md` - 页面规划
+  - Page 1：工单分析工作台（首页）— 输入工单、选择示例、启动分析
+  - Page 2：分析结果详情页 — Agent Timeline + 结构化结果展示
+  - Page 3：Eval / Bad Case 页面 — 评估用例和结果展示
+  - Page 4：About / Architecture（可选，不单独做页面）
+  - 每个页面的布局、核心模块、用户操作、对应 API、状态设计
+
+- Added `docs/09_USER_FLOW.md` - 核心用户流程
+  - 9 个核心流程：正常售后、缺订单号、物流查询、发票问题、投诉高风险、RAG 无结果、Tool 失败、QA 不通过、Eval
+  - 每个流程的 Agent 执行顺序、输入输出、前端展示
+  - 关键差异点和异常处理
+
+- Added `docs/FRONTEND_DESIGN_REFERENCE.md` - 前端设计参考
+  - 设计参考来源：企业后台、工单系统、电商后台、AI 工作流、数据分析
+  - 可借鉴设计系统：Ant Design、Material Design、Shopify Polaris、Atlassian、shadcn/ui
+  - 页面设计关键词
+  - 禁止风格清单
+  - 推荐布局方案
+  - Goal 模式前端指令摘要
+  - 颜色系统参考（CSS 变量）
+
+### Changed
+
+- Changed `docs/DEV_STATUS.md` - 更新开发状态
+  - 当前阶段：Module 3 产品设计与页面流程完成
+  - 已完成：Module 3 全部文档
+  - 下一步：Module 4 技术地基准备
+  - 更新禁止事项和验收标准
+
+## [0.0.3] - PRD and Scope Finalization
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 2 PRD 生成与固化阶段，完成 PRD 初版、PRD 审查、最终 PRD 固化和项目范围锁定。
+
+### Added
+
+- Added `docs/04_PRD_DRAFT.md` - PRD 初版文档
+  - 项目背景和定位
+  - 目标用户定义
+  - 5 个核心场景（产品故障、退款换货、物流查询、发票问题、投诉高风险）
+  - 12 项 MVP 核心功能
+  - 输入输出定义
+  - 核心流程（6 Agent 线性编排）
+  - 13 项验收标准
+  - 14 项暂不实现范围
+  - 6 个风险点及控制方式
+
+- Added `docs/05_PRD_REVIEW.md` - PRD 审查文档
+  - 项目定位审查：未误解
+  - MVP 范围审查：合理，部分功能需保持轻量
+  - 15 项必须保留功能
+  - 14 项必须删除功能
+  - 10 项后续扩展方向
+  - 6 项 Goal 模式风险及控制方式
+  - PRD 收窄建议
+
+- Added `docs/06_PRD_FINAL.md` - 最终 PRD 文档
+  - 15 项 MVP 必做功能
+  - 14 项明确禁止功能
+  - 用户使用路径
+  - 系统输入输出定义
+  - 6 个 Agent 详细定义（职责、输入、输出、失败处理）
+  - 16 项功能验收标准
+  - 9 项 MVP 成功标准
+
+- Added `docs/PROJECT_SCOPE.md` - 项目范围锁定文档
+  - 唯一目标
+  - 15 项 In Scope
+  - 20 项 Out of Scope
+  - 9 项 Allowed Simplifications
+  - 7 项 Hard Boundaries
+  - 21 项 Goal 模式必须遵守清单
+
+### Changed
+
+- Changed `docs/DEV_STATUS.md` - 更新开发状态
+  - 当前阶段：Module 2 PRD 生成与固化完成
+  - 已完成：Module 2 全部文档
+  - 下一步：Module 3 产品设计与页面流程
+  - 更新禁止事项和验收标准
+
+## [0.0.2] - Idea Validation and MVP Scope
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 1 想法验证 + MVP 收窄阶段，完成项目想法定义、压力测试、判断结论和 MVP 范围锁定。
+
+### Added
+
+#### 想法验证文档
+- Added `docs/01_IDEA.md` - 想法定义文档
+  - 项目想解决什么问题
+  - 目标用户是谁
+  - 用户为什么需要它
+  - 和普通方案的区别
+  - 最小可行版本定义
+  - 项目希望证明的能力
+  - 适合写进简历的原因
+  - 适合深圳 AI Agent 岗位的原因
+
+- Added `docs/02_IDEA_PRESSURE_TEST.md` - 想法压力测试文档
+  - 需求是否真实
+  - 用户场景是否明确
+  - 项目是否有差异化
+  - MVP 是否足够小
+  - 技术实现是否可控
+  - 成本是否可接受
+  - 是否适合当前阶段开发
+  - 是否适合写进简历
+  - 是否存在伪需求
+  - 是否存在过度设计风险
+  - 是否和岗位匹配
+  - 是否和 CodePilot 互补
+  - 压力测试结论
+
+- Added `docs/03_IDEA_DECISION.md` - 想法判断结论文档
+  - 最终判断：可以做，但需要收窄范围
+  - 为什么可以做
+  - 为什么必须收窄
+  - 简历项目优先级建议
+  - 和 CodePilot、ProfileAgent 的组合关系
+  - 2-4 天 MVP 开发建议
+  - 明确不能进入 MVP 的功能
+
+- Added `docs/MVP_SCOPE.md` - MVP 范围文档
+  - MVP 一句话范围
+  - 当前版本必须做
+  - 当前版本不做
+  - 输入输出定义
+  - 核心 Agent 定义
+  - 核心工具定义
+  - 知识库范围
+  - 验收标准
+  - 后续扩展方向
+
+### Changed
+
+- Changed `docs/DEV_STATUS.md` - 更新开发状态
+  - 当前阶段：Module 1 想法验证 + MVP 收窄
+  - 已完成：Module 1 全部文档
+  - 下一步：Module 2 PRD 生成与固化
+  - 更新禁止事项和验收标准
+
 ## [0.0.1] - Context Init
 
 **发布日期**：2026-06-11
@@ -85,15 +291,16 @@
 
 ## 版本规划
 
-### v0.0.x - 项目初始化
+### v0.0.x - 项目初始化与验证
 - [x] v0.0.1 - Context Init（项目上下文初始化）
-- [ ] v0.0.2 - Project Structure Init（项目结构初始化）
-- [ ] v0.0.3 - Dependencies Init（依赖和配置初始化）
+- [x] v0.0.2 - Idea Validation and MVP Scope（想法验证 + MVP 收窄）
+- [x] v0.0.3 - PRD Generation（PRD 生成与固化）
+- [x] v0.0.4 - Product Design and User Flow（产品设计与页面流程）
 
-### v0.1.x - 架构设计
-- [ ] v0.1.0 - Idea Validation（想法压力测试）
-- [ ] v0.1.1 - Architecture Design（技术架构设计）
-- [ ] v0.1.2 - Mock Data（Mock 数据准备）
+### v0.1.x - 设计阶段
+- [ ] v0.1.0 - Architecture Design（技术架构设计）
+- [x] v0.1.1 - UI/UX Design（UI/UX 设计）— 已在 v0.0.4 完成
+- [ ] v0.1.2 - Schema Design（数据与 Schema 设计）
 
 ### v0.2.x - 核心功能
 - [ ] v0.2.0 - Core Agents（核心 Agent 实现）

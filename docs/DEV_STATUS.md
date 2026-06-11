@@ -2,244 +2,72 @@
 
 ## 1. 当前阶段
 
-**Step 0.1：项目上下文初始化**
-
-本阶段只建立项目上下文、开发规则、状态记录和变更记录，不实现具体业务功能，不初始化复杂前后端代码，不安装依赖，不接入真实 LLM。
+**Document consolidation and PRD scope correction completed.**
 
 ## 2. 当前项目状态
 
-**状态：初始化中**
+**状态：文档收敛完成**
 
 - ✅ 项目上下文文档已建立
 - ✅ 开发规则文档已建立
 - ✅ 开发状态文档已建立
 - ✅ 变更记录文档已建立
-- ❌ 尚未初始化完整前后端代码
-- ❌ 尚未实现 Agent、RAG、Tools、API、前端页面
-- ❌ 尚未安装依赖
-- ❌ 尚未接入 LLM
+- ✅ 想法验证完成（归档）
+- ✅ PRD 生成与固化完成（归档）
+- ✅ 产品设计与页面流程完成（归档）
+- ✅ 文档收敛完成
+- ✅ PRD 合并完成（docs/PRD.md）
+- ✅ Design 合并完成（docs/DESIGN.md）
+- ✅ MVP / Future Scope / Permanent Safety Boundaries 区分完成
+- ✅ 历史文档归档完成（docs/archive/planning/）
+- ❌ 尚未进入技术地基准备
+- ❌ 尚未初始化项目代码
+- ❌ 尚未实现业务功能
 
 ## 3. 已完成内容
 
-### 3.1 文档层
-- ✅ `docs/PROJECT_CONTEXT.md` - 项目上下文文档
-  - 项目名称和定位
-  - 项目背景和目标用户
-  - 核心业务场景
-  - MVP 核心能力
-  - 多 Agent 设计方向
-  - 项目边界（不做什么）
-  - 差异化分析
-  - 面试展示点
+### 文档收敛（本轮）
 
-- ✅ `docs/DEV_RULES.md` - 开发规则文档
-  - 总开发原则
-  - AI 协作规则
-  - 每轮开发规则
-  - 文件修改规则
-  - 模块拆分规则
-  - API 契约规则
-  - 安全规则
-  - LLM 使用规则
-  - 测试规则
-  - Git 回滚规则
-  - 禁止事项
+- ✅ 合并 PRD 相关文档 → `docs/PRD.md`
+- ✅ 合并设计相关文档 → `docs/DESIGN.md`
+- ✅ 归档历史文档 → `docs/archive/planning/`
+- ✅ 明确 Current MVP Scope / Future Possible Scope / Permanent Safety Boundaries / Non-goals
+- ✅ 更新项目上下文和开发状态
 
-- ✅ `docs/DEV_STATUS.md` - 开发状态文档（本文件）
-  - 当前阶段
-  - 当前项目状态
-  - 已完成内容
-  - 未开始内容
-  - 当前限制
-  - 下一步建议
-  - 当前可修改范围
-  - 当前禁止修改范围
-  - 当前验收标准
-  - 后续开发路线
+### 历史模块（已归档）
 
-- ✅ `docs/CHANGELOG.md` - 变更记录文档
-  - 变更记录格式
-  - 当前版本记录
+- ✅ Module 1：想法验证 + MVP 收窄（归档）
+- ✅ Module 2：PRD 生成与固化（归档）
+- ✅ Module 3：产品设计与页面流程（归档）
 
-### 3.2 项目层
-- ✅ `docs/` 目录已创建
+## 4. 当前核心文档
 
-## 4. 未开始内容
+Goal 模式默认读取以下文档：
 
-### 4.1 后端代码
-- ❌ FastAPI 项目初始化
-- ❌ 目录结构创建
-- ❌ 依赖管理（requirements.txt / pyproject.toml）
-- ❌ 配置管理（config.py）
-- ❌ 数据库模型（models/）
-- ❌ Pydantic 模型（schemas/）
-- ❌ API 路由（api/）
-- ❌ Service 层（services/）
-- ❌ Agent 层（agents/）
-- ❌ RAG 层（rag/）
-- ❌ Tools 层（tools/）
+| 文档 | 说明 |
+|------|------|
+| `docs/PROJECT_CONTEXT.md` | 项目背景和定位 |
+| `docs/PRD.md` | 产品需求文档 |
+| `docs/DESIGN.md` | 设计文档 |
+| `docs/DEV_RULES.md` | 开发规则 |
+| `docs/DEV_STATUS.md` | 开发状态（本文件） |
+| `docs/CHANGELOG.md` | 变更记录 |
 
-### 4.2 前端代码
-- ❌ 前端项目初始化
-- ❌ 页面组件
-- ❌ API 调用
+## 5. 下一步
 
-### 4.3 数据层
-- ❌ Mock 数据
-- ❌ 知识库数据
-- ❌ 测试数据
+**进入 Module 4：技术地基准备。**
 
-### 4.4 测试层
-- ❌ 单元测试
-- ❌ 集成测试
-- ❌ Bad Case 测试
+- 前端技术选型确认（框架、UI 库、构建工具）
+- 后端技术选型确认（FastAPI、依赖）
+- 项目目录结构设计
+- 数据 Schema 设计（Pydantic 模型）
+- Mock 数据准备
+- 知识库文档准备
 
-### 4.5 部署层
-- ❌ Docker 配置
-- ❌ 部署脚本
-- ❌ 环境配置
+## 6. 当前禁止事项
 
-## 5. 当前限制
-
-### 5.1 技术限制
-- 尚未初始化项目代码
-- 尚未安装依赖
-- 尚未接入 LLM
-- 尚未建立数据库
-
-### 5.2 功能限制
-- 只有文档，没有可运行代码
-- 无法演示完整业务流程
-- 无法进行集成测试
-
-### 5.3 资源限制
-- 依赖 mock 数据，无真实数据
-- 依赖 mock LLM 响应，无真实 AI 能力
-- 无生产级部署能力
-
-## 6. 下一步建议
-
-### 6.1 立即行动（Step 0.2）
-- **Step 0.2：项目结构初始化**
-  - 创建后端项目目录结构
-  - 初始化 FastAPI 项目
-  - 创建 requirements.txt
-  - 创建基础配置文件
-  - 创建 .env.example
-
-### 6.2 短期计划（Step 1.x）
-- **Step 1.1：想法压力测试**
-  - 验证项目可行性
-  - 识别潜在风险
-  - 确认技术选型
-
-- **Step 1.2：技术架构设计**
-  - 设计多 Agent 架构
-  - 设计 RAG 架构
-  - 设计 API 架构
-  - 设计数据模型
-
-- **Step 1.3：Mock 数据准备**
-  - 准备订单 mock 数据
-  - 准备物流 mock 数据
-  - 准备政策知识库数据
-  - 准备测试用例数据
-
-### 6.3 中期计划（Step 2.x）
-- **Step 2.1：核心 Agent 实现**
-  - IntentAgent 实现
-  - RetrievalAgent 实现
-  - OrderAgent 实现
-  - LogisticsAgent 实现
-
-- **Step 2.2：业务流程实现**
-  - PolicyAgent 实现
-  - ReplyAgent 实现
-  - QAAgent 实现
-
-- **Step 2.3：API 接口实现**
-  - 工单处理 API
-  - 知识库查询 API
-  - 订单查询 API
-  - 物流查询 API
-
-### 6.4 长期计划（Step 3.x）
-- **Step 3.1：前端实现**
-  - 工单输入页面
-  - 处理结果展示页面
-  - 质检报告页面
-
-- **Step 3.2：集成测试**
-  - 端到端测试
-  - Bad Case 测试
-  - 性能测试
-
-- **Step 3.3：评估和优化**
-  - Bad Case 收集和分析
-  - 模型优化
-  - 流程优化
-
-## 7. 当前可修改范围
-
-### 7.1 允许修改的文件
-- ✅ `docs/` 目录下的所有文件
-- ✅ 项目根目录的配置文件（如 .gitignore）
-
-### 7.2 允许创建的文件
-- ✅ 新的文档文件
-- ✅ 项目配置文件
-
-## 8. 当前禁止修改范围
-
-### 8.1 禁止创建的文件
-- ❌ 后端代码文件（.py）
-- ❌ 前端代码文件（.js, .jsx, .ts, .tsx）
-- ❌ 依赖文件（requirements.txt, package.json）
-- ❌ 数据库文件
-- ❌ 测试文件
-
-### 8.2 禁止修改的文件
-- ❌ 不存在的文件（不要创建新模块）
-
-## 9. 当前验收标准
-
-### 9.1 文档验收
-- [x] `docs/PROJECT_CONTEXT.md` 存在，并清楚说明项目定位
-- [x] `docs/DEV_RULES.md` 存在，并明确开发规则和禁止事项
-- [x] `docs/DEV_STATUS.md` 存在，并记录当前阶段和下一步
-- [x] `docs/CHANGELOG.md` 存在，并记录 0.0.1 Context Init
-
-### 9.2 安全验收
-- [x] 没有实现任何业务代码
-- [x] 没有引入真实 API Key
-- [x] 没有把 MVP 范围扩大
-
-### 9.3 输出验收
-- [x] 输出清晰的本轮总结
-
-## 10. 后续开发路线
-
-### Phase 0：项目初始化（当前阶段）
-- ✅ Step 0.1：项目上下文初始化
-- ⬜ Step 0.2：项目结构初始化
-- ⬜ Step 0.3：依赖和配置初始化
-
-### Phase 1：架构设计和验证
-- ⬜ Step 1.1：想法压力测试
-- ⬜ Step 1.2：技术架构设计
-- ⬜ Step 1.3：Mock 数据准备
-
-### Phase 2：核心功能实现
-- ⬜ Step 2.1：核心 Agent 实现
-- ⬜ Step 2.2：业务流程实现
-- ⬜ Step 2.3：API 接口实现
-
-### Phase 3：前端和集成
-- ⬜ Step 3.1：前端实现
-- ⬜ Step 3.2：集成测试
-- ⬜ Step 3.3：评估和优化
-
-### Phase 4：完善和展示
-- ⬜ Step 4.1：文档完善
-- ⬜ Step 4.2：演示准备
-- ⬜ Step 4.3：简历优化
+- ❌ 不写代码
+- ❌ 不初始化项目
+- ❌ 不把 Future Scope 提前塞进 MVP
+- ❌ 不突破 Permanent Safety Boundaries
+- ❌ 不扩大 MVP 范围
