@@ -25,6 +25,50 @@
 ### Fixed
 - 无
 
+## [0.0.7] - Project Initialization
+
+**发布日期**：2026-06-11
+
+**版本说明**：Module 6 项目初始化，创建 backend / frontend 基础结构，FastAPI health API，Next.js 占位首页。
+
+### Changed
+
+- Initialized backend FastAPI project structure
+  - 创建 `backend/app/` 目录结构（api / core / agents / schemas / services / rag / tools / data）
+  - 创建 `backend/app/main.py` FastAPI 应用入口
+  - 创建 `backend/app/api/routes_health.py` health 端点
+  - 创建 `backend/app/core/config.py` 基础配置
+  - 创建 `backend/requirements.txt` 依赖列表
+  - 创建 `backend/conftest.py` pytest 配置
+
+- Added health API and health test
+  - `GET /health` 返回 `{"status": "ok", "service": "customerops-agent", "mode": "mock"}`
+  - `backend/tests/test_health.py` 包含 2 个测试用例
+
+- Initialized frontend Next.js project structure
+  - 使用 `create-next-app` 创建 Next.js 16 + TypeScript + Tailwind CSS 项目
+  - 创建 `frontend/app/page.tsx` ToB 工作台占位首页
+  - 创建 `frontend/app/globals.css` 设计系统变量
+  - 创建 `frontend/app/layout.tsx` 布局和元数据
+  - 创建 `frontend/lib/api.ts` API 客户端占位
+  - 创建 `frontend/types/ticket.ts` 类型定义占位
+
+- Added placeholder ToB workspace homepage
+  - 显示项目名 CustomerOps Agent
+  - 显示定位：售后客服工单多 Agent 工作台
+  - 工单输入区域占位设计
+  - Agent Timeline 占位区域（6 个 Agent 步骤）
+  - Evidence / Tool Result / QA 占位卡片
+
+- Added README, .env.example, and .gitignore
+  - `README.md` 包含项目简介、技术栈、启动说明、当前状态
+  - `.env.example` 包含示例配置（无真实密钥）
+  - `.gitignore` 排除敏感文件和缓存目录
+
+- Updated development status
+  - `docs/DEV_STATUS.md` 更新为 Module 6 completed
+  - `docs/CHANGELOG.md` 新增本条记录
+
 ## [0.0.6] - Development Rules and Initialization Checklist
 
 **发布日期**：2026-06-11
@@ -388,6 +432,7 @@
 - [x] v0.0.4 - Product Design and User Flow（产品设计与页面流程）
 - [x] v0.0.5 - Technical Foundation Planning（技术地基准备）
 - [x] v0.0.6 - Development Rules and Initialization Checklist（开发规矩和初始化检查）
+- [x] v0.0.7 - Project Initialization（项目初始化）
 
 ### v0.1.x - 设计阶段
 - [x] v0.1.0 - Architecture Design（技术架构设计）— 已在 v0.0.5 完成

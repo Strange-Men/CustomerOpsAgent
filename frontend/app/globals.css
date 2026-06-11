@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  /* Design system: ToB, clean, professional */
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --surface-alt: #f1f3f5;
+  --border: #dee2e6;
+  --text: #212529;
+  --text-muted: #868e96;
+  --accent: #228be6;
+  --accent-hover: #1c7ed6;
+  --success: #40c057;
+  --warning: #fab005;
+  --error: #fa5252;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
