@@ -17,13 +17,52 @@
 ## [未发布]
 
 ### Added
-- Added `backend/app/rag/retriever.py` — baseline BM25 检索器（tokenize, BM25Retriever, build_default_retriever）
-- Added `backend/app/rag/schemas.py` — 新增 RetrievedChunk 模型（12 字段：KnowledgeChunk metadata + score）
-- Added `backend/tests/test_retriever.py` — retriever 测试（12 个测试用例）
+- Added `backend/app/eval/retrieval_eval.py` — retrieval evaluation harness（eval cases loader, evaluate_case, evaluate_retriever, Recall@1/3/5, MRR, failed cases, CLI）
+- Added `backend/app/eval/__init__.py` — eval 包初始化
+- Added `backend/tests/test_retrieval_eval.py` — retrieval eval 测试（10 个测试用例）
 
 ### Changed
-- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M3 baseline BM25 retriever 完成
-- Updated `docs/CHANGELOG.md` — 追加 M3 变更记录
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M4 retrieval evaluation harness 完成
+- Updated `docs/CHANGELOG.md` — 追加 M4 变更记录
+
+### Fixed
+- 无
+
+## [0.5.0] - M4: Retrieval Evaluation Harness
+
+**发布日期**：2026-06-24
+
+**版本说明**：M4 retrieval evaluation harness 实现，加载 M1 的 eval cases，调用 M3 的 baseline BM25 retriever，计算 Recall@1/3/5 和 MRR，输出 per-case 结果和 failed cases，为 M5 optimized retriever 提供基准指标。
+
+### Added
+
+- Added `backend/app/eval/retrieval_eval.py` — retrieval evaluation harness
+  - `get_default_eval_cases_path()` — 返回默认 seed eval cases 路径
+  - `load_eval_cases(path)` — 加载 JSONL eval cases，空行跳过，坏 JSON 报行号，schema 校验报行号
+  - `unique_doc_ids_from_results(results)` — 从 RetrievedChunk 列表提取去重 doc_id，保持检索顺序，同一 doc 多 chunk 只保留第一次出现
+  - `hit_at_k(expected_doc_ids, retrieved_doc_ids, k)` — 检查 top-k 是否命中任一 expected doc
+  - `reciprocal_rank(expected_doc_ids, retrieved_doc_ids)` — 计算第一个命中 doc 的倒数排名
+  - `evaluate_case(case, retriever, top_k)` — 单条 case 评测，输出 CaseResult（case_id, question, category, market, language, difficulty, expected_doc_ids, retrieved_doc_ids, retrieved_chunk_ids, top_scores, hit_at_1, hit_at_3, hit_at_5, reciprocal_rank）
+  - `evaluate_retriever(retriever, cases, top_k)` — 批量评测，输出 EvalReport（total_cases, recall_at_1, recall_at_3, recall_at_5, mrr, failed_cases, per_case_results）
+  - `run_default_evaluation()` — 默认 baseline 评测（build_default_retriever + load_eval_cases + evaluate_retriever）
+  - CLI: `python -m app.eval.retrieval_eval` — 输出 aggregate metrics + failed cases 列表
+  - 防作弊设计：expected_doc_ids 只在 eval 层用于打分，不传入 retriever.search
+
+- Added `backend/app/eval/__init__.py` — eval 包初始化
+
+- Added `backend/tests/test_retrieval_eval.py` — retrieval eval 测试
+  - 10 个测试用例
+  - 覆盖: seed 加载（20 条）、doc_id 去重保序、hit_at_k 边界、reciprocal_rank 计算、防作弊测试（search 只接收 query + top_k）、字段完整性、aggregate metrics 计算、默认评测集成测试、retriever.py 静态检查、坏 JSON/schema 错误行号
+
+### Changed
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：M4 retrieval evaluation harness 完成
+  - 下一步：M5 optimized retriever
+  - 更新风险点（eval harness 作弊、retriever 偷看、baseline 低不等于失败、failed cases 必须输出、eval/retriever 解耦、doc 去重）
+
+- Updated `docs/CHANGELOG.md`
+  - 追加 M4 变更记录
 
 ### Fixed
 - 无

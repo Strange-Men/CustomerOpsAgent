@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M3: Baseline BM25 Retriever**
+**M4: Retrieval Evaluation Harness**
 
 ## 2. 当前项目状态
 
-**状态：M3 baseline BM25 retriever 完成**
+**状态：M4 retrieval evaluation harness 完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -25,54 +25,67 @@
 - ✅ Baseline BM25 retriever（retriever.py）
 - ✅ RetrievedChunk schema（schemas.py）
 - ✅ retriever 测试（test_retriever.py, 10 个测试用例）
-- ❌ 尚未实现 retrieval evaluation harness
+- ✅ Retrieval evaluation harness（retrieval_eval.py）
+- ✅ eval cases loader（load_eval_cases）
+- ✅ Recall@1 / Recall@3 / Recall@5 / MRR 计算
+- ✅ failed cases 输出
+- ✅ retrieval eval 测试（test_retrieval_eval.py）
+- ❌ 尚未实现 optimized retriever
 - ❌ 尚未实现 answer generator
 - ❌ 尚未实现 RAG API
 
 ## 3. 已完成内容
 
-### M3：Baseline BM25 Retriever（本轮）
+### M4：Retrieval Evaluation Harness（本轮）
+
+- ✅ 创建 `backend/app/eval/__init__.py`
+  - eval 包初始化
+
+- ✅ 创建 `backend/app/eval/retrieval_eval.py`
+  - `get_default_eval_cases_path()` — 返回默认 seed eval cases 路径
+  - `load_eval_cases(path)` — 加载 JSONL eval cases，空行跳过，坏 JSON 报行号，schema 校验报行号
+  - `unique_doc_ids_from_results(results)` — 从 RetrievedChunk 列表提取去重 doc_id，保持顺序
+  - `hit_at_k(expected, retrieved, k)` — 检查 top-k 是否命中
+  - `reciprocal_rank(expected, retrieved)` — 计算 MRR 的 RR 分量
+  - `evaluate_case(case, retriever, top_k)` — 单条 case 评测，输出 CaseResult
+  - `evaluate_retriever(retriever, cases, top_k)` — 批量评测，输出 EvalReport
+  - `run_default_evaluation()` — 默认 baseline 评测
+  - CLI: `python -m app.eval.retrieval_eval` — 输出 aggregate metrics + failed cases
+
+- ✅ 创建 `backend/tests/test_retrieval_eval.py`
+  - 10 个测试用例，覆盖：seed 加载、doc_id 去重、hit_at_k、reciprocal_rank、防作弊测试、字段验证、aggregate metrics、默认评测集成测试、retriever 不被修改、坏 JSON 报错
+
+### M3：Baseline BM25 Retriever
 
 - ✅ 修改 `backend/app/rag/schemas.py`
   - 新增 RetrievedChunk 模型（12 字段）
-  - 保留 KnowledgeChunk 完整 metadata + score 字段
-  - score >= 0，类型为 float
 
 - ✅ 创建 `backend/app/rag/retriever.py`
   - `tokenize(text)` — 英文小写分词 + CJK 字符级 bigram
   - `BM25Retriever(chunks)` — 自实现 BM25 检索器
-  - `BM25Retriever.search(query, top_k)` — Top-K 检索，按 score 降序
+  - `BM25Retriever.search(query, top_k)` — Top-K 检索
   - `build_default_retriever()` — 从默认知识库构建 retriever
-  - CLI: `python -m app.rag.retriever "query"` — CLI smoke test
-  - 标准 BM25 公式：TF * IDF / (TF + k1 * (1 - b + b * dl/avgdl))
-  - k1=1.5, b=0.75
+  - CLI: `python -m app.rag.retriever "query"`
 
 - ✅ 创建 `backend/tests/test_retriever.py`
-  - 12 个测试用例，覆盖：英文 tokenize、中文 tokenize、空 chunks、空 query、top-k 排序、metadata 保留、seed KB 检索、防作弊检查、top-k 限制、score 非负、top_k=0 抛异常、英文查询
+  - 12 个测试用例
 
 ### M2：Loader + Chunker
 
-- ✅ 修改 `backend/app/rag/schemas.py`
-  - 新增 KnowledgeChunk 模型（11 字段）
-  - chunk_id / doc_id / title / category / market / language / policy_type / priority / source / content / chunk_index
-  - chunk_id 不能为空，chunk_index >= 0，content 不能为空
-
 - ✅ 创建 `backend/app/rag/loader.py`
-  - `load_jsonl(path)` — 逐行加载 JSONL，空行跳过，坏 JSON 报行号
-  - `load_knowledge_documents(path)` — 加载并校验为 KnowledgeDocument 列表
-  - `get_default_knowledge_path()` — 返回默认 seed 知识库路径
-  - CLI: `python -m app.rag.loader` — 输出文档数量、语言分布、category 分布
+  - `load_jsonl(path)` — 逐行加载 JSONL
+  - `load_knowledge_documents(path)` — 加载并校验
+  - `get_default_knowledge_path()` — 返回默认路径
+  - CLI: `python -m app.rag.loader`
 
 - ✅ 创建 `backend/app/rag/chunker.py`
-  - `split_text_by_chars(text, max_chars, overlap)` — 按字符切分文本
-  - `chunk_document(doc, max_chars, overlap)` — 单文档切分
-  - `chunk_documents(docs, max_chars, overlap)` — 批量切分
-  - 默认 max_chars=320, overlap=40
-  - chunk_id 格式: `{doc_id}::chunk_{index:03d}`
-  - CLI: `python -m app.rag.chunker` — 输出文档数、chunks 数、平均长度
+  - `split_text_by_chars(text, max_chars, overlap)` — 按字符切分
+  - `chunk_document(doc)` — 单文档切分
+  - `chunk_documents(docs)` — 批量切分
+  - CLI: `python -m app.rag.chunker`
 
 - ✅ 创建 `backend/tests/test_loader_chunker.py`
-  - 11 个测试用例，覆盖：加载、metadata 保留、短文档单 chunk、长文档多 chunk、overlap、chunk_id 稳定、坏 JSON 行号、非法参数、语言/市场保留
+  - 11 个测试用例
 
 ### M1：知识库 Schema + Seed Eval Cases
 
@@ -110,37 +123,38 @@
 | `backend/app/rag/loader.py` | JSONL 加载器 | ✅ M2 新增 |
 | `backend/app/rag/chunker.py` | 文档切分器 | ✅ M2 新增 |
 | `backend/app/rag/retriever.py` | BM25 检索器 | ✅ M3 新增 |
+| `backend/app/eval/retrieval_eval.py` | 检索评测 harness | ✅ M4 新增 |
 | `backend/data/knowledge_base/customer_service_seed.jsonl` | 种子知识库 | ✅ M1 新增 |
 | `backend/data/eval_cases_seed.jsonl` | 种子评测集 | ✅ M1 新增 |
 | `backend/tests/test_data_schema.py` | 数据校验测试 | ✅ M1 新增 |
 | `backend/tests/test_loader_chunker.py` | loader/chunker 测试 | ✅ M2 新增 |
 | `backend/tests/test_retriever.py` | retriever 测试 | ✅ M3 新增 |
+| `backend/tests/test_retrieval_eval.py` | retrieval eval 测试 | ✅ M4 新增 |
 
 ## 5. 下一步
 
-**进入 M4：retrieval evaluation harness**
+**进入 M5：optimized retriever**
 
-M4 目标：
-- 实现 retrieval evaluation harness
-- 计算 baseline Recall@1/3/5 与 MRR
-- 为 M5 optimized retriever 提供基准指标
+M5 目标：
+- 通过 metadata filter / query rewrite / synonym expansion 提升 Recall@5
+- 目标 Recall@5 ≥ 85%
 
 ## 6. 风险点
 
 | 风险 | 说明 | 控制方式 |
 |------|------|---------|
-| baseline retriever 偷看 eval cases | 检索结果被 expected_doc_ids 污染 | 测试检查 retriever.py 不包含 eval_cases / expected_doc_ids |
-| 过早加入 optimized 策略 | 边界失控，M3 只做 baseline BM25 | 代码审查不包含 synonym/query rewrite/embedding |
-| 中文 tokenizer 过度复杂 | 引入 jieba 等外部依赖 | 测试覆盖简单 CJK 字符级 token |
-| BM25 score 排序错误 | 检索结果顺序不对 | 测试检查 score 降序 |
-| 检索结果丢 metadata | RetrievedChunk 缺字段 | 测试覆盖所有 metadata 字段 |
-| top_k 边界处理不清晰 | top_k=0 或负数行为不确定 | top_k<=0 抛 ValueError，测试覆盖 |
+| eval harness 把 expected_doc_ids 传给 retriever | 检索器作弊，指标虚高 | 防作弊测试检查 search 只接收 query + top_k |
+| retriever 偷看 eval cases | retriever.py 被注入 eval 信息 | 静态检查 retriever.py 不包含 eval_cases / expected_doc_ids |
+| baseline Recall@5 低但误以为项目失败 | baseline 是基准不是目标 | 明确 M4 只记录 baseline，M5 才优化 |
+| 不输出 failed cases | M5 没有优化方向 | evaluate_retriever 必须输出 failed_cases |
+| evaluation 和 retriever 耦合太深 | 修改 retriever 影响 eval | eval 层只调用 search，不修改 retriever 内部 |
+| 同一 doc 多个 chunk 重复影响评估 | hit 虚高 | unique_doc_ids_from_results 去重 |
 
 ## 7. 当前禁止事项
 
 - ❌ 不继续扩写大文档
 - ❌ 不碰前端
-- ❌ 不写 optimized retriever
+- ❌ 不写 optimized retriever（M5 才做）
 - ❌ 不写 answer generator
 - ❌ 不接 LLM API
 - ❌ 不实现 6 Agent 工单编排
