@@ -25,6 +25,60 @@
 ### Fixed
 - 无
 
+## [0.1.0] - M0: RAG + Eval 方向重锁
+
+**发布日期**：2026-06-24
+
+**版本说明**：M0 边界重锁，项目方向从"6 Agent 工单系统"正式修正为"跨境电商客服 RAG Agent + RAG Evaluation Harness"。前端冻结为 legacy/static demo，新增 4 个设计文档，更新开发状态和变更记录。
+
+### Added
+
+- Added `docs/00_SCOPE_LOCK.md` — 项目边界锁定
+  - 项目定位：跨境电商客服 RAG Agent + RAG Evaluation Harness
+  - 做什么 / 不做什么清单
+  - 前端冻结声明（legacy/static demo）
+  - 知识库 Metadata Schema（8 字段：doc_id/title/category/market/language/policy_type/priority/source）
+  - 多语种知识库快速迁移说明
+  - 面试讲法
+
+- Added `docs/01_ACCEPTANCE_CRITERIA.md` — 两天 MVP 验收标准
+  - 简历指标口径说明（"提升 30 个百分点" vs "提升 30%"）
+  - 11 项必须完成标准 + 验收命令
+  - 3 项可选加分
+  - 8 项不做清单
+
+- Added `docs/02_RAG_DESIGN.md` — RAG 设计文档
+  - RAG 流程：knowledge base → chunking → retrieval → prompt builder → answer generator → citations
+  - 分层知识库 schema（Markdown + YAML frontmatter）
+  - chunking 策略（按标题+段落切分，100-500 tokens）
+  - retriever 设计（baseline BM25 → optimized: metadata filter + synonym expansion + query rewrite + embedding adapter stub）
+  - citations 设计（doc_id, chunk_id, source, score 一路保留）
+  - 多语种迁移流程
+
+- Added `docs/03_EVAL_DESIGN.md` — Evaluation Harness 设计
+  - 第一层：Retrieval Evaluation（Recall@1/3/5, MRR）
+  - 第二层：Answer Evaluation（三大维度：Relevance/Groundedness/Completeness + 辅助指标：Citation Hit Rate/Keyword Coverage/Answer Pass Rate）
+  - 8 条防作弊约束
+  - 数据集设计（seed_eval_cases.json, bad_cases.json）
+
+- Added `docs/ROADMAP_V2.md` — 修正版开发路线（M0-M11）
+  - 后端优先开发顺序
+  - 检索方案设计（baseline → optimized）
+  - 数据集策略（20 seed → 120+ bad cases）
+  - Evaluation 顺序（先 Retrieval Eval，后 Answer Eval）
+
+- Added `docs/M0_EXECUTION_PROMPT.md` — M0 执行 Prompt
+
+### Changed
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：M0: Scope Locked, Frontend Frozen, Docs Ready
+  - 下一步：M1: Knowledge Base Schema + 20 Seed Eval Cases
+  - 新增风险点和禁止事项
+
+### Fixed
+- 无
+
 ## [0.0.8] - Pre-MVP Readiness Audit
 
 **发布日期**：2026-06-11
