@@ -17,14 +17,52 @@
 ## [未发布]
 
 ### Added
-- Added `backend/app/rag/loader.py` — JSONL 知识库加载器（load_jsonl, load_knowledge_documents）
-- Added `backend/app/rag/chunker.py` — 文档切分器（split_text_by_chars, chunk_document, chunk_documents）
-- Added `backend/app/rag/schemas.py` — 新增 KnowledgeChunk 模型（11 字段）
-- Added `backend/tests/test_loader_chunker.py` — loader + chunker 测试（11 个测试用例）
+- Added `backend/app/rag/retriever.py` — baseline BM25 检索器（tokenize, BM25Retriever, build_default_retriever）
+- Added `backend/app/rag/schemas.py` — 新增 RetrievedChunk 模型（12 字段：KnowledgeChunk metadata + score）
+- Added `backend/tests/test_retriever.py` — retriever 测试（12 个测试用例）
 
 ### Changed
-- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M2 loader + chunker 完成
-- Updated `docs/CHANGELOG.md` — 追加 M2 变更记录
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M3 baseline BM25 retriever 完成
+- Updated `docs/CHANGELOG.md` — 追加 M3 变更记录
+
+### Fixed
+- 无
+
+## [0.4.0] - M3: Baseline BM25 Retriever
+
+**发布日期**：2026-06-24
+
+**版本说明**：M3 baseline BM25 retriever 实现，在 M2 产出的 chunks 上完成 Top-K 关键词检索，返回带 score 和 metadata 的检索结果，为 M4 retrieval evaluation 做准备。
+
+### Added
+
+- Added `backend/app/rag/retriever.py` — baseline BM25 检索器
+  - `tokenize(text)` — 英文小写分词 + CJK 字符级 token
+  - `BM25Retriever(chunks, k1, b)` — 自实现 BM25 检索器
+  - `BM25Retriever.search(query, top_k)` — Top-K 检索，按 score 降序返回 RetrievedChunk
+  - `build_default_retriever()` — 从默认知识库构建 retriever
+  - CLI: `python -m app.rag.retriever "query"` — CLI smoke test
+  - 标准 BM25 公式：IDF(q) * (TF * (k1+1)) / (TF + k1 * (1 - b + b * dl/avgdl))
+  - k1=1.5, b=0.75
+
+- Added `backend/app/rag/schemas.py` — 新增 RetrievedChunk 模型
+  - 12 字段: KnowledgeChunk 的 11 字段 + score
+  - score >= 0，类型为 float
+  - 保留 KnowledgeChunk 完整 metadata
+
+- Added `backend/tests/test_retriever.py` — retriever 测试
+  - 12 个测试用例
+  - 覆盖: 英文 tokenize、中文 tokenize、空 chunks、空 query、top-k 排序、metadata 保留、seed KB 检索、防作弊检查、top-k 限制、score 非负、top_k=0 异常、英文查询
+
+### Changed
+
+- Updated `backend/app/rag/schemas.py`
+  - 新增 RetrievedChunk 模型（保留 KnowledgeDocument、KnowledgeChunk、EvalCase 不变）
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：M3 baseline BM25 retriever 完成
+  - 下一步：M4 retrieval evaluation harness
+  - 更新风险点和禁止事项
 
 ### Fixed
 - 无
