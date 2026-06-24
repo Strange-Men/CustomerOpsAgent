@@ -17,10 +17,57 @@
 ## [未发布]
 
 ### Added
-- 无
+- Added `backend/app/rag/schemas.py` — Pydantic 数据模型（KnowledgeDocument + EvalCase）
+- Added `backend/data/knowledge_base/customer_service_seed.jsonl` — 种子知识库（14 条，覆盖 12 个场景）
+- Added `backend/data/eval_cases_seed.jsonl` — 种子评测集（20 条，覆盖 zh/en，easy/medium/hard）
+- Added `backend/tests/test_data_schema.py` — 数据 schema 校验测试（16 个测试用例）
 
 ### Changed
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M1 数据层建设完成
+- Updated `docs/CHANGELOG.md` — 追加 M1 变更记录
+
+### Fixed
 - 无
+
+## [0.2.0] - M1: 知识库 Schema + Seed Eval Cases
+
+**发布日期**：2026-06-24
+
+**版本说明**：M1 数据层建设，创建 Pydantic 数据模型、种子知识库（14 条）、种子评测集（20 条）和数据校验测试。
+
+### Added
+
+- Added `backend/app/rag/schemas.py` — Pydantic 数据模型
+  - KnowledgeDocument：9 字段（doc_id/title/category/market/language/policy_type/priority/source/content）
+  - EvalCase：8 字段（case_id/question/category/market/language/difficulty/expected_doc_ids/expected_keywords）
+  - 字段与 M0 文档 metadata schema 对齐
+
+- Added `backend/data/knowledge_base/customer_service_seed.jsonl` — 种子知识库
+  - 14 条知识文档，覆盖 12 个场景
+  - 场景覆盖：物流时效、清关延迟、退货政策、退款规则、换货流程、地址修改、订单取消、支付失败、包裹丢失、包裹破损、优惠券问题、多语言英文咨询
+  - 语言覆盖：zh（12 条）/ en（2 条）
+  - 市场覆盖：US / EU / GLOBAL
+
+- Added `backend/data/eval_cases_seed.jsonl` — 种子评测集
+  - 20 条评测用例
+  - difficulty 分布：easy(8) / medium(8) / hard(4)
+  - language 分布：zh(16) / en(4)
+  - 所有 expected_doc_ids 均对应知识库 doc_id
+
+- Added `backend/tests/test_data_schema.py` — 数据 schema 校验测试
+  - JSONL 读取与 Pydantic 校验
+  - doc_id / case_id 唯一性检查
+  - expected_doc_ids 与知识库交叉校验
+  - language 覆盖检查（zh/en）
+  - 数量检查（12+ docs, 20 cases）
+  - 英文 case 问题语言检查
+
+### Changed
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：M1 数据层建设完成
+  - 下一步：M2 loader + chunker
+  - 新增风险点和禁止事项
 
 ### Fixed
 - 无
