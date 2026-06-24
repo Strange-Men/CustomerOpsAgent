@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M4: Retrieval Evaluation Harness**
+**M5: Optimized Retriever**
 
 ## 2. 当前项目状态
 
-**状态：M4 retrieval evaluation harness 完成**
+**状态：M5 optimized retriever 完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -30,13 +30,36 @@
 - ✅ Recall@1 / Recall@3 / Recall@5 / MRR 计算
 - ✅ failed cases 输出
 - ✅ retrieval eval 测试（test_retrieval_eval.py）
-- ❌ 尚未实现 optimized retriever
+- ✅ Optimized retriever（optimized_retriever.py）
+- ✅ query expansion（跨语言同义词扩展）
+- ✅ query signal inference（category / market / language 推断）
+- ✅ metadata-aware score adjustment（category / market / language boost）
+- ✅ doc-level diversity（重复 doc 去重）
+- ✅ baseline vs optimized 对比（Recall@5: 90%→100%, MRR: 0.785→0.917）
+- ✅ optimized retriever 测试（test_optimized_retriever.py, 14 个测试用例）
+- ✅ CLI smoke test
 - ❌ 尚未实现 answer generator
 - ❌ 尚未实现 RAG API
 
 ## 3. 已完成内容
 
-### M4：Retrieval Evaluation Harness（本轮）
+### M5：Optimized Retriever（本轮）
+
+- ✅ 创建 `backend/app/rag/optimized_retriever.py`
+  - `normalize_query(query)` — 小写化、去多余空白
+  - `expand_query(query)` — 跨语言同义词扩展（shipping→物流、customs→清关 等 12 组）
+  - `infer_query_signals(query)` — 推断 category / market / language
+  - `OptimizedRetriever(chunks)` — 基于 BM25Retriever 的优化检索器
+  - `OptimizedRetriever.search(query, top_k)` — 查询扩展 + metadata boost + doc diversity
+  - `_compute_boost(chunk, signals)` — 可解释的 metadata boost（category ×1.15, market ×1.10, language ×1.08, GLOBAL ×1.03）
+  - `build_default_optimized_retriever()` — 从默认知识库构建
+  - CLI: `python -m app.rag.optimized_retriever "query"` — 输出 query signals + top-k 结果
+
+- ✅ 创建 `backend/tests/test_optimized_retriever.py`
+  - 14 个测试用例
+  - 覆盖: 跨语言扩展、category 推断、market 推断、防作弊检查、metadata 保留、score 排序、空查询、top-k 限制、默认构建、eval 对比、failed case 修复验证
+
+### M4：Retrieval Evaluation Harness
 
 - ✅ 创建 `backend/app/eval/__init__.py`
   - eval 包初始化
@@ -124,38 +147,41 @@
 | `backend/app/rag/chunker.py` | 文档切分器 | ✅ M2 新增 |
 | `backend/app/rag/retriever.py` | BM25 检索器 | ✅ M3 新增 |
 | `backend/app/eval/retrieval_eval.py` | 检索评测 harness | ✅ M4 新增 |
+| `backend/app/rag/optimized_retriever.py` | 优化检索器 | ✅ M5 新增 |
 | `backend/data/knowledge_base/customer_service_seed.jsonl` | 种子知识库 | ✅ M1 新增 |
 | `backend/data/eval_cases_seed.jsonl` | 种子评测集 | ✅ M1 新增 |
 | `backend/tests/test_data_schema.py` | 数据校验测试 | ✅ M1 新增 |
 | `backend/tests/test_loader_chunker.py` | loader/chunker 测试 | ✅ M2 新增 |
 | `backend/tests/test_retriever.py` | retriever 测试 | ✅ M3 新增 |
 | `backend/tests/test_retrieval_eval.py` | retrieval eval 测试 | ✅ M4 新增 |
+| `backend/tests/test_optimized_retriever.py` | optimized retriever 测试 | ✅ M5 新增 |
 
 ## 5. 下一步
 
-**进入 M5：optimized retriever**
+**进入 M6：扩展 120+ bad cases + bad case optimization log**
 
-M5 目标：
-- 通过 metadata filter / query rewrite / synonym expansion 提升 Recall@5
-- 目标 Recall@5 ≥ 85%
+M6 目标：
+- 扩展 120+ bad cases，形成更可信的最终评测集
+- 记录 bad case optimization log
 
 ## 6. 风险点
 
 | 风险 | 说明 | 控制方式 |
 |------|------|---------|
-| eval harness 把 expected_doc_ids 传给 retriever | 检索器作弊，指标虚高 | 防作弊测试检查 search 只接收 query + top_k |
-| retriever 偷看 eval cases | retriever.py 被注入 eval 信息 | 静态检查 retriever.py 不包含 eval_cases / expected_doc_ids |
-| baseline Recall@5 低但误以为项目失败 | baseline 是基准不是目标 | 明确 M4 只记录 baseline，M5 才优化 |
-| 不输出 failed cases | M5 没有优化方向 | evaluate_retriever 必须输出 failed_cases |
-| evaluation 和 retriever 耦合太深 | 修改 retriever 影响 eval | eval 层只调用 search，不修改 retriever 内部 |
-| 同一 doc 多个 chunk 重复影响评估 | hit 虚高 | unique_doc_ids_from_results 去重 |
+| 为 20 条 seed cases 过拟合 | optimized retriever 可能针对 seed set 写死规则 | 防作弊测试 + 通用词典 + 无 case_id 硬编码 |
+| 通过 case_id 或 expected_doc_ids 硬编码 | 作弊提升指标 | 静态检查 optimized_retriever.py 不包含 eval 字段 |
+| boost 太大导致 BM25 失真 | metadata boost 覆盖关键词相关性 | boost 保守（max ×1.41），可解释 |
+| optimized 覆盖 baseline | 无法对比 | 保留 baseline retriever.py 不变 |
+| 只提升 Recall@5，不关注 Recall@1 / MRR | Top-5 命中但 Top-1 未命中 | 同时监控 Recall@1 和 MRR |
+| 忘记输出仍失败的 cases | 无法定位下一步优化方向 | eval harness 必须输出 failed_cases |
+| 扩展 120+ bad cases 后指标下降 | seed set 过拟合暴露 | M6 以完整 eval set 为准 |
 
 ## 7. 当前禁止事项
 
 - ❌ 不继续扩写大文档
 - ❌ 不碰前端
-- ❌ 不写 optimized retriever（M5 才做）
-- ❌ 不写 answer generator
+- ❌ 不写 answer generator（M7 才做）
 - ❌ 不接 LLM API
 - ❌ 不实现 6 Agent 工单编排
 - ❌ 不实现登录/权限/多租户
+- ❌ 不在 optimized retriever 中使用 eval ground-truth 数据

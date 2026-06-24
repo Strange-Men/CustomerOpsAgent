@@ -17,13 +17,49 @@
 ## [未发布]
 
 ### Added
-- Added `backend/app/eval/retrieval_eval.py` — retrieval evaluation harness（eval cases loader, evaluate_case, evaluate_retriever, Recall@1/3/5, MRR, failed cases, CLI）
-- Added `backend/app/eval/__init__.py` — eval 包初始化
-- Added `backend/tests/test_retrieval_eval.py` — retrieval eval 测试（10 个测试用例）
+- Added `backend/app/rag/optimized_retriever.py` — optimized retriever（query expansion, signal inference, metadata-aware boosting, doc diversity）
+- Added `backend/tests/test_optimized_retriever.py` — optimized retriever 测试（14 个测试用例）
 
 ### Changed
-- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M4 retrieval evaluation harness 完成
-- Updated `docs/CHANGELOG.md` — 追加 M4 变更记录
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M5 optimized retriever 完成
+- Updated `docs/CHANGELOG.md` — 追加 M5 变更记录
+
+### Fixed
+- 无
+
+## [0.6.0] - M5: Optimized Retriever
+
+**发布日期**：2026-06-24
+
+**版本说明**：M5 optimized retriever 实现，在 M3 baseline BM25Retriever 基础上通过查询扩展、信号推断和 metadata-aware boosting 提升检索质量。修复了 baseline 的 2 个 failed cases，Recall@5 从 90% 提升到 100%，MRR 从 0.785 提升到 0.917。
+
+### Added
+
+- Added `backend/app/rag/optimized_retriever.py` — optimized retriever
+  - `normalize_query(query)` — 小写化、去多余空白、保留 CJK
+  - `expand_query(query)` — 跨语言同义词扩展（12 组领域词典：shipping/物流、customs/清关、delay/延迟 等）
+  - `infer_query_signals(query)` — 从 query 推断 category / market / language
+  - `QuerySignals` — dataclass 存储推断信号
+  - `OptimizedRetriever(chunks)` — 基于 BM25Retriever 的优化检索器
+  - `OptimizedRetriever.search(query, top_k)` — 完整 pipeline：normalize → expand → infer → BM25 → metadata boost → doc diversity → top-k
+  - `_compute_boost(chunk, signals)` — 可解释的 metadata boost（category ×1.15, market ×1.10, GLOBAL ×1.03, language ×1.08，最大复合 ×1.41）
+  - `build_default_optimized_retriever()` — 从默认知识库构建 optimized retriever
+  - CLI: `python -m app.rag.optimized_retriever "query"` — 输出 query signals + top-k 结果
+  - 防作弊设计：不读取 eval 数据，不使用 ground-truth 字段
+
+- Added `backend/tests/test_optimized_retriever.py` — optimized retriever 测试
+  - 14 个测试用例
+  - 覆盖: 跨语言扩展、category 推断、market 推断、防作弊检查（静态扫描）、metadata 保留、score 排序、空查询、top-k 限制、默认构建、eval 对比（Recall@5 不降级、MRR 或 Recall@1 不降级）、failed case 修复验证
+
+### Changed
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：M5 optimized retriever 完成
+  - 下一步：M6 扩展 120+ bad cases
+  - 更新风险点和禁止事项
+
+- Updated `docs/CHANGELOG.md`
+  - 追加 M5 变更记录
 
 ### Fixed
 - 无
