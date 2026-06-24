@@ -23,6 +23,22 @@ class KnowledgeDocument(BaseModel):
     content: str = Field(..., min_length=1, description="Document content body")
 
 
+class KnowledgeChunk(BaseModel):
+    """A chunk of a knowledge document, with inherited metadata."""
+
+    chunk_id: str = Field(..., min_length=1, description="Stable chunk identifier: {doc_id}::chunk_{index:03d}")
+    doc_id: str = Field(..., min_length=1, description="Parent document identifier")
+    title: str = Field(..., description="Document title (inherited)")
+    category: str = Field(..., description="Category (inherited from doc)")
+    market: str = Field(..., description="Target market: US/EU/GLOBAL (inherited)")
+    language: str = Field(..., description="Language code: zh/en (inherited)")
+    policy_type: str = Field(..., description="Policy type (inherited from doc)")
+    priority: int = Field(..., description="Priority: 1=high, 2=medium, 3=low (inherited)")
+    source: str = Field(..., description="Data source identifier (inherited)")
+    content: str = Field(..., min_length=1, description="Chunk text content")
+    chunk_index: int = Field(..., ge=0, description="Zero-based index of this chunk within the document")
+
+
 class EvalCase(BaseModel):
     """A single evaluation case with expected retrieval targets."""
 

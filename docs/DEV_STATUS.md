@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M1: 知识库 Schema + Seed Eval Cases**
+**M2: Loader + Chunker**
 
 ## 2. 当前项目状态
 
-**状态：M1 数据层建设完成**
+**状态：M2 loader + chunker 完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -15,11 +15,13 @@
 - ✅ RAG 设计文档（02_RAG_DESIGN.md）
 - ✅ Eval 设计文档（03_EVAL_DESIGN.md）
 - ✅ ROADMAP_V2 后端优先开发路线（M0-M11）
-- ✅ Pydantic schema 定义（schemas.py）
+- ✅ Pydantic schema 定义（schemas.py: KnowledgeDocument + EvalCase + KnowledgeChunk）
 - ✅ Seed knowledge base（14 条知识文档）
 - ✅ Seed eval cases（20 条评测用例）
 - ✅ 数据 schema 测试（test_data_schema.py）
-- ❌ 尚未实现 loader / chunker
+- ✅ JSONL loader（loader.py）
+- ✅ KnowledgeChunk chunker（chunker.py）
+- ✅ loader + chunker 测试（test_loader_chunker.py）
 - ❌ 尚未实现 retriever
 - ❌ 尚未实现 evaluation harness
 - ❌ 尚未实现 answer generator
@@ -27,32 +29,36 @@
 
 ## 3. 已完成内容
 
-### M1：知识库 Schema + Seed Eval Cases（本轮）
+### M2：Loader + Chunker（本轮）
 
-- ✅ 创建 `backend/app/rag/schemas.py`
-  - KnowledgeDocument 模型（9 字段：doc_id/title/category/market/language/policy_type/priority/source/content）
-  - EvalCase 模型（8 字段：case_id/question/category/market/language/difficulty/expected_doc_ids/expected_keywords）
-  - 字段与 M0 文档 metadata schema 对齐
+- ✅ 修改 `backend/app/rag/schemas.py`
+  - 新增 KnowledgeChunk 模型（11 字段）
+  - chunk_id / doc_id / title / category / market / language / policy_type / priority / source / content / chunk_index
+  - chunk_id 不能为空，chunk_index >= 0，content 不能为空
 
-- ✅ 创建 `backend/data/knowledge_base/customer_service_seed.jsonl`
-  - 14 条知识文档
-  - 覆盖场景：物流时效、清关延迟、退货政策、退款规则、换货流程、地址修改、订单取消、支付失败、包裹丢失、包裹破损、优惠券问题、多语言英文咨询
-  - 语言覆盖：zh（12 条）/ en（2 条）
-  - 市场覆盖：US / EU / GLOBAL
+- ✅ 创建 `backend/app/rag/loader.py`
+  - `load_jsonl(path)` — 逐行加载 JSONL，空行跳过，坏 JSON 报行号
+  - `load_knowledge_documents(path)` — 加载并校验为 KnowledgeDocument 列表
+  - `get_default_knowledge_path()` — 返回默认 seed 知识库路径
+  - CLI: `python -m app.rag.loader` — 输出文档数量、语言分布、category 分布
 
-- ✅ 创建 `backend/data/eval_cases_seed.jsonl`
-  - 20 条评测用例
-  - difficulty 分布：easy(8) / medium(8) / hard(4)
-  - language 分布：zh(16) / en(4)
-  - 所有 expected_doc_ids 均对应知识库 doc_id
+- ✅ 创建 `backend/app/rag/chunker.py`
+  - `split_text_by_chars(text, max_chars, overlap)` — 按字符切分文本
+  - `chunk_document(doc, max_chars, overlap)` — 单文档切分
+  - `chunk_documents(docs, max_chars, overlap)` — 批量切分
+  - 默认 max_chars=320, overlap=40
+  - chunk_id 格式: `{doc_id}::chunk_{index:03d}`
+  - CLI: `python -m app.rag.chunker` — 输出文档数、chunks 数、平均长度
 
-- ✅ 创建 `backend/tests/test_data_schema.py`
-  - JSONL 读取与 Pydantic 校验
-  - doc_id / case_id 唯一性检查
-  - expected_doc_ids 与知识库交叉校验
-  - language 覆盖检查（zh/en）
-  - 数量检查（12+ docs, 20 cases）
-  - 英文 case 问题语言检查
+- ✅ 创建 `backend/tests/test_loader_chunker.py`
+  - 11 个测试用例，覆盖：加载、metadata 保留、短文档单 chunk、长文档多 chunk、overlap、chunk_id 稳定、坏 JSON 行号、非法参数、语言/市场保留
+
+### M1：知识库 Schema + Seed Eval Cases
+
+- ✅ 创建 `backend/app/rag/schemas.py` — KnowledgeDocument + EvalCase
+- ✅ 创建 `backend/data/knowledge_base/customer_service_seed.jsonl` — 14 条知识文档
+- ✅ 创建 `backend/data/eval_cases_seed.jsonl` — 20 条评测用例
+- ✅ 创建 `backend/tests/test_data_schema.py` — 数据校验测试
 
 ### M0：边界重锁 + 冻结前端 + 最小文档补档
 
@@ -79,30 +85,32 @@
 | `docs/02_RAG_DESIGN.md` | RAG 设计 | ✅ M0 新增 |
 | `docs/03_EVAL_DESIGN.md` | Eval 设计 | ✅ M0 新增 |
 | `docs/ROADMAP_V2.md` | 开发路线 | ✅ M0 新增 |
-| `backend/app/rag/schemas.py` | 数据模型 | ✅ M1 新增 |
+| `backend/app/rag/schemas.py` | 数据模型 | ✅ M1 新增, M2 扩展 |
+| `backend/app/rag/loader.py` | JSONL 加载器 | ✅ M2 新增 |
+| `backend/app/rag/chunker.py` | 文档切分器 | ✅ M2 新增 |
 | `backend/data/knowledge_base/customer_service_seed.jsonl` | 种子知识库 | ✅ M1 新增 |
 | `backend/data/eval_cases_seed.jsonl` | 种子评测集 | ✅ M1 新增 |
 | `backend/tests/test_data_schema.py` | 数据校验测试 | ✅ M1 新增 |
+| `backend/tests/test_loader_chunker.py` | loader/chunker 测试 | ✅ M2 新增 |
 
 ## 5. 下一步
 
-**进入 M2：loader + chunker**
+**进入 M3：baseline BM25 retriever**
 
-M2 目标：
-- 实现 JSONL loader，读取知识库文件
-- 实现 chunker，将文档按段落切分为 chunks
-- 每个 chunk 继承文档级 metadata
-- 单元测试覆盖
+M3 目标：
+- 在 chunks 上实现 BM25 关键词检索
+- 支持 Top-K 返回
+- 为 M4 prompt builder 提供检索结果
 
 ## 6. 风险点
 
 | 风险 | 说明 | 控制方式 |
 |------|------|---------|
-| 数据质量不够 | 14 条 seed 知识库可能不够覆盖 | M6 扩展到 120+ |
-| expected_doc_ids 不匹配 | eval case 引用的 doc_id 可能不存在 | 测试已覆盖交叉校验 |
-| 字段设计后续不够用 | schema 字段可能需要扩展 | M2 chunking 时验证 |
-| 英文 case 只是伪英文 | 英文问题质量可能不高 | 测试已检查非中文 |
-| 测试只测文件存在 | 测试已真正校验 JSONL 内容和 schema | ✅ 已解决 |
+| chunking 丢 metadata | chunk 切分后 metadata 丢失 | 测试已覆盖 metadata 保留 |
+| chunk_id 不稳定 | chunk_id 在不同运行间变化 | chunk_id 格式固定为 {doc_id}::chunk_{index:03d} |
+| chunk 太大或太小 | max_chars 设置不当 | 默认 320 字符，overlap 40，可调参数 |
+| loader 吞异常 | 数据问题难排查 | loader 逐行报行号，不吞异常 |
+| 提前把 retriever 写进 M2 | 边界失控 | M2 严格只做 loader + chunker |
 
 ## 7. 当前禁止事项
 

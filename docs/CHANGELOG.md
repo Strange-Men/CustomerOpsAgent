@@ -17,14 +17,58 @@
 ## [未发布]
 
 ### Added
-- Added `backend/app/rag/schemas.py` — Pydantic 数据模型（KnowledgeDocument + EvalCase）
-- Added `backend/data/knowledge_base/customer_service_seed.jsonl` — 种子知识库（14 条，覆盖 12 个场景）
-- Added `backend/data/eval_cases_seed.jsonl` — 种子评测集（20 条，覆盖 zh/en，easy/medium/hard）
-- Added `backend/tests/test_data_schema.py` — 数据 schema 校验测试（16 个测试用例）
+- Added `backend/app/rag/loader.py` — JSONL 知识库加载器（load_jsonl, load_knowledge_documents）
+- Added `backend/app/rag/chunker.py` — 文档切分器（split_text_by_chars, chunk_document, chunk_documents）
+- Added `backend/app/rag/schemas.py` — 新增 KnowledgeChunk 模型（11 字段）
+- Added `backend/tests/test_loader_chunker.py` — loader + chunker 测试（11 个测试用例）
 
 ### Changed
-- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M1 数据层建设完成
-- Updated `docs/CHANGELOG.md` — 追加 M1 变更记录
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M2 loader + chunker 完成
+- Updated `docs/CHANGELOG.md` — 追加 M2 变更记录
+
+### Fixed
+- 无
+
+## [0.3.0] - M2: Loader + Chunker
+
+**发布日期**：2026-06-24
+
+**版本说明**：M2 loader + chunker 实现，将 M1 的 JSONL 知识库加载为 Python 对象并切分为可检索 chunks，为 M3 BM25 retriever 做准备。
+
+### Added
+
+- Added `backend/app/rag/loader.py` — JSONL 知识库加载器
+  - `load_jsonl(path)` — 逐行加载 JSONL，空行跳过，坏 JSON 报行号
+  - `load_knowledge_documents(path)` — 加载并校验为 KnowledgeDocument 列表
+  - `get_default_knowledge_path()` — 返回默认 seed 知识库路径
+  - CLI: `python -m app.rag.loader` 输出文档数量、语言分布、category 分布
+
+- Added `backend/app/rag/chunker.py` — 文档切分器
+  - `split_text_by_chars(text, max_chars, overlap)` — 按字符切分文本
+  - `chunk_document(doc, max_chars, overlap)` — 单文档切分
+  - `chunk_documents(docs, max_chars, overlap)` — 批量切分
+  - 默认 max_chars=320, overlap=40
+  - chunk_id 格式: `{doc_id}::chunk_{index:03d}`
+  - CLI: `python -m app.rag.chunker` 输出文档数、chunks 数、平均长度
+
+- Added `backend/app/rag/schemas.py` — 新增 KnowledgeChunk 模型
+  - 11 字段: chunk_id / doc_id / title / category / market / language / policy_type / priority / source / content / chunk_index
+  - 保留 KnowledgeDocument 核心 metadata
+  - chunk_id 不能为空，chunk_index >= 0
+
+- Added `backend/tests/test_loader_chunker.py` — loader + chunker 测试
+  - 11 个测试用例
+  - 覆盖: 加载、metadata 保留、短文档单 chunk、长文档多 chunk、overlap、chunk_id 稳定、坏 JSON 行号、非法参数、语言/市场保留
+
+### Changed
+
+- Updated `backend/app/rag/schemas.py`
+  - 新增 KnowledgeChunk 模型（保留 KnowledgeDocument 和 EvalCase 不变）
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：M2 loader + chunker 完成
+  - 下一步：M3 baseline BM25 retriever
+  - 更新风险点和禁止事项
 
 ### Fixed
 - 无
