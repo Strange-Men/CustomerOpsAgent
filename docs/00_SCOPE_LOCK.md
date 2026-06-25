@@ -7,14 +7,17 @@
 
 ## 一、项目定位
 
-**跨境电商客服 RAG Agent + RAG Evaluation Harness**
+**跨境电商轻量客服 RAG Agent + RAG Evaluation Harness**
 
-本项目是一个面向跨境电商客服场景的 RAG（Retrieval-Augmented Generation）系统，核心能力是：
+本项目是一个面向跨境电商客服场景的轻量客服 RAG Agent 系统，核心能力是：
 
 1. 分层知识库检索（BM25 baseline → 优化策略）
-2. 回答生成（mock-first，带 citations）
-3. 双层 Evaluation Harness（Retrieval Eval + Answer Eval）
-4. 120+ Bad Case 分析与迭代优化
+2. 轻量 Agent Workflow（Intent Recognition → Evidence Check → Answer Generation → Citation Check → Fallback）
+3. 回答生成（mock-first，带 citations）
+4. 双层 Evaluation Harness（Retrieval Eval + Answer Eval）
+5. 120+ Bad Case 分析与迭代优化
+
+**Agent 层说明**：Agent 层由 intent recognition、evidence check、answer generation、citation check、fallback rules 组成，是围绕 RAG 的轻量工作流。明确不做复杂 6 Agent 工单系统、不做 LangGraph 多 Agent 编排、不做多租户 SaaS。
 
 **简历对应能力**：
 - "构建 RAG 知识库，按 category/market/language/policy_type 做分层，通过 metadata filter 提升召回准确率"

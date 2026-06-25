@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M6: Full Bad Case Eval Set + Optimization Log**
+**M6.5: Agent Workflow 设计补档**
 
 ## 2. 当前项目状态
 
-**状态：M6 120+ bad cases + bad case optimization log 完成**
+**状态：M6.5 轻量客服 Agent Workflow 设计文档完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -46,8 +46,40 @@
 - ❌ 尚未实现 answer generator
 - ❌ 尚未实现 prompt builder
 - ❌ 尚未实现 RAG API
+- ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
+
+### M6.5：Agent Workflow 设计补档（本轮）
+
+- ✅ 创建 `docs/AGENT_WORKFLOW.md`
+  - Agent Workflow 总览（Intent Recognition → Query Signals → RAG Retrieval → Evidence Check → Prompt Builder → Answer Generator → Citation Check → Fallback）
+  - Intent Recognition 设计（11 个 intent：logistics/customs/return/refund/exchange/address/order/payment/package/coupon/unknown）
+  - Evidence Check 设计（6 项检查：chunks 非空 / top score / category 匹配 / citation 可用 / intent 覆盖 / 多意图冲突）
+  - Citation Check 设计（4 条规则：必须带引用 / 不能引用不存在的 doc_id / 无引用不输出正式答复 / 引用必须来自 retrieved chunks）
+  - Fallback / Escalation 规则（10 条：检索无结果 / score 太低 / citation 缺失 / 订单状态 / 知识库外 / 多意图 / 政策风险 / 情绪激烈 / 隐私敏感 / 低置信度）
+  - M7 开发范围（7 个模块 + 不做清单）
+  - 面试讲法（1 分钟版）
+  - 设计原则总结（Rule-first / Fail-safe / Citation-required / Single-pipeline / Intent-aware）
+
+- ✅ 修改 `docs/00_SCOPE_LOCK.md`
+  - 项目定位从"RAG Agent"补充为"轻量客服 RAG Agent"
+  - 新增 Agent 层说明（intent recognition / evidence check / answer generation / citation check / fallback rules）
+  - 明确不做复杂 6 Agent 工单系统、不做 LangGraph、不做多租户 SaaS
+
+- ✅ 修改 `docs/02_RAG_DESIGN.md`
+  - 新增第七节"RAG 与 Agent Workflow 的关系"
+  - 说明 RAG 负责找证据、Agent 负责判断和决策
+  - 说明没有证据时不能强答
+
+- ✅ 修改 `docs/DEV_STATUS.md`
+  - 当前阶段更新为 M6.5
+  - 新增 M6.5 已完成内容
+
+- ✅ 修改 `docs/CHANGELOG.md`
+  - 追加 M6.5 变更记录
+
+## 3.1 已完成内容
 
 ### M6：Full Bad Case Eval Set + Optimization Log（本轮）
 
@@ -177,11 +209,12 @@
 
 | 文档 | 说明 | 状态 |
 |------|------|------|
-| `docs/00_SCOPE_LOCK.md` | 项目边界锁定 | ✅ M0 新增 |
+| `docs/00_SCOPE_LOCK.md` | 项目边界锁定 | ✅ M0 新增, M6.5 更新 |
 | `docs/01_ACCEPTANCE_CRITERIA.md` | 验收标准 | ✅ M0 新增 |
-| `docs/02_RAG_DESIGN.md` | RAG 设计 | ✅ M0 新增 |
+| `docs/02_RAG_DESIGN.md` | RAG 设计 | ✅ M0 新增, M6.5 更新 |
 | `docs/03_EVAL_DESIGN.md` | Eval 设计 | ✅ M0 新增 |
 | `docs/ROADMAP_V2.md` | 开发路线 | ✅ M0 新增 |
+| `docs/AGENT_WORKFLOW.md` | Agent Workflow 设计 | ✅ M6.5 新增 |
 | `backend/app/rag/schemas.py` | 数据模型 | ✅ M1 新增, M2 扩展, M3 扩展 |
 | `backend/app/rag/loader.py` | JSONL 加载器 | ✅ M2 新增 |
 | `backend/app/rag/chunker.py` | 文档切分器 | ✅ M2 新增 |
@@ -202,12 +235,15 @@
 
 ## 5. 下一步
 
-**进入 M7：Prompt Builder + Mock Answer Generator + Citations**
+**进入 M7：Intent Recognition + Prompt Builder + Mock Answer Generator + Citations + Fallback Rules**
 
 M7 目标：
-- 实现 prompt builder，把检索结果组装成结构化 prompt
-- 实现 mock answer generator，生成可追溯的客服回答
-- 实现 citations 机制，引用 doc_id / chunk_id / source / score
+- 实现 intent recognizer，基于规则识别用户意图（11 个 intent）
+- 实现 prompt builder，根据 intent + retrieved chunks 组装结构化 prompt
+- 实现 mock answer generator，生成带 citation 标记的客服回答
+- 实现 citation checker，校验 answer 中的引用合法性
+- 实现 fallback rules，覆盖 10 种兜底场景
+- 实现 agent workflow，串联以上模块的主流程
 
 ## 6. 风险点
 
@@ -227,10 +263,10 @@ M7 目标：
 
 ## 7. 当前禁止事项
 
-- ❌ 不继续扩写大文档
 - ❌ 不碰前端
-- ❌ 不写 answer generator（M7 才做）
-- ❌ 不接 LLM API
+- ❌ 不接 LLM API（M7 用规则实现）
 - ❌ 不实现 6 Agent 工单编排
+- ❌ 不实现 LangGraph 多 Agent
 - ❌ 不实现登录/权限/多租户
 - ❌ 不在 optimized retriever 中使用 eval ground-truth 数据
+- ❌ 不实现真实订单查询 / 物流 API

@@ -179,3 +179,45 @@ citations 一路保留以下信息：
 - 不做复杂翻译服务
 - 不做自动翻译
 - 只做数据结构和检索接口支持
+
+---
+
+## 七、RAG 与 Agent Workflow 的关系
+
+### 职责划分
+
+| 层 | 职责 | 说明 |
+|----|------|------|
+| RAG（Retrieval） | 找证据 | 从知识库中检索与用户问题相关的 chunks |
+| Agent Workflow | 做决策 | 判断用户意图、检查证据质量、组织回答、执行兜底 |
+
+### 协作流程
+
+```
+User Query
+    ↓
+Agent Workflow: Intent Recognition（识别意图）
+    ↓
+RAG: Optimized Retrieval（检索相关 chunks）
+    ↓
+Agent Workflow: Evidence Check（检查证据是否充分）
+    ↓
+Agent Workflow: Prompt Builder + Answer Generator（组装回答）
+    ↓
+Agent Workflow: Citation Check（校验引用合法性）
+    ↓
+Agent Workflow: Fallback / Escalation（兜底或输出）
+    ↓
+Final Response
+```
+
+### 核心原则
+
+- **RAG 负责找证据，Agent 负责判断和决策**
+- **没有证据时不能强答**：Evidence Check 不通过时走 Fallback
+- **RAG 是 Agent 的工具，不是 Agent 的全部**：Agent 还负责意图识别、引用校验、兜底策略
+- **检索质量是基础**：M5 Optimized Retriever 的 Recall@5 = 98.36% 是 Agent 可靠工作的前提
+
+### 详细设计
+
+完整的 Agent Workflow 设计（Intent Recognition / Evidence Check / Citation Check / Fallback Rules）见 `docs/AGENT_WORKFLOW.md`。

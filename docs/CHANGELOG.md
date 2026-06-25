@@ -17,14 +17,54 @@
 ## [未发布]
 
 ### Added
-- Added `backend/data/eval_cases_full.jsonl` — 全量评测集（122 条 bad cases，覆盖 10 category / 3 market / 2 language / 3 difficulty）
-- Added `backend/tests/test_full_eval_dataset.py` — full eval dataset 质量测试（12 个测试用例）
-- Added `docs/BAD_CASE_OPTIMIZATION_LOG.md` — bad case 优化日志（失败类型分析 + baseline vs optimized 对比）
-- Added `docs/EVAL_REPORT_M6.md` — M6 评测报告（122-case full dataset baseline vs optimized）
+- Added `docs/AGENT_WORKFLOW.md` — 轻量客服 Agent Workflow 设计文档（intent recognition / evidence check / citation check / fallback rules / M7 开发范围 / 面试讲法）
 
 ### Changed
-- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M6 full bad case eval set 完成
-- Updated `docs/CHANGELOG.md` — 追加 M6 变更记录
+- Updated `docs/00_SCOPE_LOCK.md` — 项目定位补充为"轻量客服 RAG Agent"，新增 Agent 层说明
+- Updated `docs/02_RAG_DESIGN.md` — 新增第七节"RAG 与 Agent Workflow 的关系"
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M6.5 Agent Workflow 设计补档
+- Updated `docs/CHANGELOG.md` — 追加 M6.5 变更记录
+
+### Fixed
+- 无
+
+## [0.8.0] - M6.5: Lightweight Agent Workflow Design
+
+**发布日期**：2026-06-25
+
+**版本说明**：M6.5 补充轻量客服 Agent Workflow 设计文档，将项目从"RAG demo"升级为"轻量客服 RAG Agent 系统"。定义 Intent Recognition、Evidence Check、Citation Check、Fallback Rules 设计，明确 M7 开发边界。
+
+### Added
+
+- Added `docs/AGENT_WORKFLOW.md` — 轻量客服 Agent Workflow 设计文档
+  - Agent Workflow 总览（8 个节点的单链路工作流）
+  - Intent Recognition 设计（11 个 intent：logistics/customs/return/refund/exchange/address/order/payment/package/coupon/unknown）
+  - Evidence Check 设计（6 项检查：chunks 非空 / top score / category 匹配 / citation 可用 / intent 覆盖 / 多意图冲突）
+  - Citation Check 设计（4 条规则）
+  - Fallback / Escalation 规则（10 条兜底场景及话术）
+  - M7 开发范围（7 个模块 + 不做清单）
+  - 面试讲法（1 分钟版）
+  - 设计原则（Rule-first / Fail-safe / Citation-required / Single-pipeline / Intent-aware）
+
+### Changed
+
+- Updated `docs/00_SCOPE_LOCK.md`
+  - 项目定位从"RAG Agent"补充为"轻量客服 RAG Agent"
+  - 新增 Agent 层说明（intent recognition / evidence check / answer generation / citation check / fallback rules）
+  - 明确不做复杂 6 Agent 工单系统、不做 LangGraph、不做多租户 SaaS
+
+- Updated `docs/02_RAG_DESIGN.md`
+  - 新增第七节"RAG 与 Agent Workflow 的关系"
+  - RAG 负责找证据，Agent 负责判断和决策
+  - 没有证据时不能强答
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：M6.5 Agent Workflow 设计补档
+  - 下一步：M7 intent recognition + prompt builder + mock answer generator + citations + fallback rules
+  - 更新风险点和禁止事项
+
+- Updated `docs/CHANGELOG.md`
+  - 追加 M6.5 变更记录
 
 ### Fixed
 - 无
@@ -855,6 +895,9 @@
 - 无
 
 ## 版本规划
+
+### v0.8.x - Agent Workflow 设计
+- [x] v0.8.0 - Agent Workflow Design（轻量客服 Agent Workflow 设计）
 
 ### v0.0.x - 项目初始化与验证
 - [x] v0.0.1 - Context Init（项目上下文初始化）
