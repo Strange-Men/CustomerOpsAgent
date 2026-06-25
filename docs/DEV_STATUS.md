@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M9.5: Answer Quality Polish**
+**M10: API Smoke Demo + Final Docs Consolidation**
 
 ## 2. 当前项目状态
 
-**状态：M9.5 Answer Quality Polish 完成**
+**状态：M10 完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -51,7 +51,6 @@
 - ✅ Mock Answer Generator - 模拟回答生成器（M7）
 - ✅ Workflow Orchestrator - 工作流编排器（M7）
 - ✅ Agent Workflow Tests - 24 个测试用例（M7）
-- ❌ 尚未实现 answer evaluation（M8）
 - ✅ Answer Quality Evaluation（M8）
   - ✅ answer_eval.py — 6 个评估指标（relevance / groundedness / completeness / citation hit / keyword coverage / answer pass rate）
   - ✅ 38 个 answer eval 测试用例（test_answer_eval.py）
@@ -80,12 +79,43 @@
   - ✅ EVAL_REPORT_M9_5.md — M9.5 评测报告
   - ✅ Answer Pass Rate: 46.72%（+2.46% vs M9）
   - ✅ Fallback Rate: 13.11%（-2.46% vs M9）
-- ❌ 尚未实现 RAG API（M10）
+- ✅ Agent API Smoke Demo（M10）
+  - ✅ FastAPI endpoint: POST /api/agent/chat
+  - ✅ AgentChatRequest / AgentChatResponse Pydantic schemas
+  - ✅ API router 只包装 workflow，不复制逻辑
+  - ✅ API 测试（test_agent_api.py, 9 个测试用例）
+  - ✅ docs/API_SMOKE_DEMO.md — API smoke demo 文档
+  - ✅ README 更新（Features / API Smoke Demo / Evaluation / Limitations）
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
 
-### M8：Answer Quality Evaluation（本轮）
+### M10：Agent API Smoke Demo + Final Docs Consolidation（本轮）
+
+- ✅ 创建 `backend/app/api/agent.py`
+  - `AgentChatRequest` — request schema（user_query / order_id / conversation_history）
+  - `AgentChatResponse` — response schema（answer / route / intent / detail_intent / citations / fallback_triggered / fallback_reason / confidence / retrieved_doc_ids / order_id / tool_used）
+  - `POST /api/agent/chat` — 调用 `run_customer_service_agent()`，不复制 workflow 逻辑
+  - Error handling: 422 for empty query, 500 for workflow exceptions
+  - 不读取 eval_cases / expected_keywords / expected_doc_ids
+
+- ✅ 更新 `backend/app/main.py`
+  - 注册 agent router（`app.include_router(agent_router)`）
+
+- ✅ 创建 `backend/tests/test_agent_api.py`
+  - 9 个测试用例
+  - 覆盖: customs query / refund query / logistics with order_id / logistics without order_id fallback / out-of-scope fallback / empty query rejection / history limiting / eval data static scan / public docs safety
+
+- ✅ 创建 `docs/API_SMOKE_DEMO.md`
+  - Endpoint 说明、Request/Response body、curl 示例、Limitations
+
+- ✅ 更新 `README.md` — Features / API Smoke Demo / Evaluation / Limitations / Quick Start
+- ✅ 更新 `docs/AGENT_WORKFLOW.md` — 新增 API entrypoint 章节
+- ✅ 更新 `docs/DEV_STATUS.md` — 当前阶段更新为 M10
+- ✅ 更新 `docs/CHANGELOG.md` — 追加 M10 变更记录
+- ✅ 更新 `docs/PROJECT_CONTEXT.md` — 补充当前交付状态
+
+### M8：Answer Quality Evaluation
 
 - ✅ 创建 `backend/app/eval/answer_eval.py`
   - `normalize_text(text)` — 大小写、空白归一化
@@ -302,19 +332,20 @@
 | `backend/tests/test_retrieval_eval.py` | retrieval eval 测试 | ✅ M4 新增 |
 | `backend/tests/test_optimized_retriever.py` | optimized retriever 测试 | ✅ M5 新增 |
 | `backend/tests/test_full_eval_dataset.py` | full eval dataset 测试 | ✅ M6 新增 |
+| `backend/app/api/agent.py` | Agent Chat API router | ✅ M10 新增 |
+| `backend/tests/test_agent_api.py` | agent API 测试 | ✅ M10 新增 |
+| `docs/API_SMOKE_DEMO.md` | API smoke demo 文档 | ✅ M10 新增 |
 
 ## 5. 下一步
 
-**进入 M10：API Integration / Final Docs Consolidation**
+**M10.5：Final Release Checklist**
 
-或根据 M9.5 结果继续 M9.6 小步优化。
-
-M9.5 完成后已具备：
-- improved logistics delay recognition (delay vs lost vs damaged)
-- improved English shipping delay routing
-- improved refund/order policy response coverage
-- improved citation selection (diverse doc_ids)
-- EVAL_REPORT_M9_5.md
+M10 完成后已具备：
+- FastAPI endpoint: POST /api/agent/chat
+- AgentChatRequest / AgentChatResponse Pydantic schemas
+- API tests (9 test cases)
+- docs/API_SMOKE_DEMO.md
+- README run guide with API smoke test example
 
 ## 6. 风险点
 
@@ -340,6 +371,10 @@ M9.5 完成后已具备：
 | 为指标修改 answer_eval | 美化结果 | 评测规则固定，不针对 workflow 调整 |
 | 规则过拟合 full eval set | 通用性下降 | 通用规则，不针对 case_id 写死 |
 | mock answer 被误认为真实 LLM | 结果不代表 LLM 质量 | EVAL_REPORT 明确标注 mock |
+| API 被误认为接了真实 LLM | API 只包装 mock workflow | API_SMOKE_DEMO.md 明确标注 mock |
+| mock logistics tool 被误认为真实物流 API | 物流数据是模拟的 | API_SMOKE_DEMO.md 明确标注 mock |
+| local-only study notes 被提交 | RAG_HANDS_ON_REVIEW.md 不应进入 Git | .git/info/exclude + 静态检查 |
+| public docs 混入非公开内容 | 违反公开文档规范 | 静态测试扫描禁用关键词 |
 
 ## 7. 当前禁止事项
 

@@ -17,7 +17,24 @@
 ## [未发布]
 
 ### Added
+- Added `backend/app/api/agent.py` — Agent Chat API router
+  - `POST /api/agent/chat` — wraps `run_customer_service_agent()` as FastAPI endpoint
+  - `AgentChatRequest` — request schema (user_query / order_id / conversation_history)
+  - `AgentChatResponse` — response schema (answer / route / intent / detail_intent / citations / fallback_triggered / fallback_reason / confidence / retrieved_doc_ids / order_id / tool_used)
+  - Error handling: 422 for empty query, 500 for workflow exceptions
+  - Does not import eval_cases / expected_keywords / expected_doc_ids
+- Added `backend/tests/test_agent_api.py` — Agent API tests (9 test cases)
+  - customs query / refund query / logistics with order_id / logistics without order_id fallback / out-of-scope fallback / empty query rejection / history limiting / eval data static scan / public docs safety
+- Added `docs/API_SMOKE_DEMO.md` — API smoke demo documentation
+  - Endpoint description, request/response body, curl examples, limitations
 - Added `docs/EVAL_REPORT_M9_5.md` — M9.5 answer quality polish report
+
+### Changed
+- Updated `backend/app/main.py` — registered agent router
+- Updated `README.md` — added Features / API Smoke Demo / Evaluation / Limitations sections
+- Updated `docs/AGENT_WORKFLOW.md` — added API entrypoint section (section 9)
+- Updated `docs/DEV_STATUS.md` — current stage updated to M10
+- Updated `docs/PROJECT_CONTEXT.md` — added current delivery status
 
 ### Changed
 - Updated `backend/app/agent/intent_recognizer.py` — M9.5 intent recognition polish

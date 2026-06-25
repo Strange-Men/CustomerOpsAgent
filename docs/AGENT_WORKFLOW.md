@@ -237,3 +237,25 @@ End Node（返回结果）
 3. **Citation-required**：没有引用的回答不是客服回答。
 4. **Single-pipeline**：单链路工作流，不是多 Agent 编排。
 5. **Intent-aware**：不同 intent 用不同策略，不一视同仁。
+
+---
+
+## 9. API Entrypoint（M10）
+
+M10 新增 FastAPI endpoint `POST /api/agent/chat`，将 workflow 包装为 HTTP API。
+
+**关键约束**：
+
+- API entrypoint 只包装 workflow，不改变 workflow 内部逻辑。
+- Route decision / retrieval / answer / fallback 仍由 `backend/app/agent/workflow.py` 负责。
+- API 层只负责：request validation、调用 workflow、response serialization、error handling。
+- API 不接真实 LLM / 真实物流 API。
+
+**实现文件**：
+
+| 文件 | 说明 |
+|------|------|
+| `backend/app/api/agent.py` | Agent Chat API router |
+| `backend/app/main.py` | FastAPI app entry，注册 agent router |
+| `backend/tests/test_agent_api.py` | API 测试（9 个测试用例） |
+| `docs/API_SMOKE_DEMO.md` | API smoke demo 文档 |

@@ -51,7 +51,25 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. Goal 模式上下文规则
+## 8. 当前交付状态（M10）
+
+| 能力 | 状态 | 说明 |
+|------|------|------|
+| RAG 知识库加载/切分 | ✅ | JSONL loader + character chunker |
+| Baseline BM25 retriever | ✅ | 自实现 BM25，k1=1.5, b=0.75 |
+| Optimized retriever | ✅ | query expansion + metadata boost + doc diversity |
+| Retrieval evaluation | ✅ | Recall@1/3/5 + MRR on 122-case eval set |
+| Node-based Agent workflow | ✅ | intent → route → RAG/tool → fallback |
+| Mock logistics tool | ✅ | 模拟物流查询，不接真实 API |
+| Fallback rules | ✅ | 10 条兜底规则 |
+| Answer quality evaluation | ✅ | 6 指标评估，122-case 全量评测 |
+| FastAPI API endpoint | ✅ | POST /api/agent/chat |
+| 真实 LLM | ❌ | 使用 mock answer generator |
+| 真实物流 API | ❌ | 使用 mock logistics tool |
+| 真实订单系统 | ❌ | 无 |
+| 前端 | ❌ | 冻结为 legacy demo |
+
+## 9. Goal 模式上下文规则
 
 后续 Goal 模式**主要读取**以下核心文档：
 
