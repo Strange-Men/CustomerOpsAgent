@@ -25,12 +25,14 @@ POST /api/agent/chat
 | `user_query` | `str` | Yes | User's question. Must not be empty. |
 | `order_id` | `str \| null` | No | Optional order ID from upstream context. |
 | `conversation_history` | `list[str]` | No | Optional conversation history. Max 5 recent messages. |
+| `llm_profile` | `str` | No | Model profile: `mock` (default), `deepseek`, or `doubao`. Frontend only sends this public name. |
 
-### Example: Customs query
+### Example: Customs query (mock)
 
 ```json
 {
-  "user_query": "清关延迟怎么办？"
+  "user_query": "清关延迟怎么办？",
+  "llm_profile": "mock"
 }
 ```
 
@@ -75,6 +77,7 @@ POST /api/agent/chat
 | `order_id` | `str \| null` | Order ID if extracted or provided. |
 | `tool_used` | `str \| null` | Tool used (e.g., `mock_logistics_tool`). |
 | `answer_source` | `str` | Answer source: `mock` (default), `real_llm`, or `real_llm_fallback_mock`. |
+| `llm_profile` | `str \| null` | LLM profile used: `mock`, `deepseek`, or `doubao`. |
 | `llm_provider` | `str \| null` | LLM provider used (e.g., `openai_compatible`), null if mock. |
 | `llm_model` | `str \| null` | LLM model used, null if mock. |
 
@@ -133,6 +136,14 @@ curl -X POST http://127.0.0.1:8000/api/agent/chat ^
 curl -X POST http://127.0.0.1:8000/api/agent/chat ^
   -H "Content-Type: application/json" ^
   -d "{\"user_query\":\"你能帮我写论文吗？\"}"
+```
+
+### DeepSeek profile (falls back to mock if not configured)
+
+```powershell
+curl -X POST http://127.0.0.1:8000/api/agent/chat ^
+  -H "Content-Type: application/json" ^
+  -d "{\"user_query\":\"清关延迟怎么办？\",\"llm_profile\":\"deepseek\"}"
 ```
 
 ## 7. Limitations

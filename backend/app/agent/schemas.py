@@ -223,6 +223,10 @@ class AgentResponse(BaseModel):
         default="mock",
         description="Answer source: mock, real_llm, real_llm_fallback_mock",
     )
+    llm_profile: Optional[str] = Field(
+        None,
+        description="LLM profile used: mock, deepseek, doubao",
+    )
     llm_provider: Optional[str] = Field(
         None,
         description="LLM provider used (e.g., openai_compatible)",

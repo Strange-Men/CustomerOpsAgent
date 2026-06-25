@@ -17,7 +17,8 @@ A visitor should understand within 1 minute:
 - This is a cross-border e-commerce customer service agent demo
 - The backend supports RAG, mock logistics tool, fallback, and optional LLM adapter
 - Default mode is mock — no real logistics API, no real order system
-- API integration will be added in Frontend M4
+- Frontend is connected to backend API via `/api/agent/chat`
+- Model selector sends only public profile names — no API keys in frontend
 
 ## 4. MVP Modules
 
@@ -25,9 +26,10 @@ A visitor should understand within 1 minute:
 |--------|-------------|
 | Header | Project name, release tag, mock/LLM status badges |
 | Left Info Panel | Project overview, capabilities, limitations |
-| Chat Workspace | Static message display with example prompts |
-| Example Prompts | Pre-defined sample questions |
-| Metadata Panel | Route, intent, confidence, fallback, answer source |
+| Chat Workspace | Real-time chat with backend API, loading/error states |
+| Model Selector | Profile selector (Mock / DeepSeek / Doubao) — no key input |
+| Example Prompts | Pre-defined sample questions, click to send |
+| Metadata Panel | Route, intent, confidence, fallback, llm_profile, answer source |
 | Citation Panel | Retrieved document citations and doc IDs |
 | Status Bar | System status indicators |
 
@@ -64,20 +66,19 @@ A visitor should understand within 1 minute:
 - React 19
 - TypeScript 6
 - Tailwind CSS 4
-- fetch — deferred to Frontend M4
+- fetch — connected to backend API via `VITE_API_BASE_URL`
 
 ## 8. Boundaries
 
 **Not implemented in this phase:**
 
-- API integration (Frontend M4)
 - Authentication / login
 - Multi-tenancy
 - Real order management
 - Real logistics tracking / maps
-- Real LLM key configuration UI
+- Real LLM key configuration UI (keys are backend-only)
 - WebSocket / streaming responses
-- Deployment
+- Language toggle (deferred to Frontend M7.5)
 
 ## Deployed Demo Links
 
@@ -85,7 +86,7 @@ A visitor should understand within 1 minute:
 - **Backend API Base**: https://customeropsagent.onrender.com
 - **Backend API Docs**: https://customeropsagent.onrender.com/docs
 
-> Frontend M2 is static. API integration will be added in Frontend M4. `VITE_API_BASE_URL` should point to the Render backend in M4: `VITE_API_BASE_URL=https://customeropsagent.onrender.com`
+> Frontend M4 is connected to the backend API. Vercel needs `VITE_API_BASE_URL=https://customeropsagent.onrender.com` environment variable. Model selector sends only public profile names — real API keys stay in Render backend only.
 
 ## Language Strategy
 
@@ -122,12 +123,13 @@ A visitor should understand within 1 minute:
 - No backend changes for i18n
 - Frontend display copy switch only
 
-## 9. Acceptance Criteria for M2
+## 9. Acceptance Criteria for M4
 
 - `npm run build` passes
-- Page renders dark + pink-purple visual theme
-- Three-column static layout is visible
-- No API calls (no fetch, no real endpoints)
-- No backend modifications
-- No secrets or API keys committed
+- Frontend sends real requests to `/api/agent/chat`
+- Model selector sends only public profile names (mock / deepseek / doubao)
+- No API keys in frontend code or build output
+- Loading / error / fallback states handled
+- Metadata panel shows llm_profile, answer_source, llm_provider, llm_model
+- Unconfigured profiles fall back to mock gracefully
 - `mystudy/` directory not committed

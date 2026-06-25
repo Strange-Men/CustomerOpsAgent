@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 
 from app.agent.schemas import AgentResponse
 from app.agent.workflow import run_customer_service_agent
+from app.llm.config import ALLOWED_PROFILES
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,10 @@ class AgentChatRequest(BaseModel):
         default_factory=list,
         description="Optional conversation history (max 5 recent messages).",
     )
+    llm_profile: str = Field(
+        default="mock",
+        description="Model profile name: mock, deepseek, doubao. Frontend only sends this public name; backend resolves to env vars.",
+    )
 
 
 class AgentChatResponse(BaseModel):
@@ -62,6 +67,7 @@ class AgentChatResponse(BaseModel):
     order_id: str | None
     tool_used: str | None
     answer_source: str = "mock"
+    llm_profile: str | None = None
     llm_provider: str | None = None
     llm_model: str | None = None
 
@@ -76,10 +82,18 @@ def agent_chat(request: AgentChatRequest) -> AgentChatResponse:
     """Run the customer service agent workflow and return the result.
 
     This endpoint is a thin wrapper around ``run_customer_service_agent()``.
-    It handles request validation, history trimming, and error mapping —
-    but all route / retrieval / answer / fallback logic lives in the
-    workflow module.
+    It handles request validation, history trimming, profile validation,
+    and error mapping — but all route / retrieval / answer / fallback logic
+    lives in the workflow module.
     """
+    # Validate llm_profile against whitelist
+    profile = request.llm_profile.strip().lower() if request.llm_profile else "mock"
+    if profile not in ALLOWED_PROFILES:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid llm_profile '{request.llm_profile}'. Allowed: {', '.join(ALLOWED_PROFILES)}",
+        )
+
     try:
         # Trim conversation_history to last 5 messages (workflow also does this,
         # but we enforce it at the API boundary for safety).
@@ -89,6 +103,7 @@ def agent_chat(request: AgentChatRequest) -> AgentChatResponse:
             user_query=request.user_query,
             order_id=request.order_id,
             conversation_history=history,
+            llm_profile=profile,
         )
 
         return _to_response(result)
@@ -121,6 +136,7 @@ def _to_response(result: AgentResponse) -> AgentChatResponse:
         order_id=result.order_id,
         tool_used=result.tool_used,
         answer_source=result.answer_source,
+        llm_profile=result.llm_profile,
         llm_provider=result.llm_provider,
         llm_model=result.llm_model,
     )

@@ -13,6 +13,9 @@ export type ChatRole = "user" | "assistant" | "system";
 /** Chat UI states. */
 export type ChatUiState = "idle" | "loading" | "success" | "error" | "empty";
 
+/** Chat message status for pending/error tracking. */
+export type ChatMessageStatus = "pending" | "success" | "error";
+
 /** High-level route intent. */
 export type IntentType =
   | "logistics"
@@ -42,6 +45,9 @@ export type AnswerSource = "mock" | "real_llm" | "real_llm_fallback_mock";
 /** Confidence level. */
 export type ConfidenceLevel = "high" | "medium" | "low";
 
+/** LLM profile names — public, sent by frontend, never contains keys. */
+export type LLMProfile = "mock" | "deepseek" | "doubao";
+
 /** Supported locales — planned for i18n, not yet implemented. */
 export type Locale = "zh-CN" | "en-US";
 
@@ -61,6 +67,7 @@ export interface AgentRequest {
   user_query: string;
   order_id?: string | null;
   conversation_history?: string[];
+  llm_profile?: LLMProfile;
 }
 
 /** Chat message returned by the agent. */
@@ -77,6 +84,7 @@ export interface AgentResponse {
   order_id: string | null;
   tool_used: string | null;
   answer_source: AnswerSource;
+  llm_profile?: LLMProfile | string;
   llm_provider: string | null;
   llm_model: string | null;
 }
@@ -87,6 +95,7 @@ export interface ChatMessage {
   role: ChatRole;
   content: string;
   createdAt: string;
+  status?: ChatMessageStatus;
   response?: AgentResponse;
 }
 

@@ -2,15 +2,15 @@
 
 ## 1. 当前阶段
 
-**M11.5: Final LLM Adapter Release Checklist**
+**Frontend M4: Agent API Integration + Model Profile Selector**
 
-Verified mock default, optional real LLM adapter, docs consistency, and release tag preparation. Ready for v1.1.0-demo tag.
+Frontend connected to backend API. Model selector sends only public profile names (mock / deepseek / doubao). No API keys in frontend. CORS configured. 254 tests pass.
 
-Previous release: M10.5.1 (v1.0.1-demo) — preserved, not overwritten.
+Previous: M11.5 Final LLM Adapter Release Checklist.
 
 ## 2. 当前项目状态
 
-**状态：Ready for v1.1.0-demo Tag**
+**状态：Frontend M4 Complete**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）

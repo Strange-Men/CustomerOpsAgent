@@ -1,15 +1,24 @@
 import { useState } from "react";
 import { EXAMPLE_QUESTIONS } from "../../data/examples";
 
+interface ExamplePromptsProps {
+  onSelect?: (query: string) => void;
+}
+
 /**
- * Row of example prompt buttons — static display, no API call on click.
- * Supports selected state via local React state.
+ * Row of example prompt buttons.
+ * When onSelect is provided, clicking a button sends the query to the parent.
+ * Otherwise falls back to local selected state (static mode).
  */
-export function ExamplePrompts() {
+export function ExamplePrompts({ onSelect }: ExamplePromptsProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const handleClick = (id: string) => {
-    setSelectedId(id === selectedId ? null : id);
+  const handleClick = (id: string, query: string) => {
+    if (onSelect) {
+      onSelect(query);
+    } else {
+      setSelectedId(id === selectedId ? null : id);
+    }
   };
 
   return (
@@ -20,7 +29,7 @@ export function ExamplePrompts() {
         return (
           <button
             key={q.id}
-            onClick={() => handleClick(q.id)}
+            onClick={() => handleClick(q.id, q.query)}
             className={`
               px-3 py-1.5 text-xs rounded-lg transition-colors duration-150 cursor-pointer
               ${

@@ -7,8 +7,8 @@ interface AnswerCardProps {
 }
 
 /**
- * Displays the agent's answer with route, confidence, answer source, and other metadata.
- * No API calls — static display only.
+ * Displays the agent's answer with route, confidence, answer source,
+ * llm_profile, and other metadata.
  */
 export function AnswerCard({ response }: AnswerCardProps) {
   return (
@@ -21,6 +21,7 @@ export function AnswerCard({ response }: AnswerCardProps) {
 
         {/* Meta row */}
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-700/30">
+          <Badge label={`Profile: ${response.llm_profile ?? "mock"}`} variant="accent" />
           <Badge label={`路由: ${response.route}`} variant="info" />
           <Badge label={`置信度: ${response.confidence}`} variant="success" />
           <Badge label={`来源: ${response.answer_source}`} variant="muted" />

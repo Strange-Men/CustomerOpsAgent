@@ -39,6 +39,7 @@ export const MOCK_RESPONSE: AgentResponse = {
   order_id: "ORD-2024-0088",
   tool_used: null,
   answer_source: "mock",
+  llm_profile: "mock",
   llm_provider: null,
   llm_model: null,
 };

@@ -19,36 +19,43 @@ This document describes the **optional** real LLM adapter for CustomerOpsAgent.
 
 ## 3. Environment Variables
 
+### Profile-Based Configuration (M4+)
+
+The frontend sends only a public `llm_profile` name (mock / deepseek / doubao). The backend resolves it to the correct env vars.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `CUSTOMEROPS_LLM_DEEPSEEK_BASE_URL` | DeepSeek API base URL | None |
+| `CUSTOMEROPS_LLM_DEEPSEEK_API_KEY` | DeepSeek API key | None |
+| `CUSTOMEROPS_LLM_DEEPSEEK_MODEL` | DeepSeek model name | None |
+| `CUSTOMEROPS_LLM_DOUBAO_BASE_URL` | Doubao API base URL | None |
+| `CUSTOMEROPS_LLM_DOUBAO_API_KEY` | Doubao API key | None |
+| `CUSTOMEROPS_LLM_DOUBAO_MODEL` | Doubao model name | None |
+| `CUSTOMEROPS_LLM_TIMEOUT_SECONDS` | Request timeout in seconds | `20` |
+| `CUSTOMEROPS_ALLOWED_ORIGINS` | CORS allowed origins (comma-separated) | localhost + Vercel |
+
+### Legacy Global Configuration (still supported)
+
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `CUSTOMEROPS_LLM_MODE` | `mock` or `real` | `mock` |
 | `CUSTOMEROPS_LLM_PROVIDER` | LLM provider (currently supports `openai_compatible`) | `openai_compatible` |
-| `CUSTOMEROPS_LLM_BASE_URL` | API base URL (e.g., `https://your-provider.example/v1`) | None |
+| `CUSTOMEROPS_LLM_BASE_URL` | API base URL | None |
 | `CUSTOMEROPS_LLM_API_KEY` | API key (read from env only, never stored in code) | None |
-| `CUSTOMEROPS_LLM_MODEL` | Model name (e.g., `your-model-name`) | None |
-| `CUSTOMEROPS_LLM_TIMEOUT_SECONDS` | Request timeout in seconds | `20` |
+| `CUSTOMEROPS_LLM_MODEL` | Model name | None |
 
-### Example Configuration (PowerShell)
+### Example Configuration (Render Environment Variables)
 
-```powershell
-$env:CUSTOMEROPS_LLM_MODE="real"
-$env:CUSTOMEROPS_LLM_PROVIDER="openai_compatible"
-$env:CUSTOMEROPS_LLM_BASE_URL="https://your-provider.example/v1"
-$env:CUSTOMEROPS_LLM_API_KEY="your-api-key"
-$env:CUSTOMEROPS_LLM_MODEL="your-model-name"
+```
+CUSTOMEROPS_LLM_DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
+CUSTOMEROPS_LLM_DEEPSEEK_API_KEY=<your-key>
+CUSTOMEROPS_LLM_DEEPSEEK_MODEL=deepseek-chat
+CUSTOMEROPS_LLM_DOUBAO_BASE_URL=<your-doubao-base-url>
+CUSTOMEROPS_LLM_DOUBAO_API_KEY=<your-key>
+CUSTOMEROPS_LLM_DOUBAO_MODEL=<your-model>
 ```
 
-> **Note:** Replace placeholders with your actual values. Do not commit real API keys.
-
-### Example Configuration (Bash)
-
-```bash
-export CUSTOMEROPS_LLM_MODE=real
-export CUSTOMEROPS_LLM_PROVIDER=openai_compatible
-export CUSTOMEROPS_LLM_BASE_URL=https://your-provider.example/v1
-export CUSTOMEROPS_LLM_API_KEY=your-api-key
-export CUSTOMEROPS_LLM_MODEL=your-model-name
-```
+> **Note:** These are set in Render backend environment variables only. The frontend never sees these keys.
 
 ## 4. Safety
 
@@ -64,12 +71,15 @@ The system has multiple layers of fallback to ensure it always works:
 
 | Scenario | Behavior |
 |----------|----------|
-| No env vars set | Uses mock adapter (default) |
-| `CUSTOMEROPS_LLM_MODE=real` but missing `API_KEY` or `BASE_URL` | Falls back to mock adapter |
+| `llm_profile=mock` or no profile | Uses mock adapter (default) |
+| `llm_profile=deepseek` but env vars missing | Falls back to mock, `llm_profile=deepseek` preserved |
+| `llm_profile=doubao` but env vars missing | Falls back to mock, `llm_profile=doubao` preserved |
 | Real LLM API returns error (timeout, HTTP error, network error) | Falls back to mock answer, marks `answer_source=real_llm_fallback_mock` |
-| Unknown provider name | Falls back to mock adapter |
+| Unknown profile name | Returns 422 error |
+| No env vars set (legacy) | Uses mock adapter (default) |
 
 When fallback occurs, the response includes:
+- `llm_profile`: The requested profile (e.g., `"deepseek"`)
 - `answer_source`: Set to `"real_llm_fallback_mock"` to indicate fallback was used
 - `llm_provider`: The provider that was attempted
 - `llm_model`: The model that was attempted (if known)
@@ -90,13 +100,18 @@ pytest backend/tests/test_llm_adapter.py -v
 # Start the server
 python -m uvicorn backend.app.main:app --reload
 
-# Test the endpoint
+# Test with mock profile (default)
 curl -X POST http://127.0.0.1:8000/api/agent/chat \
   -H "Content-Type: application/json" \
-  -d '{"user_query": "清关延迟怎么办？"}'
+  -d '{"user_query": "清关延迟怎么办？", "llm_profile": "mock"}'
+
+# Test with deepseek profile (falls back to mock if not configured)
+curl -X POST http://127.0.0.1:8000/api/agent/chat \
+  -H "Content-Type: application/json" \
+  -d '{"user_query": "清关延迟怎么办？", "llm_profile": "deepseek"}'
 ```
 
-The response will include `"answer_source": "mock"` by default.
+The response will include `"answer_source": "mock"` and `"llm_profile": "mock"` by default.
 
 ### Optional Real LLM Smoke Test
 

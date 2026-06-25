@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from app.llm.config import LLMConfig, load_llm_config
+from app.llm.config import LLMConfig, load_llm_config, load_llm_config_for_profile, ALLOWED_PROFILES
 from app.llm.factory import create_llm_adapter
 from app.llm.mock_adapter import MockLLMAdapter
 from app.llm.openai_compatible_adapter import OpenAICompatibleAdapter
@@ -209,12 +209,10 @@ def test_agent_response_contains_answer_source():
 
 def test_real_llm_failure_falls_back_to_mock(monkeypatch: pytest.MonkeyPatch):
     """When real LLM adapter fails, workflow falls back to mock with answer_source=real_llm_fallback_mock."""
-    # Set env vars to enable real mode
-    monkeypatch.setenv("CUSTOMEROPS_LLM_MODE", "real")
-    monkeypatch.setenv("CUSTOMEROPS_LLM_PROVIDER", "openai_compatible")
-    monkeypatch.setenv("CUSTOMEROPS_LLM_BASE_URL", "https://fake-api.example.com/v1")
-    monkeypatch.setenv("CUSTOMEROPS_LLM_API_KEY", "sk-fake-key")
-    monkeypatch.setenv("CUSTOMEROPS_LLM_MODEL", "test-model")
+    # Set profile-specific env vars to enable real mode for deepseek
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_BASE_URL", "https://fake-api.example.com/v1")
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_API_KEY", "sk-fake-key")
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_MODEL", "test-model")
 
     # Monkeypatch httpx.post to simulate failure
     import httpx
@@ -226,11 +224,12 @@ def test_real_llm_failure_falls_back_to_mock(monkeypatch: pytest.MonkeyPatch):
 
     from app.agent.workflow import run_customer_service_agent
 
-    result = run_customer_service_agent("清关延迟怎么办？")
+    result = run_customer_service_agent("清关延迟怎么办？", llm_profile="deepseek")
 
     # Should not crash, should fall back to mock
     assert result.answer_source == "real_llm_fallback_mock"
     assert result.answer  # Should have a non-empty answer from mock
+    assert result.llm_profile == "deepseek"
     assert result.route == "rag_knowledge_base"
 
 
@@ -349,3 +348,262 @@ def test_api_response_answer_source_in_all_routes():
     resp = client.post("/api/agent/chat", json={"user_query": "你能帮我写论文吗？"})
     assert resp.status_code == 200
     assert resp.json()["answer_source"] == "mock"
+
+
+# ============================================================
+# Profile-based config tests
+# ============================================================
+
+
+def test_profile_whitelist():
+    """ALLOWED_PROFILES contains exactly mock, deepseek, doubao."""
+    assert "mock" in ALLOWED_PROFILES
+    assert "deepseek" in ALLOWED_PROFILES
+    assert "doubao" in ALLOWED_PROFILES
+    assert len(ALLOWED_PROFILES) == 3
+
+
+def test_load_config_for_profile_mock():
+    """load_llm_config_for_profile('mock') always returns mock config."""
+    config = load_llm_config_for_profile("mock")
+    assert config.mode == "mock"
+    assert config.is_real_mode is False
+
+
+def test_load_config_for_profile_deepseek_missing_config(monkeypatch: pytest.MonkeyPatch):
+    """deepseek profile with missing env vars falls back to mock config."""
+    for key in [
+        "CUSTOMEROPS_LLM_DEEPSEEK_BASE_URL",
+        "CUSTOMEROPS_LLM_DEEPSEEK_API_KEY",
+        "CUSTOMEROPS_LLM_DEEPSEEK_MODEL",
+    ]:
+        monkeypatch.delenv(key, raising=False)
+
+    config = load_llm_config_for_profile("deepseek")
+    assert config.mode == "mock"
+    assert config.is_real_mode is False
+
+
+def test_load_config_for_profile_doubao_missing_config(monkeypatch: pytest.MonkeyPatch):
+    """doubao profile with missing env vars falls back to mock config."""
+    for key in [
+        "CUSTOMEROPS_LLM_DOUBAO_BASE_URL",
+        "CUSTOMEROPS_LLM_DOUBAO_API_KEY",
+        "CUSTOMEROPS_LLM_DOUBAO_MODEL",
+    ]:
+        monkeypatch.delenv(key, raising=False)
+
+    config = load_llm_config_for_profile("doubao")
+    assert config.mode == "mock"
+    assert config.is_real_mode is False
+
+
+def test_load_config_for_profile_deepseek_complete_config(monkeypatch: pytest.MonkeyPatch):
+    """deepseek profile with complete env vars returns real config."""
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_API_KEY", "sk-fake-key")
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_MODEL", "deepseek-chat")
+
+    config = load_llm_config_for_profile("deepseek")
+    assert config.mode == "real"
+    assert config.is_real_mode is True
+    assert config.is_config_complete is True
+    assert config.base_url == "https://api.deepseek.com/v1"
+    assert config.api_key == "sk-fake-key"
+    assert config.model == "deepseek-chat"
+
+
+def test_load_config_for_profile_unknown_falls_back_to_mock():
+    """Unknown profile name falls back to mock config."""
+    config = load_llm_config_for_profile("unknown_profile")
+    assert config.mode == "mock"
+    assert config.is_real_mode is False
+
+
+def test_load_config_for_profile_case_insensitive():
+    """Profile name is case-insensitive."""
+    config = load_llm_config_for_profile("Mock")
+    assert config.mode == "mock"
+
+    config = load_llm_config_for_profile("MOCK")
+    assert config.mode == "mock"
+
+
+def test_profile_deepseek_no_key_leak_in_config(monkeypatch: pytest.MonkeyPatch):
+    """Profile config stores API key internally but never sends it to frontend."""
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_API_KEY", "sk-super-secret-12345")
+    monkeypatch.setenv("CUSTOMEROPS_LLM_DEEPSEEK_MODEL", "deepseek-chat")
+
+    config = load_llm_config_for_profile("deepseek")
+    # Config stores the key (for internal use by adapter) but it is never
+    # included in API responses — verified by test_api_no_key_leaked_in_response.
+    assert config.api_key == "sk-super-secret-12345"
+
+
+# ============================================================
+# Profile-based API tests
+# ============================================================
+
+
+def test_api_default_request_without_profile_uses_mock():
+    """POST /api/agent/chat without llm_profile defaults to mock."""
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.post("/api/agent/chat", json={"user_query": "清关延迟怎么办？"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["answer_source"] == "mock"
+    assert data["llm_profile"] == "mock"
+
+
+def test_api_explicit_mock_profile():
+    """POST /api/agent/chat with llm_profile='mock' uses mock."""
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.post(
+        "/api/agent/chat",
+        json={"user_query": "清关延迟怎么办？", "llm_profile": "mock"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["answer_source"] == "mock"
+    assert data["llm_profile"] == "mock"
+
+
+def test_api_deepseek_profile_missing_config_falls_back_to_mock(monkeypatch: pytest.MonkeyPatch):
+    """llm_profile='deepseek' with no env vars falls back to mock gracefully."""
+    for key in [
+        "CUSTOMEROPS_LLM_DEEPSEEK_BASE_URL",
+        "CUSTOMEROPS_LLM_DEEPSEEK_API_KEY",
+        "CUSTOMEROPS_LLM_DEEPSEEK_MODEL",
+    ]:
+        monkeypatch.delenv(key, raising=False)
+
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.post(
+        "/api/agent/chat",
+        json={"user_query": "清关延迟怎么办？", "llm_profile": "deepseek"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["llm_profile"] == "deepseek"
+    assert data["answer_source"] == "mock"  # Fallback to mock
+    assert data["answer"]  # Has a non-empty answer
+
+
+def test_api_doubao_profile_missing_config_falls_back_to_mock(monkeypatch: pytest.MonkeyPatch):
+    """llm_profile='doubao' with no env vars falls back to mock gracefully."""
+    for key in [
+        "CUSTOMEROPS_LLM_DOUBAO_BASE_URL",
+        "CUSTOMEROPS_LLM_DOUBAO_API_KEY",
+        "CUSTOMEROPS_LLM_DOUBAO_MODEL",
+    ]:
+        monkeypatch.delenv(key, raising=False)
+
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.post(
+        "/api/agent/chat",
+        json={"user_query": "退款多久到账？", "llm_profile": "doubao"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["llm_profile"] == "doubao"
+    assert data["answer_source"] == "mock"
+
+
+def test_api_invalid_profile_returns_422():
+    """Invalid llm_profile returns 422."""
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.post(
+        "/api/agent/chat",
+        json={"user_query": "test", "llm_profile": "gpt-4"},
+    )
+    assert resp.status_code == 422
+
+
+def test_api_response_includes_llm_profile():
+    """Response always includes llm_profile field."""
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.post(
+        "/api/agent/chat",
+        json={"user_query": "清关延迟怎么办？", "llm_profile": "mock"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "llm_profile" in data
+    assert data["llm_profile"] == "mock"
+
+
+def test_api_no_key_leaked_in_response():
+    """API response never contains API key text."""
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.post(
+        "/api/agent/chat",
+        json={"user_query": "清关延迟怎么办？", "llm_profile": "mock"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    response_text = str(data)
+    assert "sk-" not in response_text
+    assert "api_key" not in response_text
+    assert "API_KEY" not in response_text
+
+
+def test_api_no_key_leaked_in_error_text(monkeypatch: pytest.MonkeyPatch):
+    """Error responses never contain API key text."""
+    from app.main import app
+
+    client = TestClient(app)
+    # Force an error by sending invalid profile via raw request
+    resp = client.post(
+        "/api/agent/chat",
+        json={"user_query": "test", "llm_profile": "invalid"},
+    )
+    # 422 error
+    assert resp.status_code == 422
+    error_text = str(resp.json())
+    assert "sk-" not in error_text
+
+
+def test_cors_allows_localhost_origin():
+    """CORS allows localhost:5173 origin."""
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.options(
+        "/api/agent/chat",
+        headers={
+            "Origin": "http://localhost:5173",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    # CORS preflight should return 200
+    assert resp.status_code == 200
+
+
+def test_cors_allows_vercel_origin():
+    """CORS allows Vercel frontend origin."""
+    from app.main import app
+
+    client = TestClient(app)
+    resp = client.options(
+        "/api/agent/chat",
+        headers={
+            "Origin": "https://customer-ops-agent.vercel.app",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    assert resp.status_code == 200

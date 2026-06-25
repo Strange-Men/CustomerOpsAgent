@@ -9,10 +9,51 @@ interface MetadataPanelProps {
 
 /**
  * Right panel showing agent response metadata.
+ * Displays llm_profile, answer_source, provider, model, route, intent, fallback.
  */
 export function MetadataPanel({ response }: MetadataPanelProps) {
+  // Determine profile fallback hint
+  const profileFallbackHint =
+    response.llm_profile &&
+    response.llm_profile !== "mock" &&
+    response.answer_source === "mock"
+      ? "当前模型档案未启用或未配置，使用 Mock 回答"
+      : null;
+
+  const realLlmFallbackHint =
+    response.answer_source === "real_llm_fallback_mock"
+      ? "真实模型不可用，已降级 Mock"
+      : null;
+
   return (
     <aside className="space-y-4">
+      {/* LLM Profile */}
+      <Card>
+        <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
+          LLM Profile
+        </h3>
+        <div className="space-y-2">
+          <StatusTag label="profile" value={response.llm_profile ?? "mock"} />
+          <StatusTag label="source" value={response.answer_source} />
+          {response.llm_provider && (
+            <StatusTag label="provider" value={response.llm_provider} />
+          )}
+          {response.llm_model && (
+            <StatusTag label="model" value={response.llm_model} />
+          )}
+        </div>
+        {profileFallbackHint && (
+          <p className="text-[10px] text-amber-400/80 mt-2">
+            {profileFallbackHint}
+          </p>
+        )}
+        {realLlmFallbackHint && (
+          <p className="text-[10px] text-amber-400/80 mt-2">
+            {realLlmFallbackHint}
+          </p>
+        )}
+      </Card>
+
       {/* Route */}
       <Card>
         <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
@@ -30,25 +71,6 @@ export function MetadataPanel({ response }: MetadataPanelProps) {
           <StatusTag label="intent" value={response.intent} />
           <StatusTag label="detail_intent" value={response.detail_intent} />
           <StatusTag label="confidence" value={response.confidence} />
-        </div>
-      </Card>
-
-      {/* Answer Source */}
-      <Card>
-        <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
-          Answer Source
-        </h3>
-        <div className="space-y-2">
-          <StatusTag label="source" value={response.answer_source} />
-          {response.tool_used && (
-            <StatusTag label="tool" value={response.tool_used} />
-          )}
-          {response.llm_provider && (
-            <StatusTag label="provider" value={response.llm_provider} />
-          )}
-          {response.llm_model && (
-            <StatusTag label="model" value={response.llm_model} />
-          )}
         </div>
       </Card>
 

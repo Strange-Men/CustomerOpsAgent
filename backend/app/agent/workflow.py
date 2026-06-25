@@ -28,26 +28,29 @@ logger = logging.getLogger(__name__)
 def _try_real_llm_answer(
     prompt: str,
     mock_response: AgentResponse,
+    llm_profile: str = "mock",
 ) -> AgentResponse:
     """
     Attempt to generate an answer using the real LLM adapter.
 
-    If real LLM is not configured or fails, returns the mock response unchanged.
-    The mock response is used as the fallback — its answer, citations, route, etc.
-    are all preserved.
+    Uses profile-based config: the frontend only sends a public profile name
+    (mock / deepseek / doubao). The backend resolves it to the correct env
+    vars. If the profile's config is incomplete, falls back to mock.
 
     Args:
         prompt: The constructed prompt for LLM generation
         mock_response: The mock-generated response to use as fallback
+        llm_profile: Public profile name (mock, deepseek, doubao)
 
     Returns:
-        AgentResponse with answer_source set appropriately
+        AgentResponse with answer_source and llm_profile set appropriately
     """
-    from backend.app.llm.config import load_llm_config
+    from backend.app.llm.config import load_llm_config_for_profile
     from backend.app.llm.factory import create_llm_adapter
     from backend.app.llm.schemas import LLMGenerationRequest, LLMMessage
 
-    config = load_llm_config()
+    mock_response.llm_profile = llm_profile
+    config = load_llm_config_for_profile(llm_profile)
 
     # Not in real mode → return mock as-is
     if not config.is_real_mode:
@@ -108,6 +111,7 @@ def run_customer_service_agent(
     order_id: str | None = None,
     conversation_history: list[str] | None = None,
     top_k: int = 5,
+    llm_profile: str = "mock",
 ) -> AgentResponse:
     """
     Run the customer service agent workflow.
@@ -128,6 +132,7 @@ def run_customer_service_agent(
         order_id: Optional order ID from upstream conversation context
         conversation_history: Optional conversation history (max 5 recent messages)
         top_k: Number of top results to retrieve from knowledge base
+        llm_profile: Public model profile name (mock, deepseek, doubao)
 
     Returns:
         AgentResponse with answer, route, intent, citations, and metadata
@@ -171,7 +176,7 @@ def run_customer_service_agent(
                 tool_result=tool_result,
             )
             # Try real LLM if configured, fallback to mock on failure
-            response = _try_real_llm_answer(logistics_prompt, response)
+            response = _try_real_llm_answer(logistics_prompt, response, llm_profile)
             return response
         else:
             # Tool failed: Fallback
@@ -191,6 +196,7 @@ def run_customer_service_agent(
                 order_id=variables.order_id,
                 tool_used=None,
                 answer_source="mock",
+                llm_profile=llm_profile,
             )
 
     # Route 2: RAG Knowledge Base Route (aftersale, trace)
@@ -229,6 +235,7 @@ def run_customer_service_agent(
                 order_id=variables.order_id,
                 tool_used=None,
                 answer_source="mock",
+                llm_profile=llm_profile,
             )
 
         # Evidence check passed: Generate RAG answer
@@ -252,7 +259,7 @@ def run_customer_service_agent(
         response.retrieved_doc_ids = list(dict.fromkeys(c.doc_id for c in retrieved_chunks))
 
         # Try real LLM if configured, fallback to mock on failure
-        response = _try_real_llm_answer(rag_prompt, response)
+        response = _try_real_llm_answer(rag_prompt, response, llm_profile)
         return response
 
     # Route 3: Fallback Route (other intent)
@@ -273,6 +280,7 @@ def run_customer_service_agent(
             order_id=variables.order_id,
             tool_used=None,
             answer_source="mock",
+            llm_profile=llm_profile,
         )
 
 

@@ -188,3 +188,45 @@ def test_public_docs_do_not_contain_private_interview_content():
             assert term not in content, (
                 f"Public doc '{md_file.name}' contains forbidden term '{term}'"
             )
+
+
+# ============================================================
+# llm_profile field in API
+# ============================================================
+
+
+def test_agent_chat_accepts_llm_profile():
+    """POST /api/agent/chat accepts llm_profile field."""
+    response = client.post(
+        "/api/agent/chat",
+        json={"user_query": "清关延迟怎么办？", "llm_profile": "mock"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["llm_profile"] == "mock"
+
+
+def test_agent_chat_default_profile_is_mock():
+    """Without llm_profile, default is mock."""
+    response = client.post(
+        "/api/agent/chat",
+        json={"user_query": "清关延迟怎么办？"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["llm_profile"] == "mock"
+    assert data["answer_source"] == "mock"
+
+
+def test_agent_chat_response_has_all_llm_fields():
+    """Response includes llm_profile, answer_source, llm_provider, llm_model."""
+    response = client.post(
+        "/api/agent/chat",
+        json={"user_query": "退款多久到账？"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "llm_profile" in data
+    assert "answer_source" in data
+    assert "llm_provider" in data
+    assert "llm_model" in data

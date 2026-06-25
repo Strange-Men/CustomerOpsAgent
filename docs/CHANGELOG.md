@@ -14,6 +14,44 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [Frontend M4] — 2026-06-25
+
+### Added
+- Added `frontend/src/lib/api.ts` — API client with `getApiBaseUrl()` and `sendAgentMessage()`
+- Added `frontend/src/components/chat/ModelSelector.tsx` — Profile selector (Mock / DeepSeek / Doubao)
+- Added profile-based LLM config (`load_llm_config_for_profile`) to `backend/app/llm/config.py`
+- Added `ALLOWED_PROFILES` whitelist to `backend/app/llm/config.py`
+- Added CORS middleware to `backend/app/main.py` (localhost + Vercel)
+- Added 20+ new tests for profile selection, fallback, CORS, API integration
+
+### Changed
+- Updated `backend/app/agent/schemas.py` — Added `llm_profile` field to `AgentResponse`
+- Updated `backend/app/agent/workflow.py` — `_try_real_llm_answer` accepts `llm_profile`, uses profile-based config
+- Updated `backend/app/api/agent.py` — Added `llm_profile` to request/response, whitelist validation
+- Updated `frontend/src/lib/types.ts` — Added `LLMProfile`, `ChatMessageStatus`, `llm_profile` fields
+- Updated `frontend/src/lib/constants.ts` — Added `DEFAULT_LLM_PROFILE`
+- Updated `frontend/src/components/chat/ChatWorkspace.tsx` — Full API integration with loading/error states
+- Updated `frontend/src/components/chat/ChatInput.tsx` — Added `onSend` callback
+- Updated `frontend/src/components/chat/ExamplePrompts.tsx` — Added `onSelect` callback
+- Updated `frontend/src/components/metadata/MetadataPanel.tsx` — Shows `llm_profile` and fallback hints
+- Updated `frontend/src/components/chat/AnswerCard.tsx` — Shows `llm_profile` badge
+- Updated `frontend/src/App.tsx` — Wired up real API response to metadata/citation panels
+- Updated `README.md` — Frontend API integration status
+- Updated `frontend/FRONTEND_BRIEF.md` — M4 acceptance criteria
+- Updated `docs/LLM_ADAPTER.md` — Profile-based configuration docs
+- Updated `docs/API_SMOKE_DEMO.md` — `llm_profile` request/response examples
+- Updated `docs/DEV_STATUS.md` — Current stage: Frontend M4
+- Updated `docs/CHANGELOG.md` — This entry
+- Updated `docs/PROJECT_CONTEXT.md` — Frontend API integration status
+
+### Security
+- Frontend sends only public profile names, never API keys
+- Backend whitelist validates `llm_profile` (mock / deepseek / doubao)
+- CORS restricted to localhost:5173 and Vercel domain
+- No secrets committed
+
+---
+
 ## [v1.1.0-demo] — 2026-06-25
 
 ### Added

@@ -51,14 +51,10 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（M11.5 - Final LLM Adapter Release Checklist）
+## 8. 当前交付状态（Frontend M4 - API Integration + Model Profile Selector）
 
-**Release Version:** v1.1.0-demo (minor)
-**Previous Release:** v1.0.1-demo — preserved, not overwritten
-**Release Date:** 2026-06-25
-**Status:** Ready for v1.1.0-demo tag
-
-M11.5 scope: verified mock default, optional real LLM, docs consistency, release tag preparation.
+**Status:** Frontend M4 Complete
+**Previous:** M11.5 Final LLM Adapter Release Checklist
 
 | 能力 | 状态 | 说明 |
 |------|------|------|
@@ -72,14 +68,14 @@ M11.5 scope: verified mock default, optional real LLM, docs consistency, release
 | Answer quality evaluation | ✅ | 6 指标评估，122-case 全量评测 |
 | FastAPI API endpoint | ✅ | POST /api/agent/chat |
 | Optional real LLM adapter | ✅ | OpenAI-compatible adapter，环境变量配置，默认 mock |
-| Final release checklist | ✅ | docs/FINAL_RELEASE_CHECKLIST.md |
-| Final acceptance report | ✅ | docs/FINAL_ACCEPTANCE_REPORT.md |
-| Release tag | ✅ | v1.0.0-demo (preserved) |
-| Patch tag | ✅ | v1.0.1-demo (docs hotfix) |
-| Minor tag | ✅ | v1.1.0-demo (optional real LLM adapter) |
+| Profile-based model selection | ✅ | mock / deepseek / doubao 白名单，fallback 保护 |
+| CORS | ✅ | localhost:5173 + Vercel 域名 |
+| Frontend API integration | ✅ | React 前端接入后端 API，loading/error 状态 |
+| Model selector | ✅ | 只传 profile，不传 key |
+| Frontend deployed | ✅ | Vercel: https://customer-ops-agent.vercel.app/ |
+| Backend deployed | ✅ | Render: https://customeropsagent.onrender.com |
 | 真实物流 API | ❌ | 使用 mock logistics tool |
 | 真实订单系统 | ❌ | 无 |
-| 前端 | ❌ | 冻结为 legacy demo |
 
 ### Final Metrics
 
