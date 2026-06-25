@@ -71,11 +71,11 @@ Patch scope: fixed retrieval eval command in release checklist (PYTHONPATH requi
 | Fallback rules | ✅ | 10 条兜底规则 |
 | Answer quality evaluation | ✅ | 6 指标评估，122-case 全量评测 |
 | FastAPI API endpoint | ✅ | POST /api/agent/chat |
+| Optional real LLM adapter | ✅ | OpenAI-compatible adapter，环境变量配置，默认 mock |
 | Final release checklist | ✅ | docs/FINAL_RELEASE_CHECKLIST.md |
 | Final acceptance report | ✅ | docs/FINAL_ACCEPTANCE_REPORT.md |
 | Release tag | ✅ | v1.0.0-demo (preserved) |
 | Patch tag | ✅ | v1.0.1-demo (docs hotfix) |
-| 真实 LLM | ❌ | 使用 mock answer generator |
 | 真实物流 API | ❌ | 使用 mock logistics tool |
 | 真实订单系统 | ❌ | 无 |
 | 前端 | ❌ | 冻结为 legacy demo |
@@ -102,17 +102,18 @@ Patch scope: fixed retrieval eval command in release checklist (PYTHONPATH requi
 
 ### Known Limitations
 
-1. **Mock Answer Generator** — Uses predefined response templates, not real LLM generation
-2. **Mock Logistics Tool** — Simulates API responses, not connected to real logistics systems
-3. **Answer Quality** — Pass rate (46.72%) indicates demo quality, not production-grade performance
-4. **Rule-based Intent Recognition** — May have edge cases with complex or ambiguous queries
-5. **No User Session Persistence** — Each request is stateless, no conversation history maintained
-6. **No Production Deployment** — Designed for local development and demo purposes only
-7. **Limited Domain Coverage** — Optimized for customs and logistics queries, may not generalize to other domains
+1. **Mock Answer Generator by Default** — Uses predefined response templates, not real LLM generation. Real LLM is optional.
+2. **Optional Real LLM Adapter** — Can be enabled via env vars, but defaults to mock. Not configured = not used.
+3. **Mock Logistics Tool** — Simulates API responses, not connected to real logistics systems
+4. **Answer Quality** — Pass rate (46.72%) indicates demo quality, not production-grade performance
+5. **Rule-based Intent Recognition** — May have edge cases with complex or ambiguous queries
+6. **No User Session Persistence** — Each request is stateless, no conversation history maintained
+7. **No Production Deployment** — Designed for local development and demo purposes only
+8. **Limited Domain Coverage** — Optimized for customs and logistics queries, may not generalize to other domains
 
 ### Optional Next Steps
 
-- **M11: Real LLM Adapter** — Integrate with OpenAI/Claude/other LLM APIs, replace mock answer generator
+- **M11.5: Final LLM Adapter Release Checklist** — Verify mock default, optional real LLM, docs and tag
 - **M12: Real Logistics Adapter** — Connect to actual logistics tracking APIs, replace mock tool
 - **Frontend Integration** — Connect React frontend to FastAPI backend, implement chat UI
 - **Deployment** — Deploy to cloud platform (AWS/GCP/Azure), configure production environment

@@ -219,3 +219,15 @@ class AgentResponse(BaseModel):
         None,
         description="Tool used (e.g., mock_logistics_tool)",
     )
+    answer_source: str = Field(
+        default="mock",
+        description="Answer source: mock, real_llm, real_llm_fallback_mock",
+    )
+    llm_provider: Optional[str] = Field(
+        None,
+        description="LLM provider used (e.g., openai_compatible)",
+    )
+    llm_model: Optional[str] = Field(
+        None,
+        description="LLM model name used",
+    )

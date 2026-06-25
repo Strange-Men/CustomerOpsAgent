@@ -61,6 +61,9 @@ class AgentChatResponse(BaseModel):
     retrieved_doc_ids: list[str]
     order_id: str | None
     tool_used: str | None
+    answer_source: str = "mock"
+    llm_provider: str | None = None
+    llm_model: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -117,4 +120,7 @@ def _to_response(result: AgentResponse) -> AgentChatResponse:
         retrieved_doc_ids=result.retrieved_doc_ids,
         order_id=result.order_id,
         tool_used=result.tool_used,
+        answer_source=result.answer_source,
+        llm_provider=result.llm_provider,
+        llm_model=result.llm_model,
     )

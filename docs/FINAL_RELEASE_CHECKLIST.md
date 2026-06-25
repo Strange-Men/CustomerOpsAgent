@@ -45,6 +45,7 @@
 | M9.5 | Answer Quality Polish | ✅ Completed |
 | M10 | Agent API Smoke Demo | ✅ Completed |
 | M10.5 | Final Release Checklist | ✅ Completed |
+| M11 | Optional Real LLM Adapter | ✅ Completed |
 
 ---
 
@@ -146,7 +147,7 @@ curl -X POST http://127.0.0.1:8000/api/agent/chat \
 
 ## 5. Safety Checklist
 
-- [x] **No real LLM API** - Using mock answer generator
+- [x] **No real LLM API by default** - Using mock answer generator; real LLM is optional, requires explicit env config
 - [x] **No real logistics API** - Using mock logistics tool
 - [x] **No real order system** - Using seed data only
 - [x] **No API key / app_key** - No external service credentials stored
@@ -158,8 +159,9 @@ curl -X POST http://127.0.0.1:8000/api/agent/chat \
 
 ## 6. Known Limitations
 
-1. **Mock Answer Generator** - Uses predefined response templates, not real LLM generation
-2. **Mock Logistics Tool** - Simulates API responses, not connected to real logistics systems
+1. **Mock Answer Generator by Default** - Uses predefined response templates, not real LLM generation. Real LLM is optional.
+2. **Optional Real LLM Adapter** - Can be enabled via env vars, defaults to mock. Not configured = not used.
+3. **Mock Logistics Tool** - Simulates API responses, not connected to real logistics systems
 3. **Answer Quality** - Pass rate (46.72%) indicates demo quality, not production-grade performance
 4. **Rule-based Intent Recognition** - May have edge cases with complex or ambiguous queries
 5. **No User Session Persistence** - Each request is stateless, no conversation history maintained
@@ -178,7 +180,7 @@ curl -X POST http://127.0.0.1:8000/api/agent/chat \
 
 ## Checklist Summary
 
-- [x] All milestones completed (M0-M10.5)
+- [x] All milestones completed (M0-M11)
 - [x] All tests passing (220 tests)
 - [x] Ruff linter passing
 - [x] Retrieval evaluation passing (98.36% Recall@5)

@@ -50,6 +50,7 @@ AgentResponse
 | Answer workflow optimization | ✅ Passed | M9 optimization pipeline |
 | FastAPI endpoint | ✅ Passed | POST /api/agent/chat |
 | API smoke tests | ✅ Passed | TestClient validation |
+| Optional LLM adapter | ✅ Passed | Mock default, real LLM optional via env vars |
 
 **Total Functional Tests:** All components passing
 
@@ -138,7 +139,7 @@ POST /api/agent/chat
 
 | Security Check | Status | Verification |
 |----------------|--------|--------------|
-| No real LLM API | ✅ Verified | Mock answer generator in use |
+| No real LLM API by default | ✅ Verified | Mock answer generator in use; real LLM is optional, requires explicit env config |
 | No real logistics API | ✅ Verified | Mock logistics tool in use |
 | No real order system | ✅ Verified | Seed data only, no external connections |
 | No API key storage | ✅ Verified | No credentials in codebase |
@@ -158,7 +159,7 @@ POST /api/agent/chat
 
 **Version:** v1.0.0-demo
 
-**Completeness:** All planned milestones (M0-M10.5) completed successfully.
+**Completeness:** All planned milestones (M0-M11) completed successfully.
 
 ### Quality Assessment
 
@@ -174,10 +175,8 @@ POST /api/agent/chat
 
 **Optional Enhancements (Not Required for Demo):**
 
-1. **M11: Real LLM Adapter**
-   - Integrate with OpenAI/Claude/other LLM APIs
-   - Replace mock answer generator with real generation
-   - Requires: API key management, prompt engineering, response parsing
+1. **M11.5: Final LLM Adapter Release Checklist**
+   - Verify mock default, optional real LLM, docs and tag
 
 2. **M12: Real Logistics Adapter**
    - Connect to actual logistics tracking APIs

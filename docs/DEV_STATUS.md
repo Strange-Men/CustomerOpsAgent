@@ -2,15 +2,15 @@
 
 ## 1. 当前阶段
 
-**M10.5.1: Release Docs Command Hotfix**
+**M11: Optional Real LLM Adapter**
 
-Patch scope: documentation-only command fix for retrieval eval PYTHONPATH.
+Added optional real LLM adapter for answer generation. Default remains mock. No API key = no real LLM calls.
 
-Previous release: M10.5 (v1.0.0-demo) — preserved, not overwritten.
+Previous release: M10.5.1 (v1.0.1-demo) — preserved, not overwritten.
 
 ## 2. 当前项目状态
 
-**状态：Demo Release Ready**
+**状态：Optional Real LLM Adapter Added / Default Mock Remains**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -101,6 +101,40 @@ Previous release: M10.5 (v1.0.0-demo) — preserved, not overwritten.
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
+
+### M11：Optional Real LLM Adapter（本轮）
+
+- ✅ 创建 `backend/app/llm/` 包
+  - `__init__.py` — 包初始化，导出核心类型
+  - `schemas.py` — LLMMessage / LLMGenerationRequest / LLMGenerationResult
+  - `config.py` — 从环境变量读取 LLM 配置，不打印 API key
+  - `base.py` — BaseLLMAdapter 抽象基类
+  - `mock_adapter.py` — MockLLMAdapter，默认适配器
+  - `openai_compatible_adapter.py` — OpenAICompatibleAdapter，调用 /chat/completions
+  - `factory.py` — create_llm_adapter 工厂，默认返回 mock
+
+- ✅ 修改 `backend/app/agent/schemas.py`
+  - AgentResponse 新增 answer_source / llm_provider / llm_model 字段
+
+- ✅ 修改 `backend/app/agent/workflow.py`
+  - 新增 _try_real_llm_answer 辅助函数
+  - 物流路由和 RAG 路由接入 LLM adapter
+  - 失败时 fallback 到 mock，标记 answer_source
+
+- ✅ 修改 `backend/app/api/agent.py`
+  - AgentChatResponse 新增 answer_source / llm_provider / llm_model
+
+- ✅ 创建 `backend/tests/test_llm_adapter.py`
+  - 13 个测试用例
+  - 覆盖：默认 mock / 缺配置 fallback / API key 安全 / 确定性 / eval 字段扫描 / answer_source / 失败 fallback / API response
+
+- ✅ 创建 `docs/LLM_ADAPTER.md`
+  - Scope / Modes / Environment Variables / Safety / Fallback / Smoke Test / Limitations / Architecture
+
+- ✅ 更新 `README.md` — Features / API response / Limitations / Docs Index
+- ✅ 更新 `docs/DEV_STATUS.md` — 当前阶段更新为 M11
+- ✅ 更新 `docs/CHANGELOG.md` — 追加 M11 变更记录
+- ✅ 更新 `docs/PROJECT_CONTEXT.md` — 补充 LLM adapter 能力
 
 ### M10.5：Final Release Checklist（本轮）
 
@@ -390,16 +424,15 @@ Previous release: M10.5 (v1.0.0-demo) — preserved, not overwritten.
 
 **可选后续工作：**
 
-- **M11: Real LLM Adapter** — 集成 OpenAI/Claude/其他 LLM API，替换 mock answer generator
+- **M11.5: Final LLM Adapter Release Checklist** — 验证 mock 默认、optional real LLM、文档与 tag
 - **M12: Real Logistics Adapter** — 连接真实物流追踪 API，替换 mock logistics tool
 - **Frontend Integration** — 连接 React 前端到 FastAPI 后端，实现聊天 UI
 - **Deployment** — 部署到云平台（AWS/GCP/Azure），配置生产环境
 
 **当前已完成：**
+- ✅ M11 Optional Real LLM Adapter
 - ✅ M10.5 Final Release Checklist
-- ✅ Final Release Checklist 文档
-- ✅ Final Acceptance Report 文档
-- ✅ Release tag: v1.0.0-demo
+- ✅ Release tag: v1.0.1-demo
 
 ## 6. 风险点
 
@@ -433,7 +466,7 @@ Previous release: M10.5 (v1.0.0-demo) — preserved, not overwritten.
 ## 7. 当前禁止事项
 
 - ❌ 不碰前端
-- ❌ 不接 LLM API（M7 用规则实现）
+- ❌ 不把 optional LLM adapter 包装成生产级上线
 - ❌ 不实现 6 Agent 工单编排
 - ❌ 不实现 LangGraph 多 Agent
 - ❌ 不实现登录/权限/多租户

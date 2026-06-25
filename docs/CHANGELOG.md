@@ -14,6 +14,32 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [未发布 - M11]
+
+### Added
+- Added `backend/app/llm/` — Optional LLM adapter package
+  - `__init__.py` — Package init, exports core types
+  - `schemas.py` — LLMMessage / LLMGenerationRequest / LLMGenerationResult
+  - `config.py` — LLM config from environment variables (no API key logging)
+  - `base.py` — BaseLLMAdapter abstract base class
+  - `mock_adapter.py` — MockLLMAdapter (default, template-based)
+  - `openai_compatible_adapter.py` — OpenAICompatibleAdapter for /chat/completions
+  - `factory.py` — create_llm_adapter factory (default: mock)
+- Added `backend/tests/test_llm_adapter.py` — LLM adapter tests (13 test cases)
+  - Default mock mode / missing config fallback / API key safety / determinism / eval field scan / answer_source / failure fallback / API response
+- Added `docs/LLM_ADAPTER.md` — LLM adapter documentation
+  - Scope / Modes / Environment Variables / Safety / Fallback / Smoke Test / Limitations / Architecture
+
+### Changed
+- Updated `backend/app/agent/schemas.py` — AgentResponse: added answer_source, llm_provider, llm_model fields
+- Updated `backend/app/agent/workflow.py` — Integrated LLM adapter with fallback to mock
+- Updated `backend/app/api/agent.py` — AgentChatResponse: added answer_source, llm_provider, llm_model
+- Updated `README.md` — Added optional real LLM adapter feature, API response fields, limitations, docs link
+- Updated `docs/DEV_STATUS.md` — Current stage updated to M11
+- Updated `docs/PROJECT_CONTEXT.md` — Added LLM adapter capability
+
+---
+
 ## [v1.0.1-demo] — 2026-06-25
 
 ### Fixed
