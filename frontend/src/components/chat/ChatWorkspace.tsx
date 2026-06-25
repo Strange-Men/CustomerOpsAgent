@@ -1,7 +1,8 @@
-import { MessageBubble } from "./MessageBubble";
-import { AnswerCard } from "./AnswerCard";
+import { MessageList } from "./MessageList";
 import { ExamplePrompts } from "./ExamplePrompts";
-import { MOCK_RESPONSE, MOCK_USER_QUERY } from "../../data/mockResponse";
+import { ChatInput } from "./ChatInput";
+import { ChatStatePreview } from "./ChatStatePreview";
+import { STATIC_MESSAGES } from "../../data/chat";
 
 /**
  * Central chat workspace — displays a static conversation with mock data.
@@ -9,17 +10,36 @@ import { MOCK_RESPONSE, MOCK_USER_QUERY } from "../../data/mockResponse";
  */
 export function ChatWorkspace() {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex-none pb-4 border-b border-slate-700/30">
+        <h2 className="text-lg font-semibold text-slate-100">
+          客服 Agent 对话
+        </h2>
+        <p className="text-xs text-slate-500 mt-1">
+          当前为静态 UI，M4 接入 API
+        </p>
+      </div>
+
       {/* Chat messages area */}
-      <div className="space-y-4">
-        <MessageBubble role="user" text={MOCK_USER_QUERY} />
-        <AnswerCard response={MOCK_RESPONSE} />
+      <div className="flex-1 overflow-y-auto py-4 space-y-4">
+        <MessageList messages={STATIC_MESSAGES} />
       </div>
 
       {/* Example prompts */}
-      <div className="pt-4 border-t border-slate-700/30">
-        <p className="text-xs text-slate-500 mb-2">Example questions:</p>
+      <div className="flex-none pt-4 border-t border-slate-700/30">
+        <p className="text-xs text-slate-500 mb-2">示例问题：</p>
         <ExamplePrompts />
+      </div>
+
+      {/* Chat input */}
+      <div className="flex-none pt-4">
+        <ChatInput />
+      </div>
+
+      {/* Static state preview */}
+      <div className="flex-none pt-4">
+        <ChatStatePreview />
       </div>
     </div>
   );

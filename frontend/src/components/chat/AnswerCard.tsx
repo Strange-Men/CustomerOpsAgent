@@ -7,7 +7,8 @@ interface AnswerCardProps {
 }
 
 /**
- * Displays the agent's answer with route, confidence, and answer source.
+ * Displays the agent's answer with route, confidence, answer source, and other metadata.
+ * No API calls — static display only.
  */
 export function AnswerCard({ response }: AnswerCardProps) {
   return (
@@ -20,12 +21,31 @@ export function AnswerCard({ response }: AnswerCardProps) {
 
         {/* Meta row */}
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-700/30">
-          <Badge label={`route: ${response.route}`} variant="info" />
-          <Badge label={`confidence: ${response.confidence}`} variant="success" />
-          <Badge label={`source: ${response.answer_source}`} variant="muted" />
+          <Badge label={`路由: ${response.route}`} variant="info" />
+          <Badge label={`置信度: ${response.confidence}`} variant="success" />
+          <Badge label={`来源: ${response.answer_source}`} variant="muted" />
           {response.order_id && (
-            <Badge label={`order: ${response.order_id}`} variant="accent" />
+            <Badge label={`订单: ${response.order_id}`} variant="accent" />
           )}
+        </div>
+
+        {/* Fallback warning */}
+        {response.fallback_triggered && (
+          <div className="flex items-center gap-2 pt-2 border-t border-slate-700/30">
+            <Badge label="已触发 Fallback" variant="warning" />
+            {response.fallback_reason && (
+              <span className="text-xs text-amber-400/80">
+                原因: {response.fallback_reason}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Citation hint */}
+        <div className="pt-2 border-t border-slate-700/30">
+          <p className="text-[10px] text-slate-600">
+            引用见右侧 Evidence Panel
+          </p>
         </div>
       </div>
     </Card>

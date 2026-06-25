@@ -7,6 +7,12 @@
 /** Route types for customer service agent workflow. */
 export type RouteType = "logistics_tool" | "rag_knowledge_base" | "fallback";
 
+/** Chat message roles. */
+export type ChatRole = "user" | "assistant" | "system";
+
+/** Chat UI states. */
+export type ChatUiState = "idle" | "loading" | "success" | "error" | "empty";
+
 /** High-level route intent. */
 export type IntentType =
   | "logistics"
@@ -73,4 +79,22 @@ export interface AgentResponse {
   answer_source: AnswerSource;
   llm_provider: string | null;
   llm_model: string | null;
+}
+
+/** Chat message for local UI display. */
+export interface ChatMessage {
+  id: string;
+  role: ChatRole;
+  content: string;
+  createdAt: string;
+  response?: AgentResponse;
+}
+
+/** Example prompt for chat UI. */
+export interface ExamplePrompt {
+  id: string;
+  label: string;
+  query: string;
+  expectedRoute?: RouteType;
+  scenario?: string;
 }
