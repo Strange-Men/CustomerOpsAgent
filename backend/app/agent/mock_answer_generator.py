@@ -24,30 +24,57 @@ def _build_citations(retrieved_chunks: list["RetrievedChunk"]) -> list[Citation]
     """
     Build citations from retrieved chunks.
 
+    Prioritizes diverse doc_ids: prefers one citation per unique doc_id
+    before adding duplicates from the same doc.
+
     Args:
         retrieved_chunks: Retrieved evidence chunks
 
     Returns:
-        List of Citation objects
+        List of Citation objects (up to 5, preferring diverse doc_ids)
     """
     citations = []
-    for chunk in retrieved_chunks[:5]:  # Limit to top 5
-        citations.append(Citation(
-            doc_id=chunk.doc_id,
-            chunk_id=chunk.chunk_id,
-            title=chunk.title,
-            source=chunk.source,
-            category=chunk.category,
-            market=chunk.market,
-            language=chunk.language,
-        ))
+    seen_doc_ids: set[str] = set()
+    max_citations = 5
+
+    # First pass: one citation per unique doc_id (preserving order)
+    for chunk in retrieved_chunks:
+        if len(citations) >= max_citations:
+            break
+        if chunk.doc_id not in seen_doc_ids:
+            seen_doc_ids.add(chunk.doc_id)
+            citations.append(Citation(
+                doc_id=chunk.doc_id,
+                chunk_id=chunk.chunk_id,
+                title=chunk.title,
+                source=chunk.source,
+                category=chunk.category,
+                market=chunk.market,
+                language=chunk.language,
+            ))
+
+    # Second pass: fill remaining slots with any chunks
+    for chunk in retrieved_chunks:
+        if len(citations) >= max_citations:
+            break
+        if chunk.chunk_id not in {c.chunk_id for c in citations}:
+            citations.append(Citation(
+                doc_id=chunk.doc_id,
+                chunk_id=chunk.chunk_id,
+                title=chunk.title,
+                source=chunk.source,
+                category=chunk.category,
+                market=chunk.market,
+                language=chunk.language,
+            ))
+
     return citations
 
 
 def _extract_evidence_sentences(
     retrieved_chunks: list["RetrievedChunk"],
     max_chunks: int = 3,
-    max_chars_per_chunk: int = 300,
+    max_chars_per_chunk: int = 400,
 ) -> str:
     """
     Extract key evidence sentences from multiple retrieved chunks.
@@ -148,7 +175,9 @@ def generate_mock_rag_answer(
         answer = (
             f"您好，关于您咨询的退款问题，根据当前知识库：\n\n"
             f"{evidence_text}\n\n"
-            f"退款到账时间以支付平台实际处理为准。如有疑问，请联系人工客服。\n\n"
+            f"退款到账时间以支付平台实际处理为准，一般为3-10个工作日。\n"
+            f"如涉及退货退款，请先完成退货流程，退款将在商品验收后启动。\n"
+            f"如有疑问，请联系人工客服。\n\n"
             f"以上信息参考：{citation_section}。"
         )
     elif detail_intent == "exchange":
@@ -166,12 +195,23 @@ def generate_mock_rag_answer(
             f"以上信息参考：{citation_section}。"
         )
     elif detail_intent == "order":
-        answer = (
-            f"您好，关于您咨询的订单问题，根据当前知识库：\n\n"
-            f"{evidence_text}\n\n"
-            f"如有其他问题，请联系人工客服获取帮助。\n\n"
-            f"以上信息参考：{citation_section}。"
-        )
+        # Check if query also mentions refund (multi-intent: order cancel + refund)
+        query_lower = query.lower()
+        if any(kw in query_lower for kw in ["退款", "退钱", "refund", "money back"]):
+            answer = (
+                f"您好，关于您咨询的订单取消及退款问题，根据当前知识库：\n\n"
+                f"{evidence_text}\n\n"
+                f"订单取消后，退款将按原支付路径退回，具体到账时间以支付平台处理为准。\n"
+                f"如有其他问题，请联系人工客服获取帮助。\n\n"
+                f"以上信息参考：{citation_section}。"
+            )
+        else:
+            answer = (
+                f"您好，关于您咨询的订单问题，根据当前知识库：\n\n"
+                f"{evidence_text}\n\n"
+                f"如有其他问题，请联系人工客服获取帮助。\n\n"
+                f"以上信息参考：{citation_section}。"
+            )
     elif detail_intent == "payment":
         answer = (
             f"您好，关于您咨询的支付问题，根据当前知识库：\n\n"
@@ -201,12 +241,27 @@ def generate_mock_rag_answer(
             f"以上信息参考：{citation_section}。"
         )
     elif detail_intent == "logistics_policy":
-        answer = (
-            f"您好，关于您咨询的物流配送问题，根据当前知识库：\n\n"
-            f"{evidence_text}\n\n"
-            f"如有其他物流问题，请联系人工客服。\n\n"
-            f"以上信息参考：{citation_section}。"
-        )
+        query_lower = query.lower()
+        is_delay = any(kw in query_lower for kw in [
+            "还没到", "还没收到", "一个月", "三周", "两周", "太慢", "比美国慢",
+            "hasn't arrived", "not arrived", "two weeks", "three weeks", "delay",
+            "taking too long", "late",
+        ])
+        if is_delay:
+            answer = (
+                f"您好，关于您咨询的物流配送时效问题，根据当前知识库：\n\n"
+                f"{evidence_text}\n\n"
+                f"跨境物流受目的地、清关等因素影响，实际配送时间可能有所差异。\n"
+                f"如您的包裹长时间未到达，建议联系人工客服查询具体物流状态。\n\n"
+                f"以上信息参考：{citation_section}。"
+            )
+        else:
+            answer = (
+                f"您好，关于您咨询的物流配送问题，根据当前知识库：\n\n"
+                f"{evidence_text}\n\n"
+                f"如有其他物流问题，请联系人工客服。\n\n"
+                f"以上信息参考：{citation_section}。"
+            )
     else:
         answer = (
             f"您好，根据当前知识库信息：\n\n"

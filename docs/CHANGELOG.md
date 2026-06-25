@@ -17,11 +17,42 @@
 ## [未发布]
 
 ### Added
+- Added `docs/EVAL_REPORT_M9_5.md` — M9.5 answer quality polish report
+
+### Changed
+- Updated `backend/app/agent/intent_recognizer.py` — M9.5 intent recognition polish
+  - Added shipping delay keywords to `logistics_policy`: "还没到", "快一个月", "hasn't arrived", "taking too long", etc.
+  - Added delay-aware disambiguation: delay indicators route to logistics_policy, not package
+  - Added refund vs logistics_policy disambiguation: refund keywords take precedence
+  - Added colloquial package keywords: "丢了", "包裹丢了", "找不到包裹"
+- Updated `backend/app/agent/mock_answer_generator.py` — M9.5 answer generation polish
+  - Increased `max_chars_per_chunk` from 300 to 400 for better evidence extraction
+  - Order template: multi-intent detection for order cancel + refund queries
+  - Refund template: expanded to cover return-refund flow and timeline
+  - Logistics policy template: delay-specific response when delay indicators detected
+  - Citation selection: prefer diverse doc_ids (one per unique doc first)
+- Updated `backend/tests/test_answer_workflow_optimization.py` — M9.5 tests (33 test cases, +14)
+- Updated `docs/ANSWER_WORKFLOW_OPTIMIZATION_LOG.md` — Added M9.5 section
+- Updated `docs/AGENT_WORKFLOW.md` — Added M9.5 key improvements
+- Updated `docs/DEV_STATUS.md` — Current stage updated to M9.5
+
+### M9.5 Answer Quality Results
+- avg_relevance: 0.7418 → 0.7566 (+0.0148)
+- avg_groundedness: 0.8205 → 0.8328 (+0.0123)
+- avg_completeness: 0.5225 → 0.5464 (+0.0239)
+- citation_hit_rate: 81.15% → 83.61% (+2.46%)
+- answer_pass_rate: 44.26% → 46.72% (+2.46%)
+- fallback_rate: 15.57% → 13.11% (-2.46%)
+- failed_cases: 68 → 65 (-3)
+
+---
+
+### Added (M9)
 - Added `backend/tests/test_answer_workflow_optimization.py` — M9 answer workflow optimization tests（19 个测试用例）
 - Added `docs/ANSWER_WORKFLOW_OPTIMIZATION_LOG.md` — M9 answer workflow optimization log
 - Added `docs/EVAL_REPORT_M9.md` — M9 answer quality evaluation report
 
-### Changed
+### Changed (M9)
 - Updated `backend/app/agent/intent_recognizer.py` — M9 intent recognition optimization
   - Split `logistics` intent into `logistics_status` (tracking, needs order_id) and `logistics_policy` (policy, uses RAG)
   - Added disambiguation rules: package keywords override logistics_status; policy keywords override logistics_status

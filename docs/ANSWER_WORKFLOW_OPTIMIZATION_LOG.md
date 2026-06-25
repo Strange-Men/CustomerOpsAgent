@@ -119,3 +119,69 @@ Some remaining failures are due to:
 - Answer quality metrics are rule-based evaluation, not human judgment
 - Intent recognition is keyword-based; complex queries may be misclassified
 - Route decision rules may overfit to the eval dataset
+
+## 7. M9.5 Polish (Continued Optimization)
+
+### 7.1 M9.5 Optimization Scope
+
+M9.5 targeted remaining failure patterns after M9:
+
+**Optimized:**
+- Shipping delay vs package disambiguation (delay indicators override package classification)
+- English shipping delay recognition (added keywords: "hasn't arrived", "taking too long", etc.)
+- Refund vs logistics_policy disambiguation (refund keywords take precedence when both match)
+- Multi-intent order cancel + refund answer coverage
+- Citation diversity (prefer different doc_ids)
+- Colloquial package keywords ("丢了" vs "丢失")
+- Evidence extraction max_chars_per_chunk: 300 → 400
+
+**Not optimized:**
+- answer_eval.py evaluation logic (unchanged)
+- eval_cases_full.jsonl dataset (unchanged)
+- Real LLM API integration (not done)
+- Real logistics API integration (not done)
+
+### 7.2 M9.5 Changes
+
+#### Intent Recognition Changes
+
+Added shipping delay keywords to `logistics_policy`:
+- Chinese: "还没到", "还没收到", "多久了还没", "一个月了还没", "三周了还没", "两周了还没", "快一个月", "快三周", "太慢了", "为什么还没到", "怎么还没到", "比美国慢"
+- English: "hasn't arrived", "has not arrived", "still hasn't arrived", "still not arrived", "not arrived", "taking too long", "shipping delay", "delivery delay", "why hasn't", "package still hasn't", "still hasn't", "how long does it take"
+
+Added disambiguation rules:
+1. Rule 1 modified: delay indicators prevent package override when logistics+package both match
+2. Rule 1b added: when logistics+package match with delay → route to logistics_policy
+3. Rule 1b added: when refund+logistics_policy match with refund keywords → route to refund
+4. Rule 4 added: logistics+package with delay indicators → logistics_policy; with damage indicators → package
+
+Added colloquial package keywords: "丢了", "包裹丢了", "找不到包裹", "包裹找不到"
+
+#### Mock Answer Generator Changes
+
+- `max_chars_per_chunk` increased from 300 to 400
+- Order template: added multi-intent detection for order cancel + refund queries
+- Refund template: expanded to cover return-refund flow and timeline
+- Logistics policy template: added delay-specific response when delay indicators detected
+- Citation selection: prefer diverse doc_ids (one per unique doc first, then fill remaining slots)
+
+### 7.3 M9.5 Results
+
+| Metric | M9 | M9.5 | Change |
+|--------|-----|------|--------|
+| total_cases | 122 | 122 | - |
+| avg_relevance | 0.7418 | 0.7566 | +0.0148 |
+| avg_groundedness | 0.8205 | 0.8328 | +0.0123 |
+| avg_completeness | 0.5225 | 0.5464 | +0.0239 |
+| citation_hit_rate | 81.15% | 83.61% | +2.46% |
+| answer_pass_rate | 44.26% | 46.72% | +2.46% |
+| fallback_rate | 15.57% | 13.11% | -2.46% |
+| failed_cases | 68 | 65 | -3 |
+
+### 7.4 Remaining Failed Cases
+
+1. **Category mismatch**: Shipping delay cases have `expected_category: "package"` in eval dataset, but correct intent is `logistics_policy`. The relevance evaluator caps at 0.30 when categories don't match, even though the answer is correct.
+
+2. **Multi-intent completeness**: Order cancel + refund cases still have lower completeness because mock templates can't dynamically cover all keywords.
+
+3. **Edge cases**: Some queries with ambiguous intent still fall through the rule-based classifier.

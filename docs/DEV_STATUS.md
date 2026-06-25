@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M9: Answer Workflow Optimization**
+**M9.5: Answer Quality Polish**
 
 ## 2. 当前项目状态
 
-**状态：M9 Answer Workflow Optimization 完成**
+**状态：M9.5 Answer Quality Polish 完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -69,6 +69,17 @@
   - ✅ ANSWER_WORKFLOW_OPTIMIZATION_LOG.md — 优化日志
   - ✅ Answer Pass Rate: 44.26%（+12.29% vs M8）
   - ✅ Fallback Rate: 15.57%（-24.59% vs M8）
+- ✅ Answer Quality Polish（M9.5）
+  - ✅ 物流延迟 vs 包裹丢失拆分：延迟表达走 logistics_policy，损坏/丢失走 package
+  - ✅ 英文物流延迟识别：新增 hasn't arrived / taking too long / shipping delay 等
+  - ✅ 退款 vs 物流消歧：退款关键词优先于物流子串匹配
+  - ✅ 多意图回答优化：订单取消 + 退款查询覆盖两个方面
+  - ✅ 引用多样性：citation 优先来自不同 doc_id
+  - ✅ 口语化包裹关键词：新增 "丢了"、"包裹丢了" 等
+  - ✅ M9.5 answer quality 测试（test_answer_workflow_optimization.py, 33 个测试用例）
+  - ✅ EVAL_REPORT_M9_5.md — M9.5 评测报告
+  - ✅ Answer Pass Rate: 46.72%（+2.46% vs M9）
+  - ✅ Fallback Rate: 13.11%（-2.46% vs M9）
 - ❌ 尚未实现 RAG API（M10）
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
@@ -282,6 +293,9 @@
 | `docs/BAD_CASE_OPTIMIZATION_LOG.md` | Bad case 优化日志 | ✅ M6 新增 |
 | `docs/EVAL_REPORT_M6.md` | M6 评测报告 | ✅ M6 新增 |
 | `docs/EVAL_REPORT_M8.md` | M8 answer quality 评测报告 | ✅ M8 新增 |
+| `docs/EVAL_REPORT_M9.md` | M9 answer quality 评测报告 | ✅ M9 新增 |
+| `docs/EVAL_REPORT_M9_5.md` | M9.5 answer quality 评测报告 | ✅ M9.5 新增 |
+| `docs/ANSWER_WORKFLOW_OPTIMIZATION_LOG.md` | Answer workflow 优化日志 | ✅ M9 新增, M9.5 更新 |
 | `backend/tests/test_data_schema.py` | 数据校验测试 | ✅ M1 新增 |
 | `backend/tests/test_loader_chunker.py` | loader/chunker 测试 | ✅ M2 新增 |
 | `backend/tests/test_retriever.py` | retriever 测试 | ✅ M3 新增 |
@@ -291,13 +305,16 @@
 
 ## 5. 下一步
 
-**进入 M9：Answer Workflow Optimization**
+**进入 M10：API Integration / Final Docs Consolidation**
 
-M9 目标：
-- 根据 M8 failed cases 优化 intent recognition，降低 unknown_intent fallback
-- 优化 mock answer template，提高 keyword coverage
-- 调整 fallback rules，区分 policy questions 和 tracking questions
-- 目标：answer pass rate 从 32% 提升到 60%+
+或根据 M9.5 结果继续 M9.6 小步优化。
+
+M9.5 完成后已具备：
+- improved logistics delay recognition (delay vs lost vs damaged)
+- improved English shipping delay routing
+- improved refund/order policy response coverage
+- improved citation selection (diverse doc_ids)
+- EVAL_REPORT_M9_5.md
 
 ## 6. 风险点
 
@@ -320,6 +337,9 @@ M9 目标：
 | logistics tool 被误认为真实 API | 结果不代表真实物流 | EVAL_REPORT_M8.md 明确标注 mock |
 | expected_keywords 泄露进 agent workflow | 作弊 | 静态检查 agent 模块不包含 eval 字段 |
 | public docs 混入非公开内容 | 违反公开文档规范 | 静态测试扫描禁用关键词 |
+| 为指标修改 answer_eval | 美化结果 | 评测规则固定，不针对 workflow 调整 |
+| 规则过拟合 full eval set | 通用性下降 | 通用规则，不针对 case_id 写死 |
+| mock answer 被误认为真实 LLM | 结果不代表 LLM 质量 | EVAL_REPORT 明确标注 mock |
 
 ## 7. 当前禁止事项
 

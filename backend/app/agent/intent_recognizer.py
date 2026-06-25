@@ -35,6 +35,10 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "从哪里发货", "发货地", "仓库", "配送方式",
         "标准物流", "快速物流", "经济物流",
         "物流政策", "配送政策", "物流规则",
+        # Chinese - shipping delay expressions (not lost/damaged)
+        "还没到", "还没收到", "多久了还没", "一个月了还没",
+        "三周了还没", "两周了还没", "快一个月", "快三周",
+        "太慢了", "为什么还没到", "怎么还没到", "比美国慢",
         # English - policy queries
         "shipping time", "delivery time", "how long does shipping",
         "how long does delivery", "shipping cost", "free shipping",
@@ -42,6 +46,11 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "shipping policy", "delivery policy", "shipping rate",
         "where do you ship from", "warehouse", "dispatch time",
         "expedited", "rush delivery", "shipping method",
+        # English - shipping delay expressions (not lost/damaged)
+        "hasn't arrived", "has not arrived", "still hasn't arrived",
+        "still not arrived", "not arrived", "taking too long",
+        "shipping delay", "delivery delay", "why hasn't",
+        "package still hasn't", "still hasn't", "how long does it take",
     ],
     "customs": [
         # Chinese
@@ -110,6 +119,7 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "碎了", "碎了怎么办", "赔偿", "理赔", "补发",
         "没收到包裹", "包裹没收到", "丢包",
         "还没收到", "没收到货", "一个月了还没",
+        "丢了", "包裹丢了", "找不到包裹", "包裹找不到",
         # English
         "package", "damaged", "broken", "lost", "missing",
         "package damaged", "package lost", "package broken",
@@ -257,11 +267,52 @@ def recognize_intent(query: str) -> IntentResult:
         has_package_override = any(
             kw in query_lower for kw in _PACKAGE_OVERRIDE_KEYWORDS
         )
-        if has_package_override:
+        # Check for delay indicators — delay should NOT be overridden to package
+        delay_indicators = [
+            "一个月", "三周", "两周", "一周", "很久", "太慢", "太久了",
+            "快一个月", "快三周", "快两周",
+            "two weeks", "three weeks", "a month", "weeks",
+            "hasn't arrived", "has not arrived", "still hasn't",
+            "not arrived", "taking too long", "shipping delay",
+        ]
+        has_delay = any(ind in query_lower for ind in delay_indicators)
+        if has_package_override and not has_delay:
             # Package issue takes precedence over logistics tracking
             primary_intent = "package"
             matched_keywords = matched_intents["package"]
             route_intent = ROUTE_INTENT_MAP.get(primary_intent, "other")
+            confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
+            return IntentResult(
+                route_intent=route_intent,
+                detail_intent=primary_intent,
+                confidence=confidence,
+                matched_keywords=matched_keywords,
+                needs_clarification=False,
+            )
+        elif has_delay:
+            # Shipping delay → logistics_policy (not package)
+            primary_intent = "logistics_policy"
+            matched_keywords = matched_intents.get("logistics_policy", matched_intents.get("logistics_status", []))
+            route_intent = ROUTE_INTENT_MAP.get(primary_intent, "aftersale")
+            confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
+            return IntentResult(
+                route_intent=route_intent,
+                detail_intent=primary_intent,
+                confidence=confidence,
+                matched_keywords=matched_keywords,
+                needs_clarification=False,
+            )
+
+    # Rule 1b: If logistics_policy and refund both match, check if it's a refund query
+    # "退款多久能到账" matches both "退款" (refund) and "多久能到" (logistics_policy)
+    # When refund keywords are present, refund intent should take precedence
+    if "logistics_policy" in matched_intents and "refund" in matched_intents:
+        refund_keywords = ["退款", "退钱", "退费", "refund", "money back"]
+        has_refund = any(kw in query_lower for kw in refund_keywords)
+        if has_refund:
+            primary_intent = "refund"
+            matched_keywords = matched_intents["refund"]
+            route_intent = ROUTE_INTENT_MAP.get(primary_intent, "aftersale")
             confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
             return IntentResult(
                 route_intent=route_intent,
@@ -311,6 +362,46 @@ def recognize_intent(query: str) -> IntentResult:
             primary_intent = "logistics_status"
             matched_keywords = matched_intents["logistics_status"]
             route_intent = ROUTE_INTENT_MAP.get(primary_intent, "other")
+            confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
+            return IntentResult(
+                route_intent=route_intent,
+                detail_intent=primary_intent,
+                confidence=confidence,
+                matched_keywords=matched_keywords,
+                needs_clarification=False,
+            )
+
+    # Rule 4: If logistics_status/logistics_policy and package both match,
+    # check for delay indicators vs damage/loss indicators.
+    # "包裹一个月没到" is logistics delay, not package lost.
+    # "包裹破损/丢失" is package issue.
+    logistics_intents_in_match = {"logistics_status", "logistics_policy"} & set(matched_intents.keys())
+    if logistics_intents_in_match and "package" in matched_intents:
+        # Delay indicators: shipping is slow, not lost/damaged
+        delay_indicators = [
+            "一个月", "三周", "两周", "一周", "很久", "太慢", "太久了",
+            "还没到", "还没收到", "多久了", "为什么还没", "怎么还没",
+            "比美国慢", "比欧洲慢",
+            "two weeks", "three weeks", "a month", "weeks", "long time",
+            "hasn't arrived", "has not arrived", "still hasn't",
+            "still not arrived", "not arrived", "taking too long",
+            "shipping delay", "delivery delay",
+        ]
+        # Damage/loss indicators: actual package issue
+        damage_indicators = [
+            "丢", "碎", "坏", "破损", "损坏", "丢失", "少件", "漏发",
+            "错发", "赔偿", "理赔", "补发",
+            "damaged", "broken", "lost", "missing", "wrong",
+            "compensation", "claim", "replacement",
+        ]
+        has_delay = any(ind in query_lower for ind in delay_indicators)
+        has_damage = any(ind in query_lower for ind in damage_indicators)
+
+        if has_delay and not has_damage:
+            # Shipping delay → logistics_policy (RAG, no order_id needed)
+            primary_intent = "logistics_policy"
+            matched_keywords = matched_intents.get("logistics_policy", matched_intents.get("logistics_status", []))
+            route_intent = ROUTE_INTENT_MAP.get(primary_intent, "aftersale")
             confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
             return IntentResult(
                 route_intent=route_intent,
