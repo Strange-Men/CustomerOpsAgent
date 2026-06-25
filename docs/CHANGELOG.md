@@ -17,12 +17,62 @@
 ## [未发布]
 
 ### Added
-- Added `backend/app/rag/optimized_retriever.py` — optimized retriever（query expansion, signal inference, metadata-aware boosting, doc diversity）
-- Added `backend/tests/test_optimized_retriever.py` — optimized retriever 测试（14 个测试用例）
+- Added `backend/data/eval_cases_full.jsonl` — 全量评测集（122 条 bad cases，覆盖 10 category / 3 market / 2 language / 3 difficulty）
+- Added `backend/tests/test_full_eval_dataset.py` — full eval dataset 质量测试（12 个测试用例）
+- Added `docs/BAD_CASE_OPTIMIZATION_LOG.md` — bad case 优化日志（失败类型分析 + baseline vs optimized 对比）
+- Added `docs/EVAL_REPORT_M6.md` — M6 评测报告（122-case full dataset baseline vs optimized）
 
 ### Changed
-- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M5 optimized retriever 完成
-- Updated `docs/CHANGELOG.md` — 追加 M5 变更记录
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M6 full bad case eval set 完成
+- Updated `docs/CHANGELOG.md` — 追加 M6 变更记录
+
+### Fixed
+- 无
+
+## [0.7.0] - M6: Full Bad Case Eval Set
+
+**发布日期**：2026-06-25
+
+**版本说明**：M6 扩展 120+ bad cases 形成 full eval set，在 122-case 数据集上重新评估 baseline vs optimized retriever。Optimized Recall@5 从 75.4% 提升到 98.4%，MRR 从 0.70 提升到 0.91。
+
+### Added
+
+- Added `backend/data/eval_cases_full.jsonl` — 全量评测集
+  - 122 条 eval cases（20 seed + 102 新增）
+  - category 覆盖：logistics(18), customs(16), package(18), return(10), refund(10), exchange(10), address(10), order(10), payment(10), coupon(10)
+  - market 覆盖：US(37), EU(16), GLOBAL(69)
+  - language 覆盖：zh(82), en(40)
+  - difficulty 覆盖：easy(16), medium(75), hard(31)
+  - 问题类型：直问型、口语型、模糊型、复合型、跨语言型、市场限定型、边界型、多意图型、拼写变化型、高频客服型
+
+- Added `backend/tests/test_full_eval_dataset.py` — full eval dataset 质量测试
+  - 12 个测试用例
+  - 覆盖：加载校验、case_id 唯一性、expected_doc_ids 存在性、language 分布、difficulty 分布、category 覆盖、market 覆盖、keywords 质量、英文问题语言检查、seed 包含检查、baseline+optimized 集成测试、seed 文件未修改
+
+- Added `docs/BAD_CASE_OPTIMIZATION_LOG.md` — bad case 优化日志
+  - 数据集说明（seed 20 条 + full 122 条）
+  - 优化策略摘要（query expansion / signal inference / metadata boost / doc diversity）
+  - 6 类 baseline 典型失败类型分析
+  - seed failed cases 回顾
+  - full eval baseline vs optimized 对比
+  - 仍失败 cases 摘要（2 条）
+  - 简历指标口径提醒
+
+- Added `docs/EVAL_REPORT_M6.md` — M6 评测报告
+  - 数据集说明和分布
+  - baseline vs optimized 指标表
+  - 结论和简历表述建议
+  - 注意事项
+
+### Changed
+
+- Updated `docs/DEV_STATUS.md`
+  - 当前阶段：M6 full bad case eval set 完成
+  - 下一步：M7 prompt builder + mock answer generator + citations
+  - 更新风险点和禁止事项
+
+- Updated `docs/CHANGELOG.md`
+  - 追加 M6 变更记录
 
 ### Fixed
 - 无

@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M5: Optimized Retriever**
+**M6: Full Bad Case Eval Set + Optimization Log**
 
 ## 2. 当前项目状态
 
-**状态：M5 optimized retriever 完成**
+**状态：M6 120+ bad cases + bad case optimization log 完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -35,15 +35,55 @@
 - ✅ query signal inference（category / market / language 推断）
 - ✅ metadata-aware score adjustment（category / market / language boost）
 - ✅ doc-level diversity（重复 doc 去重）
-- ✅ baseline vs optimized 对比（Recall@5: 90%→100%, MRR: 0.785→0.917）
+- ✅ baseline vs optimized seed 对比（Recall@5: 90%→100%, MRR: 0.785→0.917）
 - ✅ optimized retriever 测试（test_optimized_retriever.py, 14 个测试用例）
+- ✅ Full eval set（122 条 bad cases，覆盖 10 category / 3 market / 2 language / 3 difficulty）
+- ✅ Full eval dataset quality tests（test_full_eval_dataset.py, 12 个测试用例）
+- ✅ BAD_CASE_OPTIMIZATION_LOG.md
+- ✅ EVAL_REPORT_M6.md
+- ✅ baseline vs optimized full 对比（Recall@5: 75.4%→98.4%, MRR: 0.696→0.911）
 - ✅ CLI smoke test
 - ❌ 尚未实现 answer generator
+- ❌ 尚未实现 prompt builder
 - ❌ 尚未实现 RAG API
 
 ## 3. 已完成内容
 
-### M5：Optimized Retriever（本轮）
+### M6：Full Bad Case Eval Set + Optimization Log（本轮）
+
+- ✅ 创建 `backend/data/eval_cases_full.jsonl`
+  - 122 条 eval cases（20 seed + 102 新增）
+  - category 覆盖：logistics(18), customs(16), package(18), return(10), refund(10), exchange(10), address(10), order(10), payment(10), coupon(10)
+  - market 覆盖：US(37), EU(16), GLOBAL(69)
+  - language 覆盖：zh(82), en(40)
+  - difficulty 覆盖：easy(16), medium(75), hard(31)
+  - 问题类型：直问型、口语型、模糊型、复合型、跨语言型、市场限定型、边界型、多意图型、拼写变化型、高频客服型
+
+- ✅ 创建 `backend/tests/test_full_eval_dataset.py`
+  - 12 个测试用例
+  - 覆盖：加载校验、case_id 唯一性、expected_doc_ids 存在性、language 分布、difficulty 分布、category 覆盖、market 覆盖、keywords 质量、英文问题语言检查、seed 包含检查、baseline+optimized 集成测试、seed 文件未修改
+
+- ✅ 创建 `docs/BAD_CASE_OPTIMIZATION_LOG.md`
+  - 数据集说明（seed 20 条 + full 122 条）
+  - 优化策略摘要（query expansion / signal inference / metadata boost / doc diversity）
+  - 6 类 baseline 典型失败类型分析
+  - seed failed cases 回顾
+  - full eval baseline vs optimized 对比
+  - 仍失败 cases 摘要（2 条）
+  - 简历指标口径提醒
+
+- ✅ 创建 `docs/EVAL_REPORT_M6.md`
+  - 数据集说明和分布
+  - baseline vs optimized 指标表
+  - 结论和简历表述建议
+  - 注意事项
+
+- ✅ Full eval baseline vs optimized 结果
+  - Baseline: Recall@1=64.75%, Recall@3=74.59%, Recall@5=75.41%, MRR=0.6956, failed=30
+  - Optimized: Recall@1=85.25%, Recall@3=96.72%, Recall@5=98.36%, MRR=0.9108, failed=2
+  - 提升: Recall@5 +22.95pp, MRR +0.2152, failed -28
+
+### M5：Optimized Retriever
 
 - ✅ 创建 `backend/app/rag/optimized_retriever.py`
   - `normalize_query(query)` — 小写化、去多余空白
@@ -150,19 +190,24 @@
 | `backend/app/rag/optimized_retriever.py` | 优化检索器 | ✅ M5 新增 |
 | `backend/data/knowledge_base/customer_service_seed.jsonl` | 种子知识库 | ✅ M1 新增 |
 | `backend/data/eval_cases_seed.jsonl` | 种子评测集 | ✅ M1 新增 |
+| `backend/data/eval_cases_full.jsonl` | 全量评测集 | ✅ M6 新增 |
+| `docs/BAD_CASE_OPTIMIZATION_LOG.md` | Bad case 优化日志 | ✅ M6 新增 |
+| `docs/EVAL_REPORT_M6.md` | M6 评测报告 | ✅ M6 新增 |
 | `backend/tests/test_data_schema.py` | 数据校验测试 | ✅ M1 新增 |
 | `backend/tests/test_loader_chunker.py` | loader/chunker 测试 | ✅ M2 新增 |
 | `backend/tests/test_retriever.py` | retriever 测试 | ✅ M3 新增 |
 | `backend/tests/test_retrieval_eval.py` | retrieval eval 测试 | ✅ M4 新增 |
 | `backend/tests/test_optimized_retriever.py` | optimized retriever 测试 | ✅ M5 新增 |
+| `backend/tests/test_full_eval_dataset.py` | full eval dataset 测试 | ✅ M6 新增 |
 
 ## 5. 下一步
 
-**进入 M6：扩展 120+ bad cases + bad case optimization log**
+**进入 M7：Prompt Builder + Mock Answer Generator + Citations**
 
-M6 目标：
-- 扩展 120+ bad cases，形成更可信的最终评测集
-- 记录 bad case optimization log
+M7 目标：
+- 实现 prompt builder，把检索结果组装成结构化 prompt
+- 实现 mock answer generator，生成可追溯的客服回答
+- 实现 citations 机制，引用 doc_id / chunk_id / source / score
 
 ## 6. 风险点
 
@@ -174,7 +219,11 @@ M6 目标：
 | optimized 覆盖 baseline | 无法对比 | 保留 baseline retriever.py 不变 |
 | 只提升 Recall@5，不关注 Recall@1 / MRR | Top-5 命中但 Top-1 未命中 | 同时监控 Recall@1 和 MRR |
 | 忘记输出仍失败的 cases | 无法定位下一步优化方向 | eval harness 必须输出 failed_cases |
-| 扩展 120+ bad cases 后指标下降 | seed set 过拟合暴露 | M6 以完整 eval set 为准 |
+| full dataset 过于简单 | 122 条可能不够复杂 | 覆盖 hard(31) / medium(75) / 多意图 / 跨语言 |
+| expected_doc_ids 标注不准确 | 影响指标可信度 | 数据质量测试 + 人工抽检 |
+| optimized 过拟合 seed set | full set 指标可能下降 | 用 full set 结果而非 seed set |
+| 只看 Recall@5，不看 Recall@1 / MRR | 排序质量未被评估 | 同时监控三个指标 |
+| retrieval 指标 ≠ 回答质量指标 | 高 Recall 不等于好回答 | M8 实现 answer quality evaluation |
 
 ## 7. 当前禁止事项
 
