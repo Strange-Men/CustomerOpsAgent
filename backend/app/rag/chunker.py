@@ -1,6 +1,9 @@
 """Chunk knowledge documents into smaller retrievable pieces."""
 
-from app.rag.schemas import KnowledgeChunk, KnowledgeDocument
+try:
+    from app.rag.schemas import KnowledgeChunk, KnowledgeDocument
+except ImportError:
+    from backend.app.rag.schemas import KnowledgeChunk, KnowledgeDocument
 
 
 def split_text_by_chars(text: str, max_chars: int = 320, overlap: int = 40) -> list[str]:
@@ -97,7 +100,10 @@ def chunk_documents(
 
 
 if __name__ == "__main__":
-    from app.rag.loader import load_knowledge_documents
+    try:
+        from app.rag.loader import load_knowledge_documents
+    except ImportError:
+        from backend.app.rag.loader import load_knowledge_documents
 
     docs = load_knowledge_documents()
     chunks = chunk_documents(docs)

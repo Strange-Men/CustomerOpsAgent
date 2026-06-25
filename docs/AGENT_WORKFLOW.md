@@ -20,29 +20,58 @@ M1-M6 已完成 RAG retrieval + evaluation harness，Optimized Retriever 在 122
 
 ## 2. Agent Workflow 总览
 
+### M7 实现的节点式流程
+
 ```
-User Query
+Start Node
     ↓
-Intent Recognition（意图识别）
+Variable Extraction Node（变量提取）
     ↓
-Query Signals / Rewrite（信号推断 / 查询改写）
+Intent Recognition Node（意图识别）
     ↓
-Optimized RAG Retrieval（优化检索）
+Route Decision Node（路由决策）
+    ├── Logistics Tool Route（物流工具路由）
+    │   ↓
+    │   Mock Logistics Plugin（模拟物流插件）
+    │   ├── Tool Success → Friendly Logistics Reply
+    │   └── Tool Failed → Fallback / Escalation
+    │
+    ├── RAG Knowledge Base Route（知识库路由）
+    │   ↓
+    │   Optimized RAG Retrieval（优化检索）
+    │   ↓
+    │   Evidence Check（证据检查）
+    │   ↓
+    │   Prompt Builder（提示构建）
+    │   ↓
+    │   Mock Answer Generator（模拟回答生成）
+    │   ↓
+    │   Citation Check（引用校验）
+    │   └── No Evidence → Fallback / Escalation
+    │
+    └── Other Intent → Fallback / Escalation
     ↓
-Evidence Check（证据检查）
-    ↓
-Prompt Builder（提示构建）
-    ↓
-Mock Answer Generator（回答生成）
-    ↓
-Citation Check（引用校验）
-    ↓
-Fallback / Escalation（兜底或转人工）
-    ↓
-Final Response
+End Node（返回结果）
 ```
 
 **关键约束**：这不是复杂多 Agent 编排，不是 LangGraph，不是 6 Agent 工单系统。这是围绕 RAG 的单链路轻量工作流，每个节点是规则驱动的函数调用。
+
+### 节点说明
+
+| 节点 | 说明 | 实现文件 |
+|------|------|---------|
+| Start Node | 接收 user_query、可选 order_id、可选 conversation_history | `workflow.py` |
+| Variable Extraction Node | 用正则提取订单号 | `entity_extractor.py` |
+| Intent Recognition Node | 规则版意图识别，不调用真实 LLM | `intent_recognizer.py` |
+| Route Decision Node | 根据 route_intent 决定路由 | `workflow.py` |
+| Logistics Tool Route | 使用 mock logistics tool，不接真实 API | `logistics_tool.py` |
+| RAG Knowledge Base Route | 使用 optimized retriever 检索知识库 | `workflow.py` |
+| Evidence Check | 检查检索结果质量和置信度 | `fallback_rules.py` |
+| Prompt Builder | 构建结构化 prompt，不调用 LLM | `prompt_builder.py` |
+| Mock Answer Generator | 模板化回答生成，不调用真实 LLM | `mock_answer_generator.py` |
+| Citation Check | 校验 citation 来自 retrieved chunks | `workflow.py` |
+| Fallback Rules | 覆盖多种兜底场景 | `fallback_rules.py` |
+| End Node | 返回 AgentResponse | `workflow.py` |
 
 ---
 
@@ -186,25 +215,7 @@ Final Response
 
 ---
 
-## 8. 面试讲法（1 分钟版）
-
-> 这个项目不是单纯把问题丢给 RAG，而是在 RAG 外面包了一层轻量客服 Agent Workflow。
->
-> 用户提问进来，第一步是 Intent Recognition，用规则识别用户是问物流、退货还是退款——这决定了后续用哪个 prompt 模板、怎么检索。
->
-> 检索用的是 M5 实现的 Optimized Retriever，BM25 加 metadata filter 和 query expansion，Recall@5 达到 98%。
->
-> 检索完不是直接生成回答，而是先过 Evidence Check：top score 够不够高、retrieved chunks 和 intent 是否匹配、有没有多意图冲突。证据不足就不答，走 fallback 转人工。
->
-> 生成回答后还有 Citation Check：每个断言必须引用知识库的 doc_id，没有引用就不输出。
->
-> 最后是 Fallback 规则引擎，覆盖 10 种兜底场景：检索无结果、置信度低、知识库外问题、用户情绪激烈、涉及隐私信息等等。
->
-> 整个设计的核心思想是：**宁可不答，不可错答**。客服 Agent 的信任感来自每一步的可追溯性。
-
----
-
-## 9. 设计原则总结
+## 8. 设计原则总结
 
 1. **Rule-first**：M7 全部用规则实现，不接 LLM，确保可测试、可解释。
 2. **Fail-safe**：每个节点的失败都走 fallback，不编造。

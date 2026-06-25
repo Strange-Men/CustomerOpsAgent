@@ -114,10 +114,6 @@ answer_eval.py
   └─ 对比：answer 内容 vs expected_keywords
 ```
 
-### 面试讲法
-
-"我的评测框架有防作弊设计：retriever 看不到 expected 答案，optimized 不为 eval cases 硬编码，所有指标可复现。eval report 不只输出数字，还输出失败 case，方便迭代优化。"
-
 ---
 
 ## 五、数据集设计

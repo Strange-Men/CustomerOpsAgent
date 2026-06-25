@@ -5,9 +5,14 @@ import re
 import sys
 from collections import Counter
 
-from app.rag.chunker import chunk_documents
-from app.rag.loader import load_knowledge_documents
-from app.rag.schemas import KnowledgeChunk, RetrievedChunk
+try:
+    from app.rag.chunker import chunk_documents
+    from app.rag.loader import load_knowledge_documents
+    from app.rag.schemas import KnowledgeChunk, RetrievedChunk
+except ImportError:
+    from backend.app.rag.chunker import chunk_documents
+    from backend.app.rag.loader import load_knowledge_documents
+    from backend.app.rag.schemas import KnowledgeChunk, RetrievedChunk
 
 # ---------------------------------------------------------------------------
 # Tokenizer

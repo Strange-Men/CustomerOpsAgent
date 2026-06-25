@@ -108,10 +108,7 @@ Optimized（M5）：
   ├─ + query rewrite（规则化 query 改写）
   └─ + optional embedding adapter（mock/stub，保留接口）
 
-面试讲法：
-  "我先建立可解释 baseline，再通过可控优化策略提升 Top-5 Recall，
-   而不是一开始堆复杂框架。embedding adapter 作为可选增强，
-   接口已预留但 MVP 用 stub 实现。"
+检索方案设计原则：先建立可解释 baseline，再通过可控优化策略提升 Top-5 Recall，而不是一开始堆复杂框架。embedding adapter 作为可选增强，接口已预留但 MVP 用 stub 实现。
 ```
 
 ### 知识库 Metadata Schema（分层知识库定义）
@@ -132,9 +129,7 @@ Optimized（M5）：
 
 content 为 Markdown 正文，不放在 frontmatter 中。
 
-面试讲法：
-  "我的知识库不是纯文本堆叠，而是按 category、market、language、policy_type 做分层，
-   检索时通过 metadata filter 提升召回准确率。"
+知识库按 category、market、language、policy_type 做分层，检索时通过 metadata filter 提升召回准确率。
 ```
 
 ### 多语种知识库快速迁移
@@ -928,7 +923,7 @@ cd frontend && npm run build
 **如果写错，面试时会被怎么追问**：
 - "你的前端展示了哪些 RAG 信息？"
 - "citations 是怎么展示的？"
-- "为什么前端这么简单？不担心面试官觉得项目不完整吗？"
+- "为什么前端这么简单？不担心项目不完整吗？"
 
 **是否需要 git commit / tag**：
 - ✅ commit: `feat: add minimal RAG demo frontend (chat, eval, bad cases)`
@@ -974,10 +969,7 @@ cd frontend && npm run build
      - 不依赖随机数（如果用随机，必须 fixed seed）
      - eval 结果保存为 JSON，包含 timestamp + config hash
 
-面试讲法：
-  "我的评测框架有防作弊设计：retriever 看不到 expected 答案，
-   optimized 不为 eval cases 硬编码，所有指标可复现。
-   eval report 不只输出数字，还输出失败 case，方便迭代优化。"
+评测框架有防作弊设计：retriever 看不到 expected 答案，optimized 不为 eval cases 硬编码，所有指标可复现。eval report 不只输出数字，还输出失败 case，方便迭代优化。
 ```
 
 ## 七、M0 后文档限制

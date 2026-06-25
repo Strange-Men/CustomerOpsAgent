@@ -17,13 +17,26 @@
 ## [未发布]
 
 ### Added
-- Added `docs/AGENT_WORKFLOW.md` — 轻量客服 Agent Workflow 设计文档（intent recognition / evidence check / citation check / fallback rules / M7 开发范围 / 面试讲法）
+- Added `backend/app/agent/__init__.py` — Agent 模块初始化
+- Added `backend/app/agent/schemas.py` — Agent 层数据结构（RouteType / CustomerIntent / ExtractedVariables / IntentResult / LogisticsToolResult / Citation / EvidenceCheckResult / AgentResponse）
+- Added `backend/app/agent/entity_extractor.py` — 变量提取节点（extract_order_id / extract_customer_variables）
+- Added `backend/app/agent/intent_recognizer.py` — 意图识别节点（recognize_intent，规则驱动，支持中英文关键词）
+- Added `backend/app/agent/logistics_tool.py` — 模拟物流插件（query_mock_logistics，不接真实 API）
+- Added `backend/app/agent/fallback_rules.py` — 兜底规则引擎（detect_sensitive_order_query / detect_private_info_request / evaluate_evidence / should_fallback / build_fallback_answer）
+- Added `backend/app/agent/prompt_builder.py` — 提示构建器（build_customer_service_prompt / build_logistics_prompt）
+- Added `backend/app/agent/mock_answer_generator.py` — 模拟回答生成器（generate_mock_rag_answer / generate_mock_logistics_answer / generate_mock_answer，不调用 LLM）
+- Added `backend/app/agent/workflow.py` — 工作流编排器（run_customer_service_agent，节点式流程：Start → Extract → Intent → Route → Tool/RAG → Fallback → End）
+- Added `backend/tests/test_agent_workflow.py` — Agent 工作流测试（24 个测试用例，覆盖实体提取、意图识别、物流工具、兜底规则、提示构建、回答生成、工作流集成、静态分析）
 
 ### Changed
-- Updated `docs/00_SCOPE_LOCK.md` — 项目定位补充为"轻量客服 RAG Agent"，新增 Agent 层说明
-- Updated `docs/02_RAG_DESIGN.md` — 新增第七节"RAG 与 Agent Workflow 的关系"
-- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M6.5 Agent Workflow 设计补档
-- Updated `docs/CHANGELOG.md` — 追加 M6.5 变更记录
+- Updated `docs/AGENT_WORKFLOW.md` — 新增 M7 节点式流程说明和节点实现状态
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M7 Node-based Agent Workflow，新增 M7 已完成内容
+- Updated `docs/CHANGELOG.md` — 追加 M7 变更记录
+- Updated `docs/00_SCOPE_LOCK.md` — 移除面试相关内容
+- Updated `docs/03_EVAL_DESIGN.md` — 移除面试相关内容
+- Updated `docs/01_ACCEPTANCE_CRITERIA.md` — 移除面试相关内容
+- Updated `docs/PROJECT_CONTEXT.md` — 移除面试相关内容
+- Updated `docs/ROADMAP_V2.md` — 移除面试相关内容
 
 ### Fixed
 - 无
@@ -43,7 +56,6 @@
   - Citation Check 设计（4 条规则）
   - Fallback / Escalation 规则（10 条兜底场景及话术）
   - M7 开发范围（7 个模块 + 不做清单）
-  - 面试讲法（1 分钟版）
   - 设计原则（Rule-first / Fail-safe / Citation-required / Single-pipeline / Intent-aware）
 
 ### Changed
@@ -333,7 +345,6 @@
   - 前端冻结声明（legacy/static demo）
   - 知识库 Metadata Schema（8 字段：doc_id/title/category/market/language/policy_type/priority/source）
   - 多语种知识库快速迁移说明
-  - 面试讲法
 
 - Added `docs/01_ACCEPTANCE_CRITERIA.md` — 两天 MVP 验收标准
   - 简历指标口径说明（"提升 30 个百分点" vs "提升 30%"）

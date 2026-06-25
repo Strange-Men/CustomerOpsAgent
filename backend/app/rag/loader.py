@@ -3,7 +3,10 @@
 import json
 from pathlib import Path
 
-from app.rag.schemas import KnowledgeDocument
+try:
+    from app.rag.schemas import KnowledgeDocument
+except ImportError:
+    from backend.app.rag.schemas import KnowledgeDocument
 
 
 def get_default_knowledge_path() -> Path:

@@ -142,9 +142,6 @@ source: "official_2026Q1"           # 来源
 （Markdown 正文内容）
 ```
 
-**面试讲法**：
-"我的知识库不是纯文本堆叠，而是按 category、market、language、policy_type 做分层，检索时通过 metadata filter 提升召回准确率。"
-
 ---
 
 ## 七、多语种知识库快速迁移

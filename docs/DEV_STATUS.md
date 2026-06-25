@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M6.5: Agent Workflow 设计补档**
+**M7: Node-based Agent Answer Workflow**
 
 ## 2. 当前项目状态
 
-**状态：M6.5 轻量客服 Agent Workflow 设计文档完成**
+**状态：M7 节点式 Agent Workflow 实现完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -43,9 +43,16 @@
 - ✅ EVAL_REPORT_M6.md
 - ✅ baseline vs optimized full 对比（Recall@5: 75.4%→98.4%, MRR: 0.696→0.911）
 - ✅ CLI smoke test
-- ❌ 尚未实现 answer generator
-- ❌ 尚未实现 prompt builder
-- ❌ 尚未实现 RAG API
+- ✅ Entity Extractor - 变量提取节点（M7）
+- ✅ Intent Recognizer - 意图识别节点（M7）
+- ✅ Mock Logistics Tool - 模拟物流插件（M7）
+- ✅ Fallback Rules - 兜底规则引擎（M7）
+- ✅ Prompt Builder - 提示构建器（M7）
+- ✅ Mock Answer Generator - 模拟回答生成器（M7）
+- ✅ Workflow Orchestrator - 工作流编排器（M7）
+- ✅ Agent Workflow Tests - 24 个测试用例（M7）
+- ❌ 尚未实现 answer evaluation（M8）
+- ❌ 尚未实现 RAG API（M9）
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
@@ -59,7 +66,6 @@
   - Citation Check 设计（4 条规则：必须带引用 / 不能引用不存在的 doc_id / 无引用不输出正式答复 / 引用必须来自 retrieved chunks）
   - Fallback / Escalation 规则（10 条：检索无结果 / score 太低 / citation 缺失 / 订单状态 / 知识库外 / 多意图 / 政策风险 / 情绪激烈 / 隐私敏感 / 低置信度）
   - M7 开发范围（7 个模块 + 不做清单）
-  - 面试讲法（1 分钟版）
   - 设计原则总结（Rule-first / Fail-safe / Citation-required / Single-pipeline / Intent-aware）
 
 - ✅ 修改 `docs/00_SCOPE_LOCK.md`
