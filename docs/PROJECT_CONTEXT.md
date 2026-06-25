@@ -51,14 +51,14 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（M10.5.1 - Demo Release Patch）
+## 8. 当前交付状态（M11.5 - Final LLM Adapter Release Checklist）
 
-**Release Version:** v1.0.1-demo (patch)  
-**Base Release:** v1.0.0-demo — preserved, not overwritten  
-**Release Date:** 2026-06-25  
-**Status:** Demo Release Patch (documentation-only hotfix)
+**Release Version:** v1.1.0-demo (minor)
+**Previous Release:** v1.0.1-demo — preserved, not overwritten
+**Release Date:** 2026-06-25
+**Status:** Ready for v1.1.0-demo tag
 
-Patch scope: fixed retrieval eval command in release checklist (PYTHONPATH requirement).
+M11.5 scope: verified mock default, optional real LLM, docs consistency, release tag preparation.
 
 | 能力 | 状态 | 说明 |
 |------|------|------|
@@ -76,6 +76,7 @@ Patch scope: fixed retrieval eval command in release checklist (PYTHONPATH requi
 | Final acceptance report | ✅ | docs/FINAL_ACCEPTANCE_REPORT.md |
 | Release tag | ✅ | v1.0.0-demo (preserved) |
 | Patch tag | ✅ | v1.0.1-demo (docs hotfix) |
+| Minor tag | ✅ | v1.1.0-demo (optional real LLM adapter) |
 | 真实物流 API | ❌ | 使用 mock logistics tool |
 | 真实订单系统 | ❌ | 无 |
 | 前端 | ❌ | 冻结为 legacy demo |
@@ -95,10 +96,10 @@ Patch scope: fixed retrieval eval command in release checklist (PYTHONPATH requi
 - avg_groundedness: 0.8328
 - avg_completeness: 0.5464
 
-**API (M10):**
-- pytest: 220 passed
+**API (M11):**
+- pytest: 233 passed
 - ruff: All checks passed
-- API smoke: passed
+- API smoke: 22 passed
 
 ### Known Limitations
 
@@ -113,10 +114,9 @@ Patch scope: fixed retrieval eval command in release checklist (PYTHONPATH requi
 
 ### Optional Next Steps
 
-- **M11.5: Final LLM Adapter Release Checklist** — Verify mock default, optional real LLM, docs and tag
-- **M12: Real Logistics Adapter** — Connect to actual logistics tracking APIs, replace mock tool
-- **Frontend Integration** — Connect React frontend to FastAPI backend, implement chat UI
-- **Deployment** — Deploy to cloud platform (AWS/GCP/Azure), configure production environment
+- **v1.1.0-demo fresh clone verification** — Clone from GitHub, verify all tests pass
+- **Portfolio materials** — Prepare demo showcase documentation and screenshots
+- **M12: Real Logistics Adapter** — Connect to actual logistics tracking APIs (not recommended immediately)
 
 ## 9. Goal 模式上下文规则
 

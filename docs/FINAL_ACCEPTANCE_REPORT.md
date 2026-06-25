@@ -1,8 +1,9 @@
 # Final Acceptance Report
 
-**Version:** v1.0.0-demo  
-**Date:** 2026-06-25  
-**Status:** Demo Release Ready
+**Current Recommended Release:** v1.1.0-demo
+**Previous Stable:** v1.0.1-demo (preserved)
+**Date:** 2026-06-25
+**Status:** Ready for v1.1.0-demo tag
 
 ---
 
@@ -51,6 +52,10 @@ AgentResponse
 | FastAPI endpoint | ✅ Passed | POST /api/agent/chat |
 | API smoke tests | ✅ Passed | TestClient validation |
 | Optional LLM adapter | ✅ Passed | Mock default, real LLM optional via env vars |
+| LLM adapter abstraction | ✅ Passed | MockLLMAdapter + OpenAICompatibleAdapter + factory |
+| Mock default | ✅ Passed | No env vars = mock mode |
+| Real config missing fallback | ✅ Passed | Partial env vars fallback to mock |
+| API response answer_source | ✅ Passed | Response includes answer_source / llm_provider / llm_model |
 
 **Total Functional Tests:** All components passing
 
@@ -131,7 +136,7 @@ POST /api/agent/chat
 | Empty query validation | ✅ Passed | Empty string rejected with 422 |
 | History limiting | ✅ Passed | Long history truncated appropriately |
 
-**Test Coverage:** 220 pytest cases passing, all API scenarios covered
+**Test Coverage:** 233 pytest cases passing, all API scenarios covered
 
 ---
 
@@ -155,11 +160,11 @@ POST /api/agent/chat
 
 ### Release Status
 
-**Status:** ✅ Demo Release Ready
+**Status:** ✅ Ready for v1.1.0-demo tag
 
-**Version:** v1.0.0-demo
+**Version:** v1.1.0-demo
 
-**Completeness:** All planned milestones (M0-M11) completed successfully.
+**Completeness:** All planned milestones (M0-M11.5) completed successfully.
 
 ### Quality Assessment
 
@@ -167,7 +172,7 @@ POST /api/agent/chat
 |-----------|--------|-------|
 | Retrieval Quality | ⭐⭐⭐⭐⭐ | 98.36% Recall@5, excellent for demo |
 | Answer Quality | ⭐⭐⭐ | 46.72% pass rate, acceptable for demo |
-| API Quality | ⭐⭐⭐⭐ | 220 tests passing, robust error handling |
+| API Quality | ⭐⭐⭐⭐ | 233 tests passing, robust error handling |
 | Documentation | ⭐⭐⭐⭐⭐ | Comprehensive docs, clear setup instructions |
 | Security | ⭐⭐⭐⭐⭐ | All boundaries properly maintained |
 
@@ -175,32 +180,25 @@ POST /api/agent/chat
 
 **Optional Enhancements (Not Required for Demo):**
 
-1. **M11.5: Final LLM Adapter Release Checklist**
-   - Verify mock default, optional real LLM, docs and tag
+1. **v1.1.0-demo fresh clone verification**
+   - Clone from GitHub, verify all tests pass
 
-2. **M12: Real Logistics Adapter**
+2. **Portfolio materials**
+   - Prepare demo showcase documentation and screenshots
+
+3. **M12: Real Logistics Adapter**
    - Connect to actual logistics tracking APIs
    - Replace mock tool with real order tracking
    - Requires: Logistics provider API integration, error handling
 
-3. **Frontend Integration**
-   - Connect React frontend to FastAPI backend
-   - Implement chat UI with real-time responses
-   - Requires: CORS configuration, WebSocket/SSE, state management
-
-4. **Deployment**
-   - Deploy to cloud platform (AWS/GCP/Azure)
-   - Configure production environment
-   - Requires: Containerization, CI/CD, monitoring, scaling
-
-**Priority Recommendation:** For production use, M11 (real LLM) would provide the highest value improvement.
+**Priority Recommendation:** For demo purposes, the current release is complete. For production use, real LLM integration would provide the highest value improvement.
 
 ---
 
 ## Acceptance Sign-off
 
-**Accepted for Demo Release:** ✅  
-**Date:** 2026-06-25  
-**Version:** v1.0.0-demo
+**Accepted for Demo Release:** ✅
+**Date:** 2026-06-25
+**Version:** v1.1.0-demo
 
 All acceptance criteria met. The system is ready for demonstration and evaluation purposes.

@@ -1,8 +1,9 @@
 # Final Release Checklist
 
-**Version:** v1.0.0-demo  
+**Current Recommended Release:** v1.1.0-demo  
+**Previous Stable:** v1.0.1-demo (preserved)  
 **Date:** 2026-06-25  
-**Status:** Demo Release Ready
+**Status:** Ready for v1.1.0-demo tag
 
 ---
 
@@ -46,6 +47,7 @@
 | M10 | Agent API Smoke Demo | ✅ Completed |
 | M10.5 | Final Release Checklist | ✅ Completed |
 | M11 | Optional Real LLM Adapter | ✅ Completed |
+| M11.5 | Final LLM Adapter Release Checklist | ✅ Completed |
 
 ---
 
@@ -54,7 +56,7 @@
 ### Run All Tests
 
 ```bash
-pytest backend/tests/test_data_schema.py backend/tests/test_loader_chunker.py backend/tests/test_retriever.py backend/tests/test_retrieval_eval.py backend/tests/test_optimized_retriever.py backend/tests/test_full_eval_dataset.py backend/tests/test_agent_workflow.py backend/tests/test_answer_eval.py backend/tests/test_answer_workflow_optimization.py backend/tests/test_agent_api.py -v
+pytest backend/tests/test_data_schema.py backend/tests/test_loader_chunker.py backend/tests/test_retriever.py backend/tests/test_retrieval_eval.py backend/tests/test_optimized_retriever.py backend/tests/test_full_eval_dataset.py backend/tests/test_agent_workflow.py backend/tests/test_answer_eval.py backend/tests/test_answer_workflow_optimization.py backend/tests/test_agent_api.py backend/tests/test_llm_adapter.py -v
 ```
 
 ### Run Ruff Linter
@@ -135,19 +137,24 @@ curl -X POST http://127.0.0.1:8000/api/agent/chat \
 | Avg Groundedness | 0.8328 |
 | Avg Completeness | 0.5464 |
 
-### API Quality (M10)
+### API Quality (M11)
 
 | Metric | Value |
 |--------|-------|
-| Pytest | **220 passed** |
+| Pytest | **233 passed** |
 | Ruff | **All checks passed** |
-| API Smoke Test | **Passed** |
+| API Smoke Test | **22 passed** |
+| LLM Adapter Tests | **13 passed** |
 
 ---
 
 ## 5. Safety Checklist
 
 - [x] **No real LLM API by default** - Using mock answer generator; real LLM is optional, requires explicit env config
+- [x] **LLM adapter abstraction passed** - MockLLMAdapter + OpenAICompatibleAdapter + fallback verified
+- [x] **Mock default verified** - No env vars = mock mode
+- [x] **Missing config fallback verified** - Partial env vars = fallback to mock
+- [x] **API response answer_source verified** - Response includes answer_source / llm_provider / llm_model
 - [x] **No real logistics API** - Using mock logistics tool
 - [x] **No real order system** - Using seed data only
 - [x] **No API key / app_key** - No external service credentials stored
@@ -172,16 +179,16 @@ curl -X POST http://127.0.0.1:8000/api/agent/chat \
 
 ## 7. Release Tag
 
-**Tag:** `v1.0.0-demo`  
-**Commit:** Will be marked by Git tag after final commit  
-**Annotation:** CustomerOpsAgent demo release: RAG Agent API smoke demo
+**Current Tag:** `v1.1.0-demo`
+**Previous Tags:** `v1.0.1-demo` (preserved), `v1.0.0-demo` (preserved)
+**Annotation:** CustomerOpsAgent v1.1.0 demo release: optional real LLM adapter
 
 ---
 
 ## Checklist Summary
 
 - [x] All milestones completed (M0-M11)
-- [x] All tests passing (220 tests)
+- [x] All tests passing (233 tests)
 - [x] Ruff linter passing
 - [x] Retrieval evaluation passing (98.36% Recall@5)
 - [x] Answer evaluation completed

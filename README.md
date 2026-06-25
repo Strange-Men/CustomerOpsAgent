@@ -39,6 +39,7 @@ API response includes `answer_source` field: `"mock"` (default), `"real_llm"` (r
 - [Dev Status](docs/DEV_STATUS.md)
 - [Change Log](docs/CHANGELOG.md)
 - [LLM Adapter](docs/LLM_ADAPTER.md)
+- [Final LLM Adapter Release Checklist](docs/FINAL_LLM_ADAPTER_RELEASE_CHECKLIST.md)
 - [PRD](docs/PRD.md)
 - [Design](docs/DESIGN.md)
 - [Technical Spec](docs/TECHNICAL_SPEC.md)
@@ -129,7 +130,7 @@ See [docs/API_SMOKE_DEMO.md](docs/API_SMOKE_DEMO.md) for more examples.
 
 ## Development Status
 
-M10.5 completed. Demo release ready. See [Dev Status](docs/DEV_STATUS.md) for details.
+M11.5 completed. Ready for v1.1.0-demo tag. See [Dev Status](docs/DEV_STATUS.md) for details.
 
 ## 许可证
 

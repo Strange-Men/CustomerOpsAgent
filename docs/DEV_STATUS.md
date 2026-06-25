@@ -2,15 +2,15 @@
 
 ## 1. 当前阶段
 
-**M11: Optional Real LLM Adapter**
+**M11.5: Final LLM Adapter Release Checklist**
 
-Added optional real LLM adapter for answer generation. Default remains mock. No API key = no real LLM calls.
+Verified mock default, optional real LLM adapter, docs consistency, and release tag preparation. Ready for v1.1.0-demo tag.
 
 Previous release: M10.5.1 (v1.0.1-demo) — preserved, not overwritten.
 
 ## 2. 当前项目状态
 
-**状态：Optional Real LLM Adapter Added / Default Mock Remains**
+**状态：Ready for v1.1.0-demo Tag**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -101,6 +101,26 @@ Previous release: M10.5.1 (v1.0.1-demo) — preserved, not overwritten.
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
+
+### M11.5：Final LLM Adapter Release Checklist（本轮）
+
+- ✅ 创建 `docs/FINAL_LLM_ADAPTER_RELEASE_CHECKLIST.md`
+  - Release Scope（v1.1.0-demo，mock 默认 + optional real LLM）
+  - New Capabilities Since v1.0.1-demo（8 项新能力）
+  - Verification Checklist（12 项检查全部 passed）
+  - Required Commands（pytest / ruff / retrieval eval / answer eval / API smoke）
+  - Optional Real LLM Smoke（placeholder 示例 + 安全规则）
+  - Final Metrics（233 passed / ruff ok / eval results）
+  - Known Limitations（10 项限制）
+  - Release Tag（v1.1.0-demo，保留旧 tag）
+
+- ✅ 更新 `README.md`
+  - Development Status 更新为 M11.5
+  - Docs Index 新增 Final LLM Adapter Release Checklist
+
+- ✅ 更新 `docs/DEV_STATUS.md` — 当前阶段更新为 M11.5
+- ✅ 更新 `docs/CHANGELOG.md` — 追加 M11.5 变更记录
+- ✅ 更新 `docs/PROJECT_CONTEXT.md` — 更新 release 版本和能力快照
 
 ### M11：Optional Real LLM Adapter（本轮）
 
@@ -422,17 +442,18 @@ Previous release: M10.5.1 (v1.0.1-demo) — preserved, not overwritten.
 
 ## 5. 下一步
 
-**可选后续工作：**
+**下一步建议：**
 
-- **M11.5: Final LLM Adapter Release Checklist** — 验证 mock 默认、optional real LLM、文档与 tag
-- **M12: Real Logistics Adapter** — 连接真实物流追踪 API，替换 mock logistics tool
-- **Frontend Integration** — 连接 React 前端到 FastAPI 后端，实现聊天 UI
-- **Deployment** — 部署到云平台（AWS/GCP/Azure），配置生产环境
+- **v1.1.0-demo fresh clone verification** — 从 GitHub 全新 clone，验证所有测试通过
+- **作品集展示材料** — 整理 demo 展示文档和截图
+- **可选：M12 Real Logistics Adapter** — 连接真实物流追踪 API（不建议马上做）
 
 **当前已完成：**
+- ✅ M11.5 Final LLM Adapter Release Checklist
 - ✅ M11 Optional Real LLM Adapter
 - ✅ M10.5 Final Release Checklist
-- ✅ Release tag: v1.0.1-demo
+- ✅ Release tag: v1.1.0-demo (pending tag)
+- ✅ Release tag: v1.0.1-demo (preserved)
 
 ## 6. 风险点
 

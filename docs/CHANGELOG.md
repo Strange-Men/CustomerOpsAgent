@@ -14,6 +14,31 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.1.0-demo] — 2026-06-25
+
+### Added
+- Added `docs/FINAL_LLM_ADAPTER_RELEASE_CHECKLIST.md` — Final LLM adapter release checklist
+  - Release scope (v1.1.0-demo, mock default + optional real LLM)
+  - New capabilities since v1.0.1-demo (8 items)
+  - Verification checklist (12 items, all passed)
+  - Required commands (pytest / ruff / retrieval eval / answer eval / API smoke)
+  - Optional real LLM smoke (placeholder examples + safety rules)
+  - Final metrics (233 passed / ruff ok / eval results)
+  - Known limitations (10 items)
+  - Release tag (v1.1.0-demo, preserving old tags)
+
+### Changed
+- Updated `README.md` — Development Status to M11.5, Docs Index with new checklist
+- Updated `docs/DEV_STATUS.md` — Current stage updated to M11.5, next steps updated
+- Updated `docs/PROJECT_CONTEXT.md` — Release version to v1.1.0-demo, capability snapshot
+
+### Notes
+- No business logic changes. No test logic changes. No eval logic changes.
+- No real logistics API. No secrets committed.
+- v1.0.1-demo and v1.0.0-demo remain preserved.
+
+---
+
 ## [未发布 - M11]
 
 ### Added
