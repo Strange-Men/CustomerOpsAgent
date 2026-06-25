@@ -31,6 +31,8 @@ See [docs/API_SMOKE_DEMO.md](docs/API_SMOKE_DEMO.md) for endpoint details, reque
 - [Project Context](docs/PROJECT_CONTEXT.md)
 - [Agent Workflow](docs/AGENT_WORKFLOW.md)
 - [API Smoke Demo](docs/API_SMOKE_DEMO.md)
+- [Final Release Checklist](docs/FINAL_RELEASE_CHECKLIST.md)
+- [Final Acceptance Report](docs/FINAL_ACCEPTANCE_REPORT.md)
 - [Dev Status](docs/DEV_STATUS.md)
 - [Change Log](docs/CHANGELOG.md)
 - [PRD](docs/PRD.md)
@@ -122,7 +124,7 @@ See [docs/API_SMOKE_DEMO.md](docs/API_SMOKE_DEMO.md) for more examples.
 
 ## Development Status
 
-M10 completed. See [Dev Status](docs/DEV_STATUS.md) for details.
+M10.5 completed. Demo release ready. See [Dev Status](docs/DEV_STATUS.md) for details.
 
 ## 许可证
 

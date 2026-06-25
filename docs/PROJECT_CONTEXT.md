@@ -51,7 +51,11 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（M10）
+## 8. 当前交付状态（M10.5 - Demo Release Ready）
+
+**Release Version:** v1.0.0-demo  
+**Release Date:** 2026-06-25  
+**Status:** Demo Release Ready
 
 | 能力 | 状态 | 说明 |
 |------|------|------|
@@ -64,10 +68,50 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | Fallback rules | ✅ | 10 条兜底规则 |
 | Answer quality evaluation | ✅ | 6 指标评估，122-case 全量评测 |
 | FastAPI API endpoint | ✅ | POST /api/agent/chat |
+| Final release checklist | ✅ | docs/FINAL_RELEASE_CHECKLIST.md |
+| Final acceptance report | ✅ | docs/FINAL_ACCEPTANCE_REPORT.md |
+| Release tag | ✅ | v1.0.0-demo |
 | 真实 LLM | ❌ | 使用 mock answer generator |
 | 真实物流 API | ❌ | 使用 mock logistics tool |
 | 真实订单系统 | ❌ | 无 |
 | 前端 | ❌ | 冻结为 legacy demo |
+
+### Final Metrics
+
+**Retrieval (M6):**
+- Optimized Recall@5: 98.36%
+- Optimized MRR: 0.9108
+- Optimized failed_cases: 2
+
+**Answer (M9.5):**
+- answer_pass_rate: 46.72%
+- fallback_rate: 13.11%
+- citation_hit_rate: 83.61%
+- avg_relevance: 0.7566
+- avg_groundedness: 0.8328
+- avg_completeness: 0.5464
+
+**API (M10):**
+- pytest: 220 passed
+- ruff: All checks passed
+- API smoke: passed
+
+### Known Limitations
+
+1. **Mock Answer Generator** — Uses predefined response templates, not real LLM generation
+2. **Mock Logistics Tool** — Simulates API responses, not connected to real logistics systems
+3. **Answer Quality** — Pass rate (46.72%) indicates demo quality, not production-grade performance
+4. **Rule-based Intent Recognition** — May have edge cases with complex or ambiguous queries
+5. **No User Session Persistence** — Each request is stateless, no conversation history maintained
+6. **No Production Deployment** — Designed for local development and demo purposes only
+7. **Limited Domain Coverage** — Optimized for customs and logistics queries, may not generalize to other domains
+
+### Optional Next Steps
+
+- **M11: Real LLM Adapter** — Integrate with OpenAI/Claude/other LLM APIs, replace mock answer generator
+- **M12: Real Logistics Adapter** — Connect to actual logistics tracking APIs, replace mock tool
+- **Frontend Integration** — Connect React frontend to FastAPI backend, implement chat UI
+- **Deployment** — Deploy to cloud platform (AWS/GCP/Azure), configure production environment
 
 ## 9. Goal 模式上下文规则
 

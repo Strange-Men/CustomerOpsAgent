@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M10: API Smoke Demo + Final Docs Consolidation**
+**M10.5: Final Release Checklist**
 
 ## 2. 当前项目状态
 
-**状态：M10 完成**
+**状态：Demo Release Ready**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -86,9 +86,55 @@
   - ✅ API 测试（test_agent_api.py, 9 个测试用例）
   - ✅ docs/API_SMOKE_DEMO.md — API smoke demo 文档
   - ✅ README 更新（Features / API Smoke Demo / Evaluation / Limitations）
+- ✅ Final Release Checklist（M10.5）
+  - ✅ docs/FINAL_RELEASE_CHECKLIST.md — 最终发布检查清单
+  - ✅ docs/FINAL_ACCEPTANCE_REPORT.md — 最终验收报告
+  - ✅ README 更新（Documentation 链接、Development Status）
+  - ✅ DEV_STATUS 更新（当前阶段、下一步、已完成）
+  - ✅ CHANGELOG 追加 M10.5 记录
+  - ✅ PROJECT_CONTEXT 更新（current release status、final capability snapshot、limitations、next optional work）
+  - ✅ Release tag: v1.0.0-demo
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
+
+### M10.5：Final Release Checklist（本轮）
+
+- ✅ 创建 `docs/FINAL_RELEASE_CHECKLIST.md`
+  - Release Scope 说明（demo release 定位）
+  - Completed Milestones 列表（M0-M10.5）
+  - Verification Commands（pytest / ruff / retrieval eval / answer eval / API smoke demo）
+  - Final Metrics（retrieval / answer / API 指标）
+  - Safety Checklist（7 项安全检查）
+  - Known Limitations（7 项已知限制）
+  - Release Tag（v1.0.0-demo）
+
+- ✅ 创建 `docs/FINAL_ACCEPTANCE_REPORT.md`
+  - Acceptance Summary（核心链路说明）
+  - Functional Acceptance（13 项功能验收）
+  - Evaluation Acceptance（retrieval / answer 评测结果）
+  - API Acceptance（7 个已验收场景）
+  - Security / Boundary Acceptance（7 项安全检查）
+  - Final Status（demo release ready + 可选后续工作）
+
+- ✅ 更新 `README.md`
+  - Documentation 链接新增 Final Release Checklist 和 Final Acceptance Report
+  - Development Status 更新为 M10.5 demo release ready
+
+- ✅ 更新 `docs/DEV_STATUS.md`
+  - 当前阶段更新为 M10.5 Final Release Checklist
+  - 当前状态更新为 Demo Release Ready
+  - 新增 M10.5 已完成内容
+  - 下一步更新为可选后续工作（M11/M12/frontend/deployment）
+
+- ✅ 更新 `docs/CHANGELOG.md`
+  - 追加 M10.5 变更记录
+
+- ✅ 更新 `docs/PROJECT_CONTEXT.md`
+  - 补充 current release status（v1.0.0-demo）
+  - 补充 final capability snapshot
+  - 补充 limitations
+  - 补充 next optional work
 
 ### M10：Agent API Smoke Demo + Final Docs Consolidation（本轮）
 
@@ -338,14 +384,18 @@
 
 ## 5. 下一步
 
-**M10.5：Final Release Checklist**
+**可选后续工作：**
 
-M10 完成后已具备：
-- FastAPI endpoint: POST /api/agent/chat
-- AgentChatRequest / AgentChatResponse Pydantic schemas
-- API tests (9 test cases)
-- docs/API_SMOKE_DEMO.md
-- README run guide with API smoke test example
+- **M11: Real LLM Adapter** — 集成 OpenAI/Claude/其他 LLM API，替换 mock answer generator
+- **M12: Real Logistics Adapter** — 连接真实物流追踪 API，替换 mock logistics tool
+- **Frontend Integration** — 连接 React 前端到 FastAPI 后端，实现聊天 UI
+- **Deployment** — 部署到云平台（AWS/GCP/Azure），配置生产环境
+
+**当前已完成：**
+- ✅ M10.5 Final Release Checklist
+- ✅ Final Release Checklist 文档
+- ✅ Final Acceptance Report 文档
+- ✅ Release tag: v1.0.0-demo
 
 ## 6. 风险点
 

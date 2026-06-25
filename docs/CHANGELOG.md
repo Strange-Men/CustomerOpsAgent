@@ -17,6 +17,41 @@
 ## [未发布]
 
 ### Added
+- Added `docs/FINAL_RELEASE_CHECKLIST.md` — Final release checklist
+  - Release scope (demo release positioning)
+  - Completed milestones (M0-M10.5)
+  - Verification commands (pytest / ruff / retrieval eval / answer eval / API smoke demo)
+  - Final metrics (retrieval / answer / API)
+  - Safety checklist (7 items)
+  - Known limitations (7 items)
+  - Release tag: v1.0.0-demo
+- Added `docs/FINAL_ACCEPTANCE_REPORT.md` — Final acceptance report
+  - Acceptance summary (core pipeline)
+  - Functional acceptance (13 components)
+  - Evaluation acceptance (retrieval + answer metrics)
+  - API acceptance (7 verified scenarios)
+  - Security / boundary acceptance (7 checks)
+  - Final status (demo release ready + optional next steps)
+
+### Changed
+- Updated `README.md`
+  - Added Documentation links for Final Release Checklist and Final Acceptance Report
+  - Updated Development Status to M10.5 demo release ready
+- Updated `docs/DEV_STATUS.md`
+  - Current stage updated to M10.5 Final Release Checklist
+  - Current status updated to Demo Release Ready
+  - Added M10.5 completed content
+  - Updated next steps to optional work (M11/M12/frontend/deployment)
+- Updated `docs/CHANGELOG.md` — Added M10.5 entry
+- Updated `docs/PROJECT_CONTEXT.md`
+  - Added current release status (v1.0.0-demo)
+  - Added final capability snapshot
+  - Added limitations
+  - Added next optional work
+
+---
+
+### Added
 - Added `backend/app/api/agent.py` — Agent Chat API router
   - `POST /api/agent/chat` — wraps `run_customer_service_agent()` as FastAPI endpoint
   - `AgentChatRequest` — request schema (user_query / order_id / conversation_history)
