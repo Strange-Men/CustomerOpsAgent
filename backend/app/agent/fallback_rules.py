@@ -154,8 +154,9 @@ def should_fallback(
     if intent_result.route_intent == "other" or intent_result.detail_intent == "unknown":
         return True, "unknown_intent"
 
-    # Rule 3: Logistics query but missing order ID
-    if intent_result.route_intent == "logistics":
+    # Rule 3: Logistics status query but missing order ID
+    # Only applies to logistics_status (real tracking queries), not logistics_policy
+    if intent_result.route_intent == "logistics" and intent_result.detail_intent == "logistics_status":
         if variables and not variables.has_order_id:
             return True, "missing_order_id"
 

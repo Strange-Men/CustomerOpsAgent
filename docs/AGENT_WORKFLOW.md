@@ -77,11 +77,12 @@ End Node（返回结果）
 
 ## 3. Intent Recognition 意图识别
 
-### 支持的 Intent
+### 支持的 Intent（M9 更新）
 
 | Intent | 说明 | 示例 Query |
 |--------|------|-----------|
-| `logistics` | 物流配送 | "快递到哪了"、"shipping delay" |
+| `logistics_status` | 物流状态查询（需订单号） | "快递到哪了"、"track my order" |
+| `logistics_policy` | 物流政策/时效查询（走 RAG） | "物流多久到"、"shipping time" |
 | `customs` | 清关 | "清关要多久"、"customs clearance" |
 | `return` | 退货 | "怎么退货"、"return policy" |
 | `refund` | 退款 | "退款多久到账"、"refund status" |
@@ -92,6 +93,12 @@ End Node（返回结果）
 | `package` | 包裹问题 | "包裹破损"、"package lost" |
 | `coupon` | 优惠券 | "优惠码不能用"、"coupon not working" |
 | `unknown` | 无法识别 | 非客服问题、语言无法判断 |
+
+### M9 关键改进
+
+- **物流意图拆分**：`logistics_status`（需订单号）vs `logistics_policy`（走 RAG）
+- **消歧规则**：包裹问题关键词（丢、碎、坏）优先于物流状态；政策关键词（取消、退款）优先于物流状态
+- **missing_order_id 只适用于真实物流状态查询**，不适用于政策查询
 
 ### 实现策略
 

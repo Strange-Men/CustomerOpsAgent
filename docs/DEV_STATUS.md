@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M8: Answer Quality Evaluation**
+**M9: Answer Workflow Optimization**
 
 ## 2. 当前项目状态
 
-**状态：M8 Answer Quality Evaluation 完成**
+**状态：M9 Answer Workflow Optimization 完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -58,7 +58,18 @@
   - ✅ EVAL_REPORT_M8.md — 公开技术报告
   - ✅ CLI smoke test: `python -m backend.app.eval.answer_eval`
   - ✅ Answer Pass Rate: 31.97%（baseline，暴露 routing / completeness 问题）
-- ❌ 尚未实现 RAG API（M9）
+- ✅ Answer Workflow Optimization（M9）
+  - ✅ 意图识别优化：logistics 拆分为 logistics_status / logistics_policy
+  - ✅ 路由决策优化：政策查询走 RAG，不要求 order_id
+  - ✅ 兜底规则优化：missing_order_id 只适用于真实物流状态查询
+  - ✅ Mock 回答优化：使用多个 retrieved chunks 的 evidence
+  - ✅ 消歧规则：包裹/政策关键词优先于物流状态
+  - ✅ M9 answer quality 测试（test_answer_workflow_optimization.py, 19 个测试用例）
+  - ✅ EVAL_REPORT_M9.md — M9 评测报告
+  - ✅ ANSWER_WORKFLOW_OPTIMIZATION_LOG.md — 优化日志
+  - ✅ Answer Pass Rate: 44.26%（+12.29% vs M8）
+  - ✅ Fallback Rate: 15.57%（-24.59% vs M8）
+- ❌ 尚未实现 RAG API（M10）
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
@@ -308,7 +319,7 @@ M9 目标：
 | mock answer 被误认为真实 LLM | 结果不代表 LLM 质量 | EVAL_REPORT_M8.md 明确标注 mock |
 | logistics tool 被误认为真实 API | 结果不代表真实物流 | EVAL_REPORT_M8.md 明确标注 mock |
 | expected_keywords 泄露进 agent workflow | 作弊 | 静态检查 agent 模块不包含 eval 字段 |
-| public docs 混入个人面试/复习内容 | 违反公开文档规范 | 静态测试扫描禁用关键词 |
+| public docs 混入非公开内容 | 违反公开文档规范 | 静态测试扫描禁用关键词 |
 
 ## 7. 当前禁止事项
 

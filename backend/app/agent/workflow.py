@@ -74,8 +74,8 @@ def run_customer_service_agent(
     # Route Decision
     # ============================================================
 
-    # Route 1: Logistics Tool Route
-    if intent_result.route_intent == "logistics":
+    # Route 1: Logistics Tool Route (logistics_status: real tracking queries)
+    if intent_result.route_intent == "logistics" and intent_result.detail_intent == "logistics_status":
         # Call mock logistics tool
         tool_result = query_mock_logistics(variables.order_id)
 

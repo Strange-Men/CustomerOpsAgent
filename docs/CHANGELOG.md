@@ -17,6 +17,41 @@
 ## [未发布]
 
 ### Added
+- Added `backend/tests/test_answer_workflow_optimization.py` — M9 answer workflow optimization tests（19 个测试用例）
+- Added `docs/ANSWER_WORKFLOW_OPTIMIZATION_LOG.md` — M9 answer workflow optimization log
+- Added `docs/EVAL_REPORT_M9.md` — M9 answer quality evaluation report
+
+### Changed
+- Updated `backend/app/agent/intent_recognizer.py` — M9 intent recognition optimization
+  - Split `logistics` intent into `logistics_status` (tracking, needs order_id) and `logistics_policy` (policy, uses RAG)
+  - Added disambiguation rules: package keywords override logistics_status; policy keywords override logistics_status
+  - Added `_PACKAGE_OVERRIDE_KEYWORDS` and `_POLICY_OVERRIDE_KEYWORDS` for smarter disambiguation
+- Updated `backend/app/agent/fallback_rules.py` — M9 fallback rule optimization
+  - `missing_order_id` only triggers for `logistics_status` intent, not `logistics_policy`
+- Updated `backend/app/agent/mock_answer_generator.py` — M9 mock answer optimization
+  - Uses content from top 3 chunks instead of just 1
+  - Includes up to 300 chars per chunk (was 200)
+  - Adds citation references in answer text
+  - Deduplicates similar content across chunks
+  - Added `_extract_evidence_sentences()` helper function
+- Updated `backend/app/agent/schemas.py` — Updated detail_intent description to include new intents
+- Updated `backend/app/agent/workflow.py` — Updated route decision for logistics_status
+- Updated `backend/tests/test_agent_workflow.py` — Updated tests for new intent split
+- Updated `docs/AGENT_WORKFLOW.md` — Updated intent recognition section for M9
+- Updated `docs/DEV_STATUS.md` — Current stage updated to M9
+- Updated `docs/CHANGELOG.md` — Added M9 entry
+
+### M9 Answer Quality Results
+- avg_relevance: 0.5967 → 0.7418 (+0.1451)
+- avg_groundedness: 0.6959 → 0.8205 (+0.1246)
+- avg_completeness: 0.3396 → 0.5225 (+0.1829)
+- citation_hit_rate: 56.56% → 81.15% (+24.59%)
+- answer_pass_rate: 31.97% → 44.26% (+12.29%)
+- fallback_rate: 40.16% → 15.57% (-24.59%)
+- failed_cases: 83 → 68 (-15)
+
+---
+
 - Added `backend/app/eval/answer_eval.py` — Answer quality evaluation harness
   - `normalize_text(text)` — 文本归一化（大小写、空白）
   - `keyword_coverage(answer, expected_keywords)` — 关键词覆盖率（支持中英文）

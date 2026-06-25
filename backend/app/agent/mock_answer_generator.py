@@ -44,6 +44,52 @@ def _build_citations(retrieved_chunks: list["RetrievedChunk"]) -> list[Citation]
     return citations
 
 
+def _extract_evidence_sentences(
+    retrieved_chunks: list["RetrievedChunk"],
+    max_chunks: int = 3,
+    max_chars_per_chunk: int = 300,
+) -> str:
+    """
+    Extract key evidence sentences from multiple retrieved chunks.
+
+    Uses content from top N chunks to improve keyword coverage.
+
+    Args:
+        retrieved_chunks: Retrieved evidence chunks
+        max_chunks: Maximum number of chunks to use
+        max_chars_per_chunk: Maximum characters per chunk content
+
+    Returns:
+        Combined evidence text from multiple chunks
+    """
+    evidence_parts = []
+    seen_content = set()
+
+    for chunk in retrieved_chunks[:max_chunks]:
+        content = chunk.content.strip()
+        if not content:
+            continue
+        # Deduplicate similar content
+        content_key = content[:50]
+        if content_key in seen_content:
+            continue
+        seen_content.add(content_key)
+
+        # Truncate if too long
+        if len(content) > max_chars_per_chunk:
+            # Try to find a sentence boundary
+            truncated = content[:max_chars_per_chunk]
+            last_period = max(truncated.rfind("。"), truncated.rfind("；"), truncated.rfind("."))
+            if last_period > max_chars_per_chunk // 2:
+                content = truncated[:last_period + 1]
+            else:
+                content = truncated + "..."
+
+        evidence_parts.append(content)
+
+    return "\n\n".join(evidence_parts)
+
+
 def generate_mock_rag_answer(
     query: str,
     intent_result: IntentResult,
@@ -53,6 +99,7 @@ def generate_mock_rag_answer(
     Generate a mock answer for RAG-based routes.
 
     This is a template-based implementation that does not call real LLM APIs.
+    Uses content from multiple retrieved chunks for better evidence coverage.
 
     Args:
         query: User query
@@ -68,40 +115,105 @@ def generate_mock_rag_answer(
     # Build retrieved doc IDs
     retrieved_doc_ids = list(dict.fromkeys(c.doc_id for c in retrieved_chunks))
 
-    # Get top chunk content for answer
-    if retrieved_chunks:
-        top_chunk = retrieved_chunks[0]
-        top_content = top_chunk.content[:200] + "..." if len(top_chunk.content) > 200 else top_chunk.content
-        top_doc_id = top_chunk.doc_id
-    else:
-        top_content = ""
-        top_doc_id = ""
+    # Extract evidence from multiple chunks
+    evidence_text = _extract_evidence_sentences(retrieved_chunks, max_chunks=3)
 
-    # Build answer based on intent
+    # Build citation references
+    citation_refs = []
+    seen_doc_ids = set()
+    for chunk in retrieved_chunks[:3]:
+        if chunk.doc_id not in seen_doc_ids:
+            seen_doc_ids.add(chunk.doc_id)
+            citation_refs.append(f"{chunk.doc_id} ({chunk.title})")
+    citation_section = "、".join(citation_refs) if citation_refs else "知识库"
+
+    # Build answer based on intent with improved evidence coverage
     detail_intent = intent_result.detail_intent
 
     if detail_intent == "customs":
-        answer = f"您好，关于清关问题：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如有进一步问题，建议您联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的清关问题，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"建议您耐心等待清关完成，如有进一步问题可联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "return":
-        answer = f"您好，关于退货政策：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如需申请退货，建议您登录账户操作或联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的退货政策，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如需申请退货，建议您登录账户操作或联系人工客服获取帮助。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "refund":
-        answer = f"您好，关于退款问题：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n退款到账时间以支付平台实际处理为准。如有疑问，请联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的退款问题，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"退款到账时间以支付平台实际处理为准。如有疑问，请联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "exchange":
-        answer = f"您好，关于换货政策：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如需申请换货，建议您登录账户操作或联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的换货政策，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如需申请换货，建议您登录账户操作或联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "address":
-        answer = f"您好，关于地址修改：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如需修改地址，请尽快登录账户操作或联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的地址修改问题，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如需修改地址，请尽快登录账户操作或联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "order":
-        answer = f"您好，关于订单问题：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如有其他问题，请联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的订单问题，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如有其他问题，请联系人工客服获取帮助。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "payment":
-        answer = f"您好，关于支付问题：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如遇支付异常，建议您检查支付方式或联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的支付问题，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如遇支付异常，建议您检查支付方式或联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "package":
-        answer = f"您好，关于包裹问题：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如包裹有损坏或丢失，请及时联系人工客服处理。"
+        answer = (
+            f"您好，关于您咨询的包裹问题，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如包裹有损坏或丢失，请及时联系人工客服处理。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "coupon":
-        answer = f"您好，关于优惠券问题：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如有其他问题，请联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的优惠券问题，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如有其他问题，请联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     elif detail_intent == "trace":
-        answer = f"您好，关于产品溯源信息：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如需更详细的溯源信息，建议您查看产品包装或联系人工客服。"
+        answer = (
+            f"您好，关于您咨询的产品溯源信息，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如需更详细的溯源信息，建议您查看产品包装或联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
+    elif detail_intent == "logistics_policy":
+        answer = (
+            f"您好，关于您咨询的物流配送问题，根据当前知识库：\n\n"
+            f"{evidence_text}\n\n"
+            f"如有其他物流问题，请联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
     else:
-        answer = f"您好，根据知识库信息：\n\n{top_content}\n\n以上信息来自文档 {top_doc_id}。\n\n如有其他问题，请联系人工客服。"
+        answer = (
+            f"您好，根据当前知识库信息：\n\n"
+            f"{evidence_text}\n\n"
+            f"如有其他问题，请联系人工客服。\n\n"
+            f"以上信息参考：{citation_section}。"
+        )
 
     return AgentResponse(
         answer=answer,

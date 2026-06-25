@@ -115,12 +115,19 @@ class TestEntityExtractor:
 class TestIntentRecognizer:
     """Tests for intent recognition."""
 
-    def test_recognize_intent_logistics_zh(self):
-        """Test recognizing logistics intent in Chinese."""
+    def test_recognize_intent_logistics_policy_zh(self):
+        """Test recognizing logistics policy intent in Chinese."""
         query = "我的包裹多久能到"
         result = recognize_intent(query)
+        assert result.route_intent == "aftersale"
+        assert result.detail_intent == "logistics_policy"
+
+    def test_recognize_intent_logistics_status_zh(self):
+        """Test recognizing logistics status intent in Chinese."""
+        query = "我的快递到哪了"
+        result = recognize_intent(query)
         assert result.route_intent == "logistics"
-        assert result.detail_intent == "logistics"
+        assert result.detail_intent == "logistics_status"
 
     def test_recognize_intent_aftersale_refund_zh(self):
         """Test recognizing aftersale/refund intent in Chinese."""
@@ -262,10 +269,10 @@ class TestFallbackRules:
         assert reason == "unknown_intent"
 
     def test_should_fallback_missing_order_id(self):
-        """Test fallback for logistics without order ID."""
+        """Test fallback for logistics_status without order ID."""
         intent = IntentResult(
             route_intent="logistics",
-            detail_intent="logistics",
+            detail_intent="logistics_status",
             confidence=0.8,
         )
         variables = ExtractedVariables(order_id=None, has_order_id=False)
@@ -273,11 +280,28 @@ class TestFallbackRules:
         assert should is True
         assert reason == "missing_order_id"
 
+    def test_should_not_fallback_logistics_policy_without_order_id(self):
+        """Test that logistics_policy does not fallback without order ID."""
+        intent = IntentResult(
+            route_intent="aftersale",
+            detail_intent="logistics_policy",
+            confidence=0.8,
+        )
+        variables = ExtractedVariables(order_id=None, has_order_id=False)
+        evidence = EvidenceCheckResult(
+            has_evidence=True,
+            confidence="medium",
+            reasons=["top score 中等"],
+        )
+        should, reason = should_fallback("物流多久到", intent, evidence=evidence, variables=variables)
+        assert should is False
+        assert reason is None
+
     def test_should_fallback_tool_failed(self):
         """Test fallback for failed tool call."""
         intent = IntentResult(
             route_intent="logistics",
-            detail_intent="logistics",
+            detail_intent="logistics_status",
             confidence=0.8,
         )
         tool_result = LogisticsToolResult(
@@ -384,7 +408,7 @@ class TestPromptBuilder:
 
         intent = IntentResult(
             route_intent="aftersale",
-            detail_intent="logistics",
+            detail_intent="logistics_policy",
             confidence=0.8,
         )
 
@@ -444,7 +468,7 @@ class TestMockAnswerGenerator:
 
         intent = IntentResult(
             route_intent="aftersale",
-            detail_intent="logistics",
+            detail_intent="logistics_policy",
             confidence=0.8,
         )
 
@@ -474,7 +498,7 @@ class TestMockAnswerGenerator:
 
         intent = IntentResult(
             route_intent="aftersale",
-            detail_intent="logistics",
+            detail_intent="logistics_policy",
             confidence=0.8,
         )
 
@@ -497,7 +521,7 @@ class TestMockAnswerGenerator:
 
         intent = IntentResult(
             route_intent="logistics",
-            detail_intent="logistics",
+            detail_intent="logistics_status",
             confidence=0.9,
         )
 

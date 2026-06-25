@@ -12,17 +12,36 @@ from .schemas import IntentResult
 # Intent keyword mappings
 # Each key is a detail_intent, value is a list of keywords (zh/en)
 INTENT_KEYWORDS: dict[str, list[str]] = {
-    "logistics": [
-        # Chinese
-        "快递", "物流", "配送", "运输", "到达", "送达", "派送",
-        "到哪了", "到哪里了", "多久能到", "什么时候到", "什么时候送",
-        "发货", "已发货", "未发货", "没发货", "已揽收", "运输中",
+    "logistics_status": [
+        # Chinese - real logistics tracking queries (need order_id)
+        "到哪了", "到哪里了", "什么时候到", "什么时候送",
+        "快递到", "包裹到", "在哪了", "在哪里了",
+        "已发货", "未发货", "没发货", "已揽收", "运输中",
         "在途中", "在路上", "派件中", "已签收", "未签收",
-        # English
-        "shipping", "delivery", "parcel", "transit",
-        "where is", "when will", "how long", "track", "tracking",
-        "shipped", "dispatched", "delivered", "received",
-        "estimated", "arrival", "courier", "carrier",
+        "查快递", "查物流", "查包裹", "查配送",
+        "快递进度", "物流进度", "包裹进度",
+        # English - tracking queries
+        "where is my", "where is the", "when will it arrive",
+        "track my order", "tracking status", "track my package",
+        "has it shipped", "not shipped yet", "in transit",
+        "out for delivery", "delivered", "not delivered",
+        "order status", "parcel status", "shipment status",
+    ],
+    "logistics_policy": [
+        # Chinese - logistics policy/timeframe queries (don't need order_id)
+        "物流多久", "配送时效", "运输时效", "物流时效",
+        "多久能到", "几天到", "多少天", "发货时间",
+        "加急", "快递费", "运费", "包邮", "免邮",
+        "从哪里发货", "发货地", "仓库", "配送方式",
+        "标准物流", "快速物流", "经济物流",
+        "物流政策", "配送政策", "物流规则",
+        # English - policy queries
+        "shipping time", "delivery time", "how long does shipping",
+        "how long does delivery", "shipping cost", "free shipping",
+        "express shipping", "standard shipping", "economy shipping",
+        "shipping policy", "delivery policy", "shipping rate",
+        "where do you ship from", "warehouse", "dispatch time",
+        "expedited", "rush delivery", "shipping method",
     ],
     "customs": [
         # Chinese
@@ -69,9 +88,11 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         # Chinese
         "订单", "订单状态", "订单查询", "查订单", "订单取消", "取消订单",
         "订单修改", "修改订单", "订单信息", "订单详情",
+        "可以取消", "能取消吗", "取消吗", "取消政策",
         # English
         "order", "order status", "order query", "cancel order",
         "order cancel", "order modify", "order info", "order detail",
+        "can i cancel", "cancel policy", "cancellation",
     ],
     "payment": [
         # Chinese
@@ -86,10 +107,15 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "破损", "损坏", "丢件", "丢失", "少件", "漏发",
         "包裹破损", "包裹损坏", "包裹丢失", "收到破损", "收到损坏",
         "外包装", "内包装", "商品损坏", "商品破损",
+        "碎了", "碎了怎么办", "赔偿", "理赔", "补发",
+        "没收到包裹", "包裹没收到", "丢包",
+        "还没收到", "没收到货", "一个月了还没",
         # English
         "package", "damaged", "broken", "lost", "missing",
         "package damaged", "package lost", "package broken",
         "item damaged", "item broken", "wrong item",
+        "compensation", "claim", "replacement",
+        "not received", "haven't received", "never arrived",
     ],
     "coupon": [
         # Chinese
@@ -112,7 +138,8 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
 
 # Route intent mapping
 ROUTE_INTENT_MAP: dict[str, str] = {
-    "logistics": "logistics",
+    "logistics_status": "logistics",
+    "logistics_policy": "aftersale",  # Policy queries go to RAG knowledge base
     "customs": "aftersale",  # Customs issues go to knowledge base
     "return": "aftersale",
     "refund": "aftersale",
@@ -128,19 +155,37 @@ ROUTE_INTENT_MAP: dict[str, str] = {
 
 # Priority order for detail intents (higher index = higher priority)
 # This is used when multiple intents match
+# logistics_status has high priority because tracking queries should be recognized
+# even when they contain generic words like "订单" or "包裹"
 INTENT_PRIORITY: list[str] = [
     "unknown",
     "customs",
     "return",
-    "refund",
     "exchange",
     "address",
-    "order",
     "payment",
-    "package",
     "coupon",
-    "logistics",
     "trace",
+    "order",
+    "refund",
+    "logistics_policy",
+    "package",
+    "logistics_status",
+]
+
+
+# Package-specific keywords that override logistics_status classification
+_PACKAGE_OVERRIDE_KEYWORDS = [
+    "丢", "碎", "坏", "赔偿", "理赔", "没收到", "破损", "损坏",
+    "少件", "漏发", "错发", "wrong", "damaged", "broken", "missing",
+    "lost", "compensation", "claim", "never received", "not received",
+]
+
+# Policy-related keywords that indicate a policy question, not a status query
+_POLICY_OVERRIDE_KEYWORDS = [
+    "取消", "退款", "退货", "换货", "政策", "规则", "多久到账",
+    "怎么退", "怎么取消", "可以取消", "能取消", "cancel", "refund",
+    "return", "exchange", "policy",
 ]
 
 
@@ -205,8 +250,77 @@ def recognize_intent(query: str) -> IntentResult:
             needs_clarification=False,
         )
 
-    # Multiple intents matched - use priority
-    # Sort by priority (higher index = higher priority)
+    # Multiple intents matched - apply disambiguation rules
+
+    # Rule 1: If logistics_status and package both match, check for package-specific keywords
+    if "logistics_status" in matched_intents and "package" in matched_intents:
+        has_package_override = any(
+            kw in query_lower for kw in _PACKAGE_OVERRIDE_KEYWORDS
+        )
+        if has_package_override:
+            # Package issue takes precedence over logistics tracking
+            primary_intent = "package"
+            matched_keywords = matched_intents["package"]
+            route_intent = ROUTE_INTENT_MAP.get(primary_intent, "other")
+            confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
+            return IntentResult(
+                route_intent=route_intent,
+                detail_intent=primary_intent,
+                confidence=confidence,
+                matched_keywords=matched_keywords,
+                needs_clarification=False,
+            )
+
+    # Rule 2: If logistics_status matches with order/refund/return, check for policy keywords
+    policy_intents = {"order", "refund", "return", "exchange"}
+    if "logistics_status" in matched_intents:
+        matched_policy_intents = policy_intents & set(matched_intents.keys())
+        if matched_policy_intents:
+            has_policy = any(
+                kw in query_lower for kw in _POLICY_OVERRIDE_KEYWORDS
+            )
+            has_tracking = any(
+                kw in query_lower
+                for kw in ["到哪了", "到哪里了", "在哪了", "在哪里了", "track", "where is"]
+            )
+            if has_policy and not has_tracking:
+                # Policy query takes precedence over logistics_status
+                # Use the highest-priority policy intent
+                sorted_policy = sorted(
+                    matched_policy_intents,
+                    key=lambda x: INTENT_PRIORITY.index(x) if x in INTENT_PRIORITY else -1,
+                )
+                primary_intent = sorted_policy[-1]
+                matched_keywords = matched_intents[primary_intent]
+                route_intent = ROUTE_INTENT_MAP.get(primary_intent, "other")
+                confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
+                return IntentResult(
+                    route_intent=route_intent,
+                    detail_intent=primary_intent,
+                    confidence=confidence,
+                    matched_keywords=matched_keywords,
+                    needs_clarification=False,
+                )
+
+    # Rule 3: If logistics_status and order both match, check for tracking keywords
+    if "logistics_status" in matched_intents and "order" in matched_intents:
+        tracking_keywords = ["到哪了", "到哪里了", "在哪了", "在哪里了", "track", "where is"]
+        has_tracking = any(kw in query_lower for kw in tracking_keywords)
+        if has_tracking:
+            # Tracking query takes precedence over generic order query
+            primary_intent = "logistics_status"
+            matched_keywords = matched_intents["logistics_status"]
+            route_intent = ROUTE_INTENT_MAP.get(primary_intent, "other")
+            confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
+            return IntentResult(
+                route_intent=route_intent,
+                detail_intent=primary_intent,
+                confidence=confidence,
+                matched_keywords=matched_keywords,
+                needs_clarification=False,
+            )
+
+    # Default: use priority ordering
     sorted_intents = sorted(
         matched_intents.keys(),
         key=lambda x: INTENT_PRIORITY.index(x) if x in INTENT_PRIORITY else -1,

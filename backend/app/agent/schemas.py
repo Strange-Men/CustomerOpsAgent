@@ -31,7 +31,7 @@ class CustomerIntent(BaseModel):
     # Detailed intent for prompt and citation context
     detail_intent: str = Field(
         ...,
-        description="Detailed intent: logistics, customs, return, refund, exchange, address, order, payment, package, coupon, trace, unknown",
+        description="Detailed intent: logistics_status, logistics_policy, customs, return, refund, exchange, address, order, payment, package, coupon, trace, unknown",
     )
     confidence: float = Field(
         ...,
@@ -71,7 +71,7 @@ class IntentResult(BaseModel):
     )
     detail_intent: str = Field(
         ...,
-        description="Detailed intent: logistics, customs, return, refund, exchange, address, order, payment, package, coupon, trace, unknown",
+        description="Detailed intent: logistics_status, logistics_policy, customs, return, refund, exchange, address, order, payment, package, coupon, trace, unknown",
     )
     confidence: float = Field(
         ...,
