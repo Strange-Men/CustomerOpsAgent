@@ -36,6 +36,9 @@ export type AnswerSource = "mock" | "real_llm" | "real_llm_fallback_mock";
 /** Confidence level. */
 export type ConfidenceLevel = "high" | "medium" | "low";
 
+/** Supported locales — planned for i18n, not yet implemented. */
+export type Locale = "zh-CN" | "en-US";
+
 /** Citation from retrieved chunks. */
 export interface Citation {
   doc_id: string;

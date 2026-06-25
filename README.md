@@ -16,6 +16,14 @@ Cross-border e-commerce customer service RAG Agent demo. Supports knowledge base
 - **FastAPI smoke demo** — POST /api/agent/chat endpoint wrapping the agent workflow
 - **Optional real LLM adapter** — drop-in replacement for mock answer generator, configurable via env vars (default: mock)
 
+## Demo Links
+
+- **Frontend Demo**: https://customer-ops-agent.vercel.app/
+- **Backend API**: https://customeropsagent.onrender.com
+- **API Docs**: https://customeropsagent.onrender.com/docs
+
+> Frontend M2 shows a static dark-theme demo console. API integration is planned for Frontend M4. Backend runs in mock-default mode — no real logistics API or real order system is connected.
+
 ## API Smoke Demo
 
 See [docs/API_SMOKE_DEMO.md](docs/API_SMOKE_DEMO.md) for endpoint details, request/response examples, and curl commands.

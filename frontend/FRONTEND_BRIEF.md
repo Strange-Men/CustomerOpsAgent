@@ -79,6 +79,49 @@ A visitor should understand within 1 minute:
 - WebSocket / streaming responses
 - Deployment
 
+## Deployed Demo Links
+
+- **Frontend Preview**: https://customer-ops-agent.vercel.app/
+- **Backend API Base**: https://customeropsagent.onrender.com
+- **Backend API Docs**: https://customeropsagent.onrender.com/docs
+
+> Frontend M2 is static. API integration will be added in Frontend M4. `VITE_API_BASE_URL` should point to the Render backend in M4: `VITE_API_BASE_URL=https://customeropsagent.onrender.com`
+
+## Language Strategy
+
+**Current issue:**
+
+- M2 static page has mixed Chinese/English content.
+- Left panel project description leans English; example questions and answers are Chinese.
+- This hurts display consistency.
+
+**Plan:**
+
+- MVP default language: Chinese (target audience is Chinese job-seeking demo).
+- Future add language toggle:
+  - `zh-CN`: default Chinese
+  - `en-US`: English presentation
+- Do NOT introduce i18n library now.
+- Use local data dictionary structure for copy management first.
+- Language toggle button deferred to Frontend M7.5.
+
+**Suggested milestones:**
+
+| Stage | Action |
+|-------|--------|
+| Frontend M3 | Chat UI static state, unify copy to Chinese |
+| Frontend M4 | API integration, prefer Chinese responses |
+| Frontend M7.5 | Language Toggle: zh-CN / en-US switch |
+| Final polish | Full-page language consistency check |
+
+**Boundaries:**
+
+- No LLM key exposed to frontend
+- No auto-translation
+- No translation API calls
+- No backend changes for i18n
+- Frontend display copy switch only
+
 ## 9. Acceptance Criteria for M2
 
 - `npm run build` passes
