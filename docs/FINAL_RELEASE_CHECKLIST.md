@@ -64,8 +64,21 @@ ruff check backend/app/rag/schemas.py backend/app/rag/loader.py backend/app/rag/
 
 ### Run Retrieval Evaluation
 
+`retrieval_eval.py` uses `app.*` imports, so the `backend` directory must be added to `PYTHONPATH` when running it from the repository root.
+
+PowerShell:
+```powershell
+$env:PYTHONPATH="backend"; python -m app.eval.retrieval_eval
+```
+
+CMD:
+```cmd
+set PYTHONPATH=backend && python -m app.eval.retrieval_eval
+```
+
+Git Bash / Linux / macOS:
 ```bash
-python -m backend.app.eval.retrieval_eval
+PYTHONPATH=backend python -m app.eval.retrieval_eval
 ```
 
 ### Run Answer Evaluation

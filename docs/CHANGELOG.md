@@ -14,6 +14,16 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.0.1-demo] — 2026-06-25
+
+### Fixed
+- Fixed retrieval eval command in `docs/FINAL_RELEASE_CHECKLIST.md` — added `PYTHONPATH=backend` requirement with Windows PowerShell / CMD / Bash examples.
+- Added technical note explaining `retrieval_eval.py` uses `app.*` imports requiring `backend` on `PYTHONPATH`.
+
+### Notes
+- No code changes. No dataset changes. No tag overwrite.
+- v1.0.0-demo remains preserved; v1.0.1-demo is a documentation-only patch release.
+
 ## [未发布]
 
 ### Added

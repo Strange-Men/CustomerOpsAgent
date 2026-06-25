@@ -2,7 +2,11 @@
 
 ## 1. 当前阶段
 
-**M10.5: Final Release Checklist**
+**M10.5.1: Release Docs Command Hotfix**
+
+Patch scope: documentation-only command fix for retrieval eval PYTHONPATH.
+
+Previous release: M10.5 (v1.0.0-demo) — preserved, not overwritten.
 
 ## 2. 当前项目状态
 

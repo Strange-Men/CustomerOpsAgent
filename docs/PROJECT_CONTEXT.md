@@ -51,11 +51,14 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（M10.5 - Demo Release Ready）
+## 8. 当前交付状态（M10.5.1 - Demo Release Patch）
 
-**Release Version:** v1.0.0-demo  
+**Release Version:** v1.0.1-demo (patch)  
+**Base Release:** v1.0.0-demo — preserved, not overwritten  
 **Release Date:** 2026-06-25  
-**Status:** Demo Release Ready
+**Status:** Demo Release Patch (documentation-only hotfix)
+
+Patch scope: fixed retrieval eval command in release checklist (PYTHONPATH requirement).
 
 | 能力 | 状态 | 说明 |
 |------|------|------|
@@ -70,7 +73,8 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | FastAPI API endpoint | ✅ | POST /api/agent/chat |
 | Final release checklist | ✅ | docs/FINAL_RELEASE_CHECKLIST.md |
 | Final acceptance report | ✅ | docs/FINAL_ACCEPTANCE_REPORT.md |
-| Release tag | ✅ | v1.0.0-demo |
+| Release tag | ✅ | v1.0.0-demo (preserved) |
+| Patch tag | ✅ | v1.0.1-demo (docs hotfix) |
 | 真实 LLM | ❌ | 使用 mock answer generator |
 | 真实物流 API | ❌ | 使用 mock logistics tool |
 | 真实订单系统 | ❌ | 无 |
