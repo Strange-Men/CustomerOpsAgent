@@ -1,145 +1,236 @@
-# CustomerOps Agent
+# CustomerOpsAgent｜跨境电商客服 Agent 与 RAG 评估增强
 
-Cross-border e-commerce customer service RAG Agent demo. Supports knowledge base retrieval, intent recognition, mock logistics tool, citation validation, fallback rules, retrieval evaluation, and answer quality evaluation.
+English version: [README.en.md](./README.en.md)
 
-## Features
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-Build-646CFF?logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)
+![Tailwind_CSS](https://img.shields.io/badge/Tailwind_CSS-UI-06B6D4?logo=tailwindcss&logoColor=white)
+![RAG](https://img.shields.io/badge/RAG-Enabled-8A2BE2)
+![Render](https://img.shields.io/badge/Render-Backend-46E3B7?logo=render&logoColor=black)
+![Vercel](https://img.shields.io/badge/Vercel-Frontend-000000?logo=vercel&logoColor=white)
+![Mock_Default](https://img.shields.io/badge/Mock-Default-orange)
 
-- **Knowledge base loader/chunker** — JSONL knowledge documents split into searchable chunks
-- **Baseline BM25 retriever** — keyword-based retrieval with custom BM25 implementation
-- **Optimized retriever** — query expansion, signal inference, metadata-aware boosting, doc diversity
-- **Retrieval evaluation** — Recall@1/3/5 and MRR metrics on 122-case eval set
-- **Node-based Agent workflow** — intent recognition → route decision → RAG/tool → fallback
-- **Mock logistics tool route** — simulated logistics tracking (not real API)
-- **RAG knowledge base route** — optimized retrieval + evidence check + answer generation
-- **Fallback rules** — 10 fallback scenarios with safe escalation
-- **Answer quality evaluation** — relevance, groundedness, completeness, citation hit rate
-- **FastAPI smoke demo** — POST /api/agent/chat endpoint wrapping the agent workflow
-- **Optional real LLM adapter** — drop-in replacement for mock answer generator, configurable via env vars (default: mock)
-- **Frontend API integration** — React frontend connected to backend via `/api/agent/chat` with safe model profile selector
+## 项目简介
 
-## Demo Links
+CustomerOpsAgent 是一个面向跨境电商客服场景的 AI Agent Demo，覆盖清关延迟、退款周期、物流查询等常见咨询。系统支持 RAG 知识库检索、意图路由、Mock 物流工具、fallback 兜底和安全模型 profile 选择。
 
-- **Frontend Demo**: https://customer-ops-agent.vercel.app/
-- **Backend API**: https://customeropsagent.onrender.com
-- **API Docs**: https://customeropsagent.onrender.com/docs
+前端提供暗黑粉紫风格的客服 Agent Console，后端提供 FastAPI API。当前默认使用 Mock 模式，可在无真实模型 key 的情况下运行；DeepSeek / Doubao 是可选增强 profile。
 
-> Frontend is connected to the backend API. Model selector sends only public profile names (mock / deepseek / doubao) — no API keys are stored in the frontend. Real model keys are configured in Render backend environment variables only. If a profile is not configured, the backend falls back to mock automatically.
+## 在线预览
 
-## API Smoke Demo
+- 前端 Demo：https://customer-ops-agent.vercel.app/
+- 后端 API：https://customeropsagent.onrender.com
+- API Docs：https://customeropsagent.onrender.com/docs
 
-See [docs/API_SMOKE_DEMO.md](docs/API_SMOKE_DEMO.md) for endpoint details, request/response examples, and curl commands.
+当前已完成前端 API 接入。线上 smoke 仍建议以 M4.5 验证结果为准；Render 免费实例可能冷启动，需要等待。
 
-API response includes `answer_source` field: `"mock"` (default), `"real_llm"` (real LLM used), or `"real_llm_fallback_mock"` (real LLM failed, fell back to mock).
+## 项目亮点
 
-## Evaluation
+- RAG 检索增强：支持知识库命中、citation、retrieved_doc_ids。
+- Agent Workflow：支持意图识别、二级意图、路由、fallback。
+- 安全模型选择器：前端只传 `llm_profile`，不暴露 API key。
+- Mock 默认可运行：无真实模型 key 也能完整演示。
+- 前后端分离：FastAPI + React/Vite。
+- 可部署演示：Render 后端 + Vercel 前端。
+- 评估闭环：包含 retrieval eval、answer eval、pytest、ruff。
 
-- **M6 Retrieval Eval**: Baseline Recall@5 75.4% → Optimized 98.4%, MRR 0.70 → 0.91 ([report](docs/EVAL_REPORT_M6.md))
-- **M8 Answer Eval**: Answer Pass Rate 31.97% (baseline) ([report](docs/EVAL_REPORT_M8.md))
-- **M9 Answer Eval**: Answer Pass Rate 44.26% (+12.29%) ([report](docs/EVAL_REPORT_M9.md))
-- **M9.5 Answer Eval**: Answer Pass Rate 46.72%, Fallback Rate 13.11% ([report](docs/EVAL_REPORT_M9_5.md))
+## 项目说明
 
-## Documentation
+### 背景
 
-- [Project Context](docs/PROJECT_CONTEXT.md)
-- [Agent Workflow](docs/AGENT_WORKFLOW.md)
-- [API Smoke Demo](docs/API_SMOKE_DEMO.md)
-- [Final Release Checklist](docs/FINAL_RELEASE_CHECKLIST.md)
-- [Final Acceptance Report](docs/FINAL_ACCEPTANCE_REPORT.md)
-- [Dev Status](docs/DEV_STATUS.md)
-- [Change Log](docs/CHANGELOG.md)
-- [LLM Adapter](docs/LLM_ADAPTER.md)
-- [Final LLM Adapter Release Checklist](docs/FINAL_LLM_ADAPTER_RELEASE_CHECKLIST.md)
-- [PRD](docs/PRD.md)
-- [Design](docs/DESIGN.md)
-- [Technical Spec](docs/TECHNICAL_SPEC.md)
-- [Dev Rules](docs/DEV_RULES.md)
+跨境电商客服常见问题包括清关延迟、退款周期、订单物流查询等。如果只做普通聊天机器人，回答缺少证据来源，也难以展示 Agent 的决策过程。
 
-## Tech Stack
+### 目标
 
-- **Backend**: Python 3.11 (Conda), FastAPI, Pydantic v2
-- **AI**: mock-first / rule-based (no real LLM)
-- **Data**: JSONL knowledge base and eval cases
-- **Frontend**: Next.js 16 (frozen, legacy demo)
+构建一个可演示的客服 Agent Demo，使访问者能在 1 分钟内理解：
 
-## Quick Start
+- 用户问题如何进入 Agent。
+- 系统如何路由到 RAG / 工具 / fallback。
+- 回答如何携带 citations、metadata、answer_source。
+- 模型选择如何在不暴露 key 的前提下完成。
 
-### 前置要求
+### 实现
 
-- [Conda](https://docs.conda.io/) (Miniconda / Anaconda)
-- Node.js 18+
-- npm
+- 后端使用 FastAPI 设计 `/api/agent/chat`。
+- 使用 RAG 知识库检索支持证据引用。
+- 使用 workflow 处理 intent / detail_intent / route。
+- 使用 mock logistics tool 模拟物流查询。
+- 使用 LLM Adapter 支持 mock default 与 openai-compatible real LLM。
+- 使用 `llm_profile` 支持 mock / deepseek / doubao 安全选择。
+- 前端使用 React + Vite + TypeScript + Tailwind 搭建客服 Agent Console。
+- 部署到 Render + Vercel。
 
-### 后端环境（必须使用 Conda）
+### 结果
 
-> **⚠️ 后端 Python 必须使用 Conda 环境，不允许使用系统 Python 或 venv。**
+- 后端测试：254 passed。
+- Ruff：All checks passed。
+- Retrieval Eval：20 cases，Recall@5 90%，MRR 0.785。
+- Answer Eval：122 cases，citation hit rate 83.61%，pass rate 46.72%。
+- 本地 smoke：mock / deepseek fallback / invalid profile 422 通过。
+- 前端 build：passed。
+- 支持 Render + Vercel 部署预览。
 
-#### 1. 查找 Conda 路径
+Answer Eval 的 pass rate 46.72% 是当前基线指标，用于透明展示系统质量和后续优化空间。
 
-如果 `conda` 不在 PATH 中，需要使用完整路径调用。常见路径：
+## 技术架构
 
-| 安装位置 | 路径 |
-|---------|------|
-| E 盘自定义 | `E:\Conda\Scripts\conda.exe` |
-| E 盘 Miniconda | `E:\Miniconda3\Scripts\conda.exe` |
-| D 盘 Miniconda | `D:\Miniconda3\Scripts\conda.exe` |
-| 用户目录 | `%USERPROFILE%\miniconda3\Scripts\conda.exe` |
-
-本机 Conda 路径：`E:\Conda\Scripts\conda.exe`
-
-#### 2. 创建 Conda 环境
-
-```powershell
-& "E:\Conda\Scripts\conda.exe" create -n customerops-agent python=3.11 -y
+```text
+User
+  ↓
+React / Vite Frontend
+  ↓  POST /api/agent/chat
+FastAPI Backend
+  ↓
+Agent Workflow
+  ├── Intent Routing
+  ├── RAG Retriever
+  ├── Mock Logistics Tool
+  ├── Fallback Handler
+  └── LLM Adapter
+        ├── mock
+        ├── deepseek profile
+        └── doubao profile
 ```
 
-> 将 `E:\Conda\Scripts\conda.exe` 替换为你的实际 Conda 路径。
+DeepSeek / Doubao 只是 profile。key 只放后端环境变量，前端不直接调用模型服务。
 
-#### 3. 安装后端依赖
+## 功能清单
 
-```powershell
-& "E:\Conda\Scripts\conda.exe" run -n customerops-agent python -m pip install -r backend/requirements.txt
+已完成：
+
+- RAG knowledge base retrieval
+- citations / retrieved_doc_ids
+- Agent route / intent / detail_intent
+- fallback workflow
+- mock logistics tool
+- LLM adapter
+- model profile selector
+- frontend API integration
+- Render / Vercel demo links
+
+进行中 / 待验证：
+
+- M4.5 online smoke
+- Metadata + Citations 展示完善
+- 响应式 polish
+- zh-CN / en-US language toggle
+
+## API 示例
+
+```bash
+curl -X POST "https://customeropsagent.onrender.com/api/agent/chat" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_query": "清关延迟怎么办？",
+    "order_id": null,
+    "conversation_history": [],
+    "llm_profile": "mock"
+  }'
 ```
 
-#### 4. 运行后端测试
+- `llm_profile` 可选：mock / deepseek / doubao。
+- 未配置真实模型时 deepseek / doubao 会 fallback mock。
+- 不要在请求中传 API key。
+
+## 本地运行
+
+后端：
 
 ```powershell
-& "E:\Conda\Scripts\conda.exe" run -n customerops-agent python -m pytest backend
+cd D:\Claude_workfile\CustomerOpsAgent
+$env:PYTHONPATH="backend"
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-#### 5. 运行代码检查
+前端：
 
 ```powershell
-& "E:\Conda\Scripts\conda.exe" run -n customerops-agent python -m ruff check backend
+cd frontend
+npm install
+npm run dev
 ```
 
-#### 6. 启动后端服务
+前端环境变量说明：
+
+```text
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+线上 Vercel：
+
+```text
+VITE_API_BASE_URL=https://customeropsagent.onrender.com
+```
+
+- `VITE_API_BASE_URL` 是公开 API 地址。
+- DeepSeek / Doubao key 不能放 Vercel。
+- LLM key 只能放 Render 后端环境变量。
+
+## 测试与评估
 
 ```powershell
-& "E:\Conda\Scripts\conda.exe" run -n customerops-agent uvicorn app.main:app --app-dir backend --reload
+pytest
+ruff check
+cd frontend
+npm run build
 ```
 
-#### 7. API Smoke Test
+当前结果：
 
-```powershell
-curl -X POST http://127.0.0.1:8000/api/agent/chat ^
-  -H "Content-Type: application/json" ^
-  -d "{\"user_query\":\"清关延迟怎么办？\"}"
+- pytest：254 passed
+- ruff：All checks passed
+- frontend build：passed
+- retrieval eval 当前基线：20 cases，Recall@5 90%，MRR 0.785
+- answer eval 当前基线：122 cases，citation hit rate 83.61%，pass rate 46.72%
+
+## 安全边界
+
+- 不在前端保存任何 LLM API key。
+- 不允许用户在前端输入 API key。
+- 前端只传 `llm_profile`。
+- 后端白名单限制 profile。
+- 未配置真实模型时 fallback mock。
+- 当前未接真实物流 API。
+- 当前未接真实订单系统。
+- 当前默认 mock，可无 key 运行。
+
+## 项目状态 / Roadmap
+
+当前进度：
+
+- Backend：v1.1.0-demo + Frontend M4。
+- Frontend：已完成 API integration + model profile selector。
+- 下一步：M4.5 online smoke，M5 Metadata + Citations 展示完善。
+
+Roadmap：
+
+- M4.5：线上 Render + Vercel smoke 验证。
+- M5：Metadata + Citations 展示完善。
+- M6：fallback / error / empty 状态完善。
+- M7：响应式与视觉 polish。
+- M7.5：zh-CN / en-US 切换。
+- M8：最终文档与 release checklist。
+- M9：fresh clone + deployment final verification。
+
+## 项目目录
+
+```text
+CustomerOpsAgent/
+├── backend/
+│   └── app/
+│       ├── agent/
+│       ├── api/
+│       ├── llm/
+│       └── rag/
+├── frontend/
+│   └── src/
+│       ├── components/
+│       ├── data/
+│       └── lib/
+├── docs/
+├── README.md
+└── README.en.md
 ```
-
-See [docs/API_SMOKE_DEMO.md](docs/API_SMOKE_DEMO.md) for more examples.
-
-## Limitations
-
-- **Mock LLM by default**: Answers are generated by rule-based templates, not a real language model.
-- **Optional real LLM adapter**: Can be enabled via profile-based environment variables (see [LLM Adapter docs](docs/LLM_ADAPTER.md)), but defaults to mock. Not configured = not used.
-- **Mock logistics tool**: Logistics tracking returns simulated data.
-- **No real order system**: Order queries are simulated.
-- **Frontend model selector**: Only sends public profile name (mock / deepseek / doubao). Real API keys are never stored in the frontend.
-
-## Development Status
-
-Frontend M4 completed. Frontend is connected to backend API with safe model profile selector. See [Dev Status](docs/DEV_STATUS.md) for details.
-
-## 许可证
-
-MIT License
