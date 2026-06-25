@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**M7: Node-based Agent Answer Workflow**
+**M8: Answer Quality Evaluation**
 
 ## 2. 当前项目状态
 
-**状态：M7 节点式 Agent Workflow 实现完成**
+**状态：M8 Answer Quality Evaluation 完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -52,10 +52,48 @@
 - ✅ Workflow Orchestrator - 工作流编排器（M7）
 - ✅ Agent Workflow Tests - 24 个测试用例（M7）
 - ❌ 尚未实现 answer evaluation（M8）
+- ✅ Answer Quality Evaluation（M8）
+  - ✅ answer_eval.py — 6 个评估指标（relevance / groundedness / completeness / citation hit / keyword coverage / answer pass rate）
+  - ✅ 38 个 answer eval 测试用例（test_answer_eval.py）
+  - ✅ EVAL_REPORT_M8.md — 公开技术报告
+  - ✅ CLI smoke test: `python -m backend.app.eval.answer_eval`
+  - ✅ Answer Pass Rate: 31.97%（baseline，暴露 routing / completeness 问题）
 - ❌ 尚未实现 RAG API（M9）
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
+
+### M8：Answer Quality Evaluation（本轮）
+
+- ✅ 创建 `backend/app/eval/answer_eval.py`
+  - `normalize_text(text)` — 大小写、空白归一化
+  - `keyword_coverage(answer, expected_keywords)` — 关键词覆盖率（支持中英文）
+  - `citation_hit_rate(citation_doc_ids, expected_doc_ids)` — 引用命中率
+  - `evaluate_relevance(case, response)` — 相关性评估（category match / route / fallback）
+  - `evaluate_groundedness(case, response)` — 有据性评估（RAG citation / tool_used / fabrication check）
+  - `evaluate_completeness(case, response)` — 完整性评估（keyword coverage + fallback penalty）
+  - `evaluate_citation(case, response)` — 引用质量评估
+  - `evaluate_answer_case(case, response)` — 单条 case 完整评估
+  - `evaluate_agent_answers(cases)` — 批量评估 + 汇总指标
+  - `run_default_answer_evaluation()` — 默认全量评估
+  - CLI: `python -m backend.app.eval.answer_eval`
+
+- ✅ 创建 `backend/tests/test_answer_eval.py`
+  - 38 个测试用例
+  - 覆盖: normalize_text / keyword_coverage / citation_hit_rate / relevance / groundedness / completeness / citation / per-case result / aggregate metrics / full dataset / anti-cheating / public docs safety
+
+- ✅ 创建 `docs/EVAL_REPORT_M8.md`
+  - 评测范围、指标说明、数据集、结果、失败分析、解读
+
+- ✅ Answer quality baseline 结果
+  - Total cases: 122
+  - Avg Relevance: 0.5967
+  - Avg Groundedness: 0.6959
+  - Avg Completeness: 0.3396
+  - Citation Hit Rate: 56.56%
+  - Answer Pass Rate: 31.97%
+  - Fallback Rate: 40.16%
+  - Failed cases: 83
 
 ### M6.5：Agent Workflow 设计补档（本轮）
 
@@ -232,6 +270,7 @@
 | `backend/data/eval_cases_full.jsonl` | 全量评测集 | ✅ M6 新增 |
 | `docs/BAD_CASE_OPTIMIZATION_LOG.md` | Bad case 优化日志 | ✅ M6 新增 |
 | `docs/EVAL_REPORT_M6.md` | M6 评测报告 | ✅ M6 新增 |
+| `docs/EVAL_REPORT_M8.md` | M8 answer quality 评测报告 | ✅ M8 新增 |
 | `backend/tests/test_data_schema.py` | 数据校验测试 | ✅ M1 新增 |
 | `backend/tests/test_loader_chunker.py` | loader/chunker 测试 | ✅ M2 新增 |
 | `backend/tests/test_retriever.py` | retriever 测试 | ✅ M3 新增 |
@@ -241,15 +280,13 @@
 
 ## 5. 下一步
 
-**进入 M7：Intent Recognition + Prompt Builder + Mock Answer Generator + Citations + Fallback Rules**
+**进入 M9：Answer Workflow Optimization**
 
-M7 目标：
-- 实现 intent recognizer，基于规则识别用户意图（11 个 intent）
-- 实现 prompt builder，根据 intent + retrieved chunks 组装结构化 prompt
-- 实现 mock answer generator，生成带 citation 标记的客服回答
-- 实现 citation checker，校验 answer 中的引用合法性
-- 实现 fallback rules，覆盖 10 种兜底场景
-- 实现 agent workflow，串联以上模块的主流程
+M9 目标：
+- 根据 M8 failed cases 优化 intent recognition，降低 unknown_intent fallback
+- 优化 mock answer template，提高 keyword coverage
+- 调整 fallback rules，区分 policy questions 和 tracking questions
+- 目标：answer pass rate 从 32% 提升到 60%+
 
 ## 6. 风险点
 
@@ -266,6 +303,12 @@ M7 目标：
 | optimized 过拟合 seed set | full set 指标可能下降 | 用 full set 结果而非 seed set |
 | 只看 Recall@5，不看 Recall@1 / MRR | 排序质量未被评估 | 同时监控三个指标 |
 | retrieval 指标 ≠ 回答质量指标 | 高 Recall 不等于好回答 | M8 实现 answer quality evaluation |
+| 把 retrieval 指标误当 answer 指标 | 高 Recall@5 不代表好回答 | M8 独立评估 answer 质量 |
+| 为分数修改评测规则 | 美化结果 | 评测规则固定，不针对 workflow 调整 |
+| mock answer 被误认为真实 LLM | 结果不代表 LLM 质量 | EVAL_REPORT_M8.md 明确标注 mock |
+| logistics tool 被误认为真实 API | 结果不代表真实物流 | EVAL_REPORT_M8.md 明确标注 mock |
+| expected_keywords 泄露进 agent workflow | 作弊 | 静态检查 agent 模块不包含 eval 字段 |
+| public docs 混入个人面试/复习内容 | 违反公开文档规范 | 静态测试扫描禁用关键词 |
 
 ## 7. 当前禁止事项
 

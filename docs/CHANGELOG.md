@@ -17,6 +17,21 @@
 ## [未发布]
 
 ### Added
+- Added `backend/app/eval/answer_eval.py` — Answer quality evaluation harness
+  - `normalize_text(text)` — 文本归一化（大小写、空白）
+  - `keyword_coverage(answer, expected_keywords)` — 关键词覆盖率（支持中英文）
+  - `citation_hit_rate(citation_doc_ids, expected_doc_ids)` — 引用命中率
+  - `evaluate_relevance(case, response)` — 相关性评估（category match / route / fallback penalty）
+  - `evaluate_groundedness(case, response)` — 有据性评估（RAG citation / tool_used / fabrication detection）
+  - `evaluate_completeness(case, response)` — 完整性评估（keyword coverage + fallback penalty）
+  - `evaluate_citation(case, response)` — 引用质量评估
+  - `evaluate_answer_case(case, response)` — 单条 case 完整评估（6 指标 + pass/fail）
+  - `evaluate_agent_answers(cases)` — 批量评估 + 汇总指标
+  - `run_default_answer_evaluation()` — 默认全量评估（122 cases）
+  - CLI: `python -m backend.app.eval.answer_eval`
+- Added `backend/tests/test_answer_eval.py` — Answer quality evaluation tests（38 个测试用例）
+- Added `docs/EVAL_REPORT_M8.md` — M8 answer quality evaluation report
+
 - Added `backend/app/agent/__init__.py` — Agent 模块初始化
 - Added `backend/app/agent/schemas.py` — Agent 层数据结构（RouteType / CustomerIntent / ExtractedVariables / IntentResult / LogisticsToolResult / Citation / EvidenceCheckResult / AgentResponse）
 - Added `backend/app/agent/entity_extractor.py` — 变量提取节点（extract_order_id / extract_customer_variables）
@@ -30,7 +45,7 @@
 
 ### Changed
 - Updated `docs/AGENT_WORKFLOW.md` — 新增 M7 节点式流程说明和节点实现状态
-- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M7 Node-based Agent Workflow，新增 M7 已完成内容
+- Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M8 Answer Quality Evaluation，新增 M8 已完成内容和结果
 - Updated `docs/CHANGELOG.md` — 追加 M7 变更记录
 - Updated `docs/00_SCOPE_LOCK.md` — 移除面试相关内容
 - Updated `docs/03_EVAL_DESIGN.md` — 移除面试相关内容
