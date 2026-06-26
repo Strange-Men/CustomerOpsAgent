@@ -14,6 +14,28 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.5.0-docker] — 2026-06-26
+
+### Added
+- `backend/Dockerfile` — 后端容器化（python:3.11-slim + uvicorn）
+- `frontend/Dockerfile` — 前端容器化（node:20-alpine build + nginx:alpine serve）
+- `frontend/nginx.conf` — SPA fallback nginx 配置
+- `docker-compose.yml` — 一键启动前后端服务
+- `.dockerignore` — 排除 .env、mystudy、node_modules 等
+- `docs/DOCKER_RUNBOOK.md` — Docker 本地运行手册
+
+### Changed
+- `README.md` — 增加 "Docker 本地运行" 小节
+- `README.en.md` — 增加 "Docker Local Runtime" 小节
+- `docs/DEV_STATUS.md` — 更新当前阶段为 v1.5.0-docker
+- `docs/PROJECT_CONTEXT.md` — 增加 Docker Compose 本地运行能力
+
+### Not Changed
+- 业务逻辑、RAG、Bad Case Bank、eval 指标均未改变
+- 不依赖真实 LLM key，默认 mock 模式
+
+---
+
 ## [v1.4.1-real-mimo] — 2026-06-26
 
 ### Added

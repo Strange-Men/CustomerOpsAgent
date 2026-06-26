@@ -162,6 +162,32 @@ VITE_API_BASE_URL=https://customeropsagent.onrender.com
 
 `VITE_API_BASE_URL` is a public API base URL. DeepSeek / Doubao keys must not be placed in Vercel; LLM keys belong only in Render backend environment variables.
 
+### Docker Local Runtime
+
+Run both frontend and backend with Docker Compose — no manual Python/Node setup required:
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
+
+Access:
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:8080 |
+| Backend API Docs | http://localhost:8000/docs |
+
+Default mode uses mock profile — no real LLM key needed. Real LLM is verified via Render environment variables, not enabled in local Docker by default.
+
+Stop:
+
+```bash
+docker compose down
+```
+
+See [docs/DOCKER_RUNBOOK.md](docs/DOCKER_RUNBOOK.md) for details.
+
 ## Evaluation
 
 ```powershell

@@ -191,6 +191,32 @@ VITE_API_BASE_URL=https://customeropsagent.onrender.com
 - DeepSeek / Doubao key 不能放 Vercel。
 - LLM key 只能放 Render 后端环境变量。
 
+### Docker 本地运行
+
+使用 Docker Compose 一键启动前后端，无需手动安装 Python/Node 环境：
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
+
+访问：
+
+| 服务 | 地址 |
+|------|------|
+| Frontend | http://localhost:8080 |
+| Backend API Docs | http://localhost:8000/docs |
+
+默认使用 mock profile，无需真实 LLM key。真实 LLM 通过 Render 线上环境变量验证，不在本地 Docker 默认启用。
+
+停止：
+
+```bash
+docker compose down
+```
+
+详细说明见 [docs/DOCKER_RUNBOOK.md](docs/DOCKER_RUNBOOK.md)。
+
 ## 测试与评估
 
 ```powershell

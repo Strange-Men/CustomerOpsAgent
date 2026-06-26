@@ -51,10 +51,10 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（v1.4.1 - Real Mimo LLM Verified）
+## 8. 当前交付状态（v1.5.0 - Docker Compose Local Runtime）
 
-**Status:** v1.4.1 Real Mimo LLM Verified ✅ — 真实 Mimo API 调用成功，answer_source=real_llm, llm_model=mimo-v2.5-pro
-**Previous:** v1.4.0-badcase (120+ Bad Case Bank + Evaluation Harness)
+**Status:** v1.5.0 Docker Compose Local Runtime ✅ — 新增 Docker Compose 本地一键运行能力
+**Previous:** v1.4.1-real-mimo (Real Mimo LLM Verified)
 
 | 能力 | 状态 | 说明 |
 |------|------|------|
@@ -75,6 +75,7 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | Model selector | ✅ | 只传 profile，不传 key |
 | Frontend deployed | ✅ | Vercel: https://customer-ops-agent.vercel.app/ |
 | Backend deployed | ✅ | Render: https://customeropsagent.onrender.com |
+| Docker Compose 本地运行 | ✅ | docker compose up 一键启动，默认 mock |
 | 真实物流 API | ❌ | 使用 mock logistics tool |
 | 真实订单系统 | ❌ | 无 |
 

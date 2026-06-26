@@ -2,9 +2,11 @@
 
 ## 1. 当前阶段
 
-**v1.4.1-real-mimo: Real Mimo LLM Verified ✅**
+**v1.5.0-docker: Docker Compose Local Runtime ✅**
 
-已通过 Render 后端环境变量验证 Mimo 真实 LLM profile。真实 key 仅保存在 Render，前端只传 llm_profile，不接触任何密钥。所有业务查询（清关、退款、支付、物流）均成功调用真实 Mimo API（answer_source=real_llm, llm_model=mimo-v2.5-pro）。Mock profile 仍正常。回答比 Mock 更自然，有客服口吻。详见 `docs/REAL_MIMO_SMOKE_REPORT.md`。
+新增 Docker Compose 本地运行能力。通过 `docker compose up --build` 一键启动前后端：前端 http://localhost:8080，后端 http://localhost:8000/docs。默认使用 mock profile，无需真实 LLM key。不改变业务逻辑、RAG、Bad Case Bank 或 eval 指标。
+
+Previous: v1.4.1-real-mimo (Real Mimo LLM Verified)。
 
 Previous: v1.4.0-badcase (120+ Bad Case Bank + Evaluation Harness).
 

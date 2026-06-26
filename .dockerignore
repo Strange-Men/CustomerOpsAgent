@@ -1,0 +1,41 @@
+# Version control
+.git
+.github
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Personal / agent work
+mystudy
+.agents
+
+# Node artifacts
+node_modules
+frontend/node_modules
+frontend/dist
+frontend/.npm-cache
+
+# Python artifacts
+backend/**/__pycache__
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.coverage
+
+# Build artifacts
+dist
+build
+
+# Compiled Python
+*.pyc
+*.pyo
+*.pyd
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
