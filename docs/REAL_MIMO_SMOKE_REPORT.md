@@ -5,6 +5,7 @@
 | Item | Value |
 |------|-------|
 | Date | 2026-06-26 |
+| Version | v1.4.1-real-mimo |
 | Render Backend | https://customeropsagent.onrender.com |
 | Vercel Frontend | https://customer-ops-agent.vercel.app/ |
 | Profile tested | `mimo` |
@@ -12,7 +13,7 @@
 
 ## 2. Environment Variables (names only, no values)
 
-The following env vars are expected in Render backend:
+The following env vars are configured in Render backend:
 
 | Variable | Purpose |
 |----------|---------|
@@ -20,57 +21,56 @@ The following env vars are expected in Render backend:
 | `CUSTOMEROPS_LLM_MIMO_API_KEY` | Mimo API key |
 | `CUSTOMEROPS_LLM_MIMO_MODEL` | Mimo model name |
 | `CUSTOMEROPS_LLM_TIMEOUT_SECONDS` | Request timeout |
+| `CUSTOMEROPS_ALLOWED_ORIGINS` | CORS allowed origins |
 
-**Note:** No real API keys are stored in code, docs, frontend, or Git history.
+**Note:** No real API keys are stored in code, docs, frontend, or Git history. Real key is only in Render backend env vars.
 
 ## 3. API Smoke Results
 
 ### 3.1 Single Query Test (Mimo profile)
 
-**Query:** "清关延迟一般是什么原因？请用客服口吻回答，并说明依据。"
+**Query:** "退款多久到账"
 
 | Field | Value |
 |-------|-------|
 | intent | `aftersale` |
-| detail_intent | `customs` |
+| detail_intent | `refund` |
 | route | `rag_knowledge_base` |
-| answer_source | `real_llm_fallback_mock` |
+| answer_source | **`real_llm`** ✅ |
 | llm_profile | `mimo` |
 | llm_provider | `openai_compatible` |
-| llm_model | `None` |
+| llm_model | **`mimo-v2.5-pro`** ✅ |
 | fallback_triggered | `false` |
 | citations | 5 |
 | retrieved_doc_ids | 5 |
 
-**Interpretation:**
-- The real Mimo LLM adapter was **actually invoked** (not skipped).
-- `answer_source=real_llm_fallback_mock` means the API call was attempted but failed, so the system fell back to the mock answer template.
-- `llm_provider=openai_compatible` confirms the adapter was created and the HTTP request was made.
-- `llm_model=None` suggests the `CUSTOMEROPS_LLM_MIMO_MODEL` env var may not be set on Render, or the API error prevented model info from being returned.
+**Result:** Mimo 真实 API 调用成功，返回了由 mimo-v2.5-pro 生成的回答。
 
 ### 3.2 Multi-Scenario Tests (Mimo profile)
 
-| Query | Intent | Route | Answer Source | Fallback | Citations |
-|-------|--------|-------|---------------|----------|-----------|
-| 清关延迟一般是什么原因？ | aftersale/customs | rag_knowledge_base | real_llm_fallback_mock | No | 5 |
-| 退款多久到账？ | aftersale/refund | rag_knowledge_base | real_llm_fallback_mock | No | 5 |
-| 我的订单123456到哪了？ | logistics/logistics_status | logistics_tool | real_llm_fallback_mock | No | 0 |
-| 支付失败怎么办？ | aftersale/payment | rag_knowledge_base | real_llm_fallback_mock | No | 5 |
-| 你能帮我写论文吗？ | other/unknown | fallback | mock | Yes | 0 |
+| Query | Intent | Route | Answer Source | llm_model | Fallback | Citations |
+|-------|--------|-------|---------------|-----------|----------|-----------|
+| 清关延迟一般是什么原因？ | aftersale/customs | rag_knowledge_base | **real_llm** | mimo-v2.5-pro | No | 5 |
+| 退款多久到账 | aftersale/refund | rag_knowledge_base | **real_llm** | mimo-v2.5-pro | No | 5 |
+| 支付失败怎么办 | aftersale/payment | rag_knowledge_base | **real_llm** | mimo-v2.5-pro | No | 5 |
+| 我的订单123456到哪了 | logistics/logistics_status | logistics_tool | **real_llm** | mimo-v2.5-pro | No | 0 |
+| 你能帮我写论文吗 | other/unknown | fallback | mock | null | Yes | 0 |
 
 **Key observations:**
-- All business queries correctly routed to RAG or logistics tool.
-- All business queries attempted the real Mimo LLM (answer_source=real_llm_fallback_mock).
-- Out-of-scope query correctly rejected without attempting real LLM.
-- Intent classification, RAG retrieval, and mock logistics tool all work correctly.
+- 所有业务查询均成功调用真实 Mimo LLM（answer_source=real_llm）。
+- `llm_model` 正确显示 `mimo-v2.5-pro`。
+- 超出范围的查询正确拒绝，不调用真实 LLM。
+- Intent 分类、RAG 检索、Mock 物流工具均正常工作。
 
 ### 3.3 Multi-Scenario Tests (Mock profile)
 
-| Query | Intent | Route | Answer Source | Fallback | Citations |
-|-------|--------|-------|---------------|----------|-----------|
-| 清关延迟一般是什么原因？ | aftersale/customs | rag_knowledge_base | mock | No | 5 |
-| 退款多久到账？ | aftersale/refund | rag_knowledge_base | mock | No | 5 |
-| 支付失败怎么办？ | aftersale/payment | rag_knowledge_base | mock | No | 5 |
+| Query | Intent | Route | Answer Source | llm_model | Fallback | Citations |
+|-------|--------|-------|---------------|-----------|----------|-----------|
+| 清关延迟一般是什么原因？ | aftersale/customs | rag_knowledge_base | mock | null | No | 5 |
+| 退款多久到账 | aftersale/refund | rag_knowledge_base | mock | null | No | 5 |
+| 支付失败怎么办 | aftersale/payment | rag_knowledge_base | mock | null | No | 5 |
+
+Mock profile 仍然正常工作。
 
 ## 4. Mock vs Mimo Comparison
 
@@ -78,45 +78,46 @@ The following env vars are expected in Render backend:
 
 | Aspect | Mock | Mimo |
 |--------|------|------|
-| answer_source | `mock` | `real_llm_fallback_mock` |
+| answer_source | `mock` | **`real_llm`** |
+| llm_model | null | **`mimo-v2.5-pro`** |
 | Intent/route | customs / rag | customs / rag |
 | Citations | 5 | 5 |
-| Naturalness | Template-based, structured | Same (fallback to mock) |
-| Customer tone | Adequate | Same (fallback to mock) |
+| Naturalness | Template-based, structured | More natural, conversational |
+| Customer tone | Adequate | Better, more like real customer service |
 
-### Query 2: "退款多久到账？"
+### Query 2: "退款多久到账"
 
 | Aspect | Mock | Mimo |
 |--------|------|------|
-| answer_source | `mock` | `real_llm_fallback_mock` |
+| answer_source | `mock` | **`real_llm`** |
+| llm_model | null | **`mimo-v2.5-pro`** |
 | Intent/route | refund / rag | refund / rag |
 | Citations | 5 | 5 |
-| Naturalness | Template-based | Same (fallback to mock) |
+| Naturalness | Template-based | More natural, organized |
 
-### Query 3: "支付失败怎么办？"
+### Query 3: "支付失败怎么办"
 
 | Aspect | Mock | Mimo |
 |--------|------|------|
-| answer_source | `mock` | `real_llm_fallback_mock` |
+| answer_source | `mock` | **`real_llm`** |
+| llm_model | null | **`mimo-v2.5-pro`** |
 | Intent/route | payment / rag | payment / rag |
 | Citations | 5 | 5 |
-| Naturalness | Template-based | Same (fallback to mock) |
+| Naturalness | Template-based | More natural, structured with numbered steps |
 
-**Conclusion:** Since Mimo API calls failed and fell back to mock, the answer quality is identical. The Mimo integration infrastructure is correct, but the actual LLM response was not obtained.
+**Conclusion:** Mimo 真实 LLM 成功返回了比 Mock 更自然、更像真实客服的回答。回答组织了依据，使用了客服口吻，并正确引用了知识库文档。
 
 ## 5. Frontend Smoke
 
 | Check | Result |
 |-------|--------|
-| Page accessible | ✅ HTTP 200 (via Python urllib) |
-| Page title | ✅ "CustomerOpsAgent｜跨境电商客服 Agent" |
+| Page accessible | ✅ HTTP 200 |
 | Model selector has Mimo | ✅ (verified in ModelSelector.tsx) |
+| LLMProfile type includes "mimo" | ✅ (verified in types.ts) |
+| RELEASE_TAG updated | ✅ "v1.4.1-real-mimo" |
 | Backend URL configured | ✅ `https://customeropsagent.onrender.com` |
 | llm_profile sent to backend | ✅ Only public profile name, no API key |
-| answer_source=real_llm_fallback_mock handled | ✅ Shows "真实模型不可用，已降级 Mock" |
 | No API key in frontend code | ✅ Verified |
-
-**Note:** curl on Windows had IPv6 timeout issues; Python urllib works correctly.
 
 ## 6. Security Check
 
@@ -126,79 +127,50 @@ The following env vars are expected in Render backend:
 | API key in frontend code | ✅ Not found |
 | API key in docs/README | ✅ Not found |
 | .env committed to Git | ✅ Not committed (gitignore verified) |
-| mystudy/ committed | ✅ Not committed (git/info/exclude) |
-| .agents/ committed | ✅ Not committed (git/info/exclude) |
+| mystudy/ committed | ✅ Not committed |
+| .agents/ committed | ✅ Not committed |
 
 ## 7. Test & Build Results
 
 | Check | Result |
 |-------|--------|
-| pytest (full suite) | ✅ 293 passed in 2.87s |
+| pytest (agent_api + llm_adapter) | ✅ 44 passed |
+| pytest (full suite) | ✅ 293 passed in 1.86s |
 | ruff check | ✅ All checks passed |
-| frontend build | ✅ Built in 260ms |
+| frontend build | ✅ Built in 217ms |
 
-## 8. Known Limitations
+## 8. Technical Notes
 
-1. **Mimo API call failed** — The real LLM was attempted but the API returned an error, causing fallback to mock answers. Root cause is likely one of:
-   - `CUSTOMEROPS_LLM_MIMO_BASE_URL` format mismatch (e.g., needs `/v1` suffix)
-   - `CUSTOMEROPS_LLM_MIMO_API_KEY` invalid or expired
-   - `CUSTOMEROPS_LLM_MIMO_MODEL` not set or incorrect model name
-   - Mimo API endpoint format not fully OpenAI-compatible
+1. **Windows curl encoding issue** — curl on Windows corrupts Chinese characters in JSON `-d` parameter. Use file-based input (`-d @file.json`) or Python urllib for Chinese query testing.
 
-2. **`llm_model=None`** — The model field is empty, suggesting the model env var may not be configured on Render.
+2. **Fallback route does not call real LLM** — When intent is classified as "other" (out-of-scope), the workflow goes to the fallback route which directly returns mock without attempting real LLM. This is by design: out-of-scope queries should be rejected, not answered by LLM.
 
-3. **curl encoding on Windows** — curl corrupts Chinese characters in JSON on Windows. Use Python urllib for Chinese query testing.
+3. **Intent classification** — The rule-based intent recognizer correctly classifies business queries (customs, refund, payment, logistics) and rejects out-of-scope queries (paper writing).
 
-## 9. Diagnosis: Why Mimo Fallback to Mock
+## 9. Conclusion
 
-The workflow code (`workflow.py:56-65`) shows:
-```python
-config = load_llm_config_for_profile(llm_profile)
-if not config.is_real_mode:
-    mock_response.answer_source = "mock"
-    return mock_response
-```
-
-Since `answer_source=real_llm_fallback_mock` (not `mock`), the config **did** resolve to `mode="real"` and `is_config_complete=True`. This means:
-- ✅ `CUSTOMEROPS_LLM_MIMO_BASE_URL` is set
-- ✅ `CUSTOMEROPS_LLM_MIMO_API_KEY` is set
-- ⚠️ `CUSTOMEROPS_LLM_MIMO_MODEL` may or may not be set (llm_model=None in response)
-
-The adapter was created and the HTTP request was made to `{base_url}/chat/completions`. The failure is at the API call level (timeout, HTTP error, or response format mismatch).
-
-**Recommended next steps for the user:**
-1. Check Render logs for the specific error message (look for "LLM request failed" or "LLM API returned HTTP" warnings)
-2. Verify `CUSTOMEROPS_LLM_MIMO_BASE_URL` ends with the correct path (e.g., `/v1`)
-3. Verify `CUSTOMEROPS_LLM_MIMO_API_KEY` is valid and not expired
-4. Set `CUSTOMEROPS_LLM_MIMO_MODEL` to the correct model name
-5. Test the Mimo API endpoint directly with curl to verify it accepts OpenAI-compatible requests
-
-## 10. Conclusion
-
-**Status: PARTIAL PASS**
+**Status: PASS** ✅
 
 | Criterion | Result |
 |-----------|--------|
 | Render deployed and accessible | ✅ PASS |
-| Mimo env vars read by backend | ✅ PASS (config resolved to real mode) |
-| Mimo API actually called | ✅ PASS (adapter invoked, HTTP request made) |
-| Mimo API returned valid response | ❌ FAIL (fell back to mock) |
-| answer_source reflects real LLM | ⚠️ PARTIAL (`real_llm_fallback_mock`, not `real_llm`) |
-| llm_model shows Mimo model | ❌ FAIL (None) |
+| Mimo env vars read by backend | ✅ PASS |
+| Mimo API actually called | ✅ PASS |
+| Mimo API returned valid response | ✅ PASS |
+| answer_source = real_llm | ✅ PASS |
+| llm_model = mimo-v2.5-pro | ✅ PASS |
 | Frontend Mimo selector works | ✅ PASS |
 | Mock profile still works | ✅ PASS |
-| Fallback on Mimo failure works | ✅ PASS |
+| Fallback on out-of-scope works | ✅ PASS |
 | No API key leakage | ✅ PASS |
 | pytest / ruff / build | ✅ PASS |
 
-**Tag decision:** `v1.4.1-real-mimo` tag is **NOT created** because the real Mimo LLM did not return a valid response. The infrastructure is correct and the API was actually called, but the call failed at the API level.
+**Tag decision:** `v1.4.1-real-mimo` tag **created** because all criteria passed.
 
-**What worked:**
-- The full pipeline (intent → RAG → prompt → adapter → response) executed correctly
-- The Mimo profile resolved to real mode and attempted the actual API call
-- Fallback to mock worked seamlessly when the API failed
-- No secrets leaked anywhere
-
-**What needs fixing:**
-- Mimo API configuration on Render (likely base_url format, API key, or model name)
-- Possible need for a dedicated Mimo adapter if the API is not fully OpenAI-compatible
+**What was verified:**
+- 真实 Mimo LLM profile 通过 Render 后端环境变量配置成功
+- `answer_source=real_llm` 确认真实 API 调用成功
+- `llm_model=mimo-v2.5-pro` 确认模型名正确返回
+- 回答比 Mock 更自然，有客服口吻，组织了依据
+- 前端仅传 `llm_profile`，不接触任何密钥
+- 模型切换与密钥安全解耦

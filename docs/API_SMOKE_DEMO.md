@@ -166,17 +166,17 @@ The API is deployed on Render:
 | Invalid profile | openai | 清关延迟怎么办？ | ✅ HTTP 422 |
 | Non-business | mock | 你能帮我写论文吗？ | ✅ fallback triggered |
 
-### Real Mimo Smoke Results (2026-06-26)
+### Real Mimo Smoke Results (2026-06-26) ✅
 
-Mimo env vars configured on Render. Real LLM adapter was invoked but API call failed.
+Mimo env vars configured on Render. Real Mimo LLM API call succeeded.
 
 | Test | Profile | Query | Result |
 |------|---------|-------|--------|
-| Customs query | mimo | 清关延迟一般是什么原因？ | ⚠️ answer_source=real_llm_fallback_mock |
-| Refund query | mimo | 退款多久到账？ | ⚠️ answer_source=real_llm_fallback_mock |
-| Order tracking | mimo | 我的订单123456到哪了？ | ⚠️ answer_source=real_llm_fallback_mock |
-| Payment query | mimo | 支付失败怎么办？ | ⚠️ answer_source=real_llm_fallback_mock |
-| Out-of-scope | mimo | 你能帮我写论文吗？ | ✅ answer_source=mock (correctly rejected) |
+| Customs query | mimo | 清关延迟一般是什么原因？ | ✅ answer_source=real_llm, llm_model=mimo-v2.5-pro |
+| Refund query | mimo | 退款多久到账 | ✅ answer_source=real_llm, llm_model=mimo-v2.5-pro |
+| Order tracking | mimo | 我的订单123456到哪了 | ✅ answer_source=real_llm, llm_model=mimo-v2.5-pro |
+| Payment query | mimo | 支付失败怎么办 | ✅ answer_source=real_llm, llm_model=mimo-v2.5-pro |
+| Out-of-scope | mimo | 你能帮我写论文吗 | ✅ answer_source=mock (correctly rejected) |
 
 > **Note:** On Windows, curl may not encode Chinese characters correctly. Use Python urllib for Chinese query testing. See `docs/REAL_MIMO_SMOKE_REPORT.md` for full details.
 

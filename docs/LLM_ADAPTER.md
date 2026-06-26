@@ -147,20 +147,20 @@ Tested on Render: https://customeropsagent.onrender.com
 | Invalid profile | openai | ✅ HTTP 422 |
 | No key leak in response | all | ✅ No API key in any response field |
 
-### Real Mimo Smoke (2026-06-26)
+### Real Mimo Smoke (2026-06-26) ✅
 
-Mimo environment variables were configured on Render. The adapter was actually invoked and the HTTP request was made, but the API call failed (answer_source=real_llm_fallback_mock). See `docs/REAL_MIMO_SMOKE_REPORT.md` for details.
+Mimo environment variables configured on Render. Real Mimo LLM API call succeeded. See `docs/REAL_MIMO_SMOKE_REPORT.md` for details.
 
 | Test | Profile | Result |
 |------|---------|--------|
-| Customs query | mimo | ⚠️ answer_source=real_llm_fallback_mock, API call failed |
-| Refund query | mimo | ⚠️ answer_source=real_llm_fallback_mock, API call failed |
-| Order tracking | mimo | ⚠️ answer_source=real_llm_fallback_mock, API call failed |
-| Payment query | mimo | ⚠️ answer_source=real_llm_fallback_mock, API call failed |
+| Customs query | mimo | ✅ answer_source=real_llm, llm_model=mimo-v2.5-pro |
+| Refund query | mimo | ✅ answer_source=real_llm, llm_model=mimo-v2.5-pro |
+| Order tracking | mimo | ✅ answer_source=real_llm, llm_model=mimo-v2.5-pro |
+| Payment query | mimo | ✅ answer_source=real_llm, llm_model=mimo-v2.5-pro |
 | Out-of-scope | mimo | ✅ answer_source=mock (correctly rejected, no API call) |
 | Mock still works | mock | ✅ answer_source=mock |
 
-**Diagnosis:** The Mimo env vars are correctly read (config resolves to real mode), but the API call fails. Likely cause: base_url format, API key validity, or model name mismatch. Check Render logs for the specific error.
+**Verified:** 真实 key 仅保存在 Render 后端环境变量中；前端仅传 llm_profile，确保模型切换与密钥安全解耦。
 
 ## 8. Limitations
 

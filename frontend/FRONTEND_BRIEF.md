@@ -241,7 +241,7 @@ A visitor should understand within 1 minute:
 
 **Known limitation:** Windows curl may not encode Chinese characters correctly for API testing. Use Python urllib for Chinese queries.
 
-## 14. Real Mimo Smoke (v1.4.1)
+## 14. Real Mimo Smoke (v1.4.1) ✅
 
 **Goal:** Verify real Mimo LLM profile via Render backend environment variables.
 
@@ -249,14 +249,13 @@ A visitor should understand within 1 minute:
 
 - Mimo env vars configured on Render backend
 - Frontend ModelSelector correctly includes Mimo option
-- API calls with `llm_profile=mimo` reach the backend and invoke the real LLM adapter
-- `answer_source=real_llm_fallback_mock` — the Mimo API was actually called but failed, falling back to mock
-- `llm_provider=openai_compatible` — adapter was created and HTTP request was made
-- `llm_model=None` — model env var may not be set
-- Intent classification, RAG retrieval, mock logistics tool all work correctly
+- API calls with `llm_profile=mimo` successfully invoke real Mimo LLM
+- `answer_source=real_llm` — real Mimo API call succeeded
+- `llm_provider=openai_compatible` — adapter correctly created
+- `llm_model=mimo-v2.5-pro` — model name correctly returned
+- All business queries (customs, refund, payment, logistics) succeeded
+- Out-of-scope queries correctly rejected
 - Mock profile still works normally
 - No API key leakage in frontend, response, or docs
 
-**Frontend handling:** When `answer_source=real_llm_fallback_mock`, the UI shows "真实模型不可用，已降级 Mock" hint.
-
-**Status:** Infrastructure verified correct. API configuration needs user-side verification (check Render logs for specific error). See `docs/REAL_MIMO_SMOKE_REPORT.md`.
+**Status:** Real Mimo LLM verified. See `docs/REAL_MIMO_SMOKE_REPORT.md`.

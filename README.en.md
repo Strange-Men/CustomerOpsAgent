@@ -81,7 +81,7 @@ The project follows a “core flow → core capabilities → safe adapter → fr
 - Answer result: Answer Eval 122 cases, citation hit rate 95.90%, pass rate 60.66%, fallback rate 0.82%. v1.3.0 improved citation hit rate by +12.29pp and pass rate by +13.94pp over baseline.
 - Bad Case Bank: 131 structured bad cases across 11 scenarios (customs/refund/logistics/payment/order/package/return/exchange/address/coupon/out_of_scope). Bad case eval structural pass rate 97.71%, citation coverage 97.54%.
 - Safety and demoability: local smoke passed for mock, deepseek fallback, and invalid profile 422; the full flow can run without real model keys.
-- Real Mimo verification: Mimo env vars configured on Render; adapter actually invoked the Mimo API (answer_source=real_llm_fallback_mock); infrastructure is correct; API-level call failed (likely base_url / API key / model config issue, needs user-side verification).
+- Real Mimo verification: Real Mimo LLM profile verified via Render backend env vars. Real key stored only in Render; frontend sends only `llm_profile`, no key exposure. answer_source=real_llm, llm_model=mimo-v2.5-pro, answers more natural than Mock.
 - Access: Render + Vercel demo links available; online smoke verified (M7).
 
 Reader value:

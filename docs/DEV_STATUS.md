@@ -2,9 +2,9 @@
 
 ## 1. 当前阶段
 
-**v1.4.1-real-mimo: Real Mimo LLM Smoke Verification**
+**v1.4.1-real-mimo: Real Mimo LLM Verified ✅**
 
-Attempted real Mimo API call via Render backend. The Mimo adapter was actually invoked (answer_source=real_llm_fallback_mock), confirming env vars are correctly read and the HTTP request is made. However, the Mimo API call failed (likely base_url/API key/model config issue), so answers fell back to mock templates. Infrastructure verified correct; API configuration needs user-side verification. See `docs/REAL_MIMO_SMOKE_REPORT.md`.
+已通过 Render 后端环境变量验证 Mimo 真实 LLM profile。真实 key 仅保存在 Render，前端只传 llm_profile，不接触任何密钥。所有业务查询（清关、退款、支付、物流）均成功调用真实 Mimo API（answer_source=real_llm, llm_model=mimo-v2.5-pro）。Mock profile 仍正常。回答比 Mock 更自然，有客服口吻。详见 `docs/REAL_MIMO_SMOKE_REPORT.md`。
 
 Previous: v1.4.0-badcase (120+ Bad Case Bank + Evaluation Harness).
 
