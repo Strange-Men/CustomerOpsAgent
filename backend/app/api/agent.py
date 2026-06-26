@@ -44,7 +44,7 @@ class AgentChatRequest(BaseModel):
     )
     llm_profile: str = Field(
         default="mock",
-        description="Model profile name: mock, deepseek, doubao. Frontend only sends this public name; backend resolves to env vars.",
+        description="Model profile name: mock, deepseek, doubao, mimo. Frontend only sends this public name; backend resolves to env vars.",
     )
 
 

@@ -14,6 +14,44 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.3.0-quality] — 2026-06-26
+
+### Added
+- Added Mimo model profile to frontend and backend (`LLMProfile`, `ModelSelector`, `ALLOWED_PROFILES`, `_PROFILE_ENV_MAP`)
+- Added `.env.example` with DeepSeek / Doubao / Mimo configuration template
+- Added `docs/KNOWLEDGE_BASE_INVENTORY.md` — knowledge base size audit (14 docs, 18 chunks, 122 eval cases)
+- Added `docs/RAG_QUALITY_IMPROVEMENT_REPORT.md` — baseline vs optimized metrics report
+- Added `docs/BAD_CASE_ANALYSIS.md` — failed case classification and optimization log
+
+### Changed
+- Fixed browser title: `frontend` → `CustomerOpsAgent｜跨境电商客服 Agent`
+- Updated `frontend/src/lib/constants.ts` — RELEASE_TAG to v1.3.0-quality
+- Updated `frontend/src/components/chat/AnswerCard.tsx` — RAG evidence banner, citations collapsible section, retrieved_doc_ids display, route/source friendly labels
+- Updated `frontend/src/data/examples.ts` — optimized example questions for RAG demo
+- Updated `backend/app/agent/intent_recognizer.py` — expanded keywords for logistics_policy, package, coupon, customs; added disambiguation rules for address, customs, package
+- Updated `backend/app/agent/mock_answer_generator.py` — improved answer templates with structured format (conclusion → evidence → actions → citation)
+- Updated `backend/app/agent/fallback_rules.py` — improved fallback messages; fixed sensitive detection false positives (pin in shipping, China)
+- Updated `backend/app/eval/answer_eval.py` — expanded `_CATEGORY_INTENT_MAP` for multi-intent matching; added logistics+RAG route correctness bonus
+- Updated `.gitignore` — added `!.env.example`
+
+### Quality Results
+- Answer Pass Rate: 46.72% → 60.66% (+13.94 pp)
+- Citation Hit Rate: 83.61% → 95.90% (+12.29 pp)
+- Fallback Rate: 13.11% → 0.82% (-12.29 pp)
+- Avg Relevance: 0.7566 → 0.9148 (+0.1582)
+- Retrieval Recall@5: 90.00% (unchanged)
+- Retrieval MRR: 0.7850 (unchanged)
+
+### Verified
+- pytest: all tests passed
+- ruff: all checks passed
+- frontend build: passed
+- No real API keys committed
+- No .env committed
+- No eval data modified
+
+---
+
 ## [Frontend M7] — 2026-06-26
 
 ### Added

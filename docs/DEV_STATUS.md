@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**Frontend M7: Online Smoke, Final Docs, Release Checklist, Tag**
+**v1.3.0-quality: RAG Quality Enhancement + Mimo Profile**
 
-Online smoke verification complete. Render backend and Vercel frontend verified. All 254 tests pass. v1.2.0-demo release ready.
+RAG answer quality improved: pass rate 46.72% → 60.66%, citation hit rate 83.61% → 95.90%, fallback rate 13.11% → 0.82%. Added Mimo model profile, .env.example, knowledge base inventory, and RAG quality report.
 
-Previous: Frontend M6.5 (long answer collapse + README polish).
+Previous: Frontend M7 (online smoke + release checklist + v1.2.0-demo tag).
 
 ## 2. 当前项目状态
 

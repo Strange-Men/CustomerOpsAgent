@@ -23,7 +23,7 @@ ENV_LLM_MODEL = "CUSTOMEROPS_LLM_MODEL"
 ENV_LLM_TIMEOUT_SECONDS = "CUSTOMEROPS_LLM_TIMEOUT_SECONDS"
 
 # Allowed profile names (public, sent by frontend)
-ALLOWED_PROFILES: tuple[str, ...] = ("mock", "deepseek", "doubao")
+ALLOWED_PROFILES: tuple[str, ...] = ("mock", "deepseek", "doubao", "mimo")
 
 # Profile → environment variable mapping
 # Each profile maps to (base_url_env, api_key_env, model_env)
@@ -37,6 +37,11 @@ _PROFILE_ENV_MAP: dict[str, tuple[str, str, str]] = {
         "CUSTOMEROPS_LLM_DOUBAO_BASE_URL",
         "CUSTOMEROPS_LLM_DOUBAO_API_KEY",
         "CUSTOMEROPS_LLM_DOUBAO_MODEL",
+    ),
+    "mimo": (
+        "CUSTOMEROPS_LLM_MIMO_BASE_URL",
+        "CUSTOMEROPS_LLM_MIMO_API_KEY",
+        "CUSTOMEROPS_LLM_MIMO_MODEL",
     ),
 }
 

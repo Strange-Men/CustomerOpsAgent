@@ -46,7 +46,7 @@ export type AnswerSource = "mock" | "real_llm" | "real_llm_fallback_mock";
 export type ConfidenceLevel = "high" | "medium" | "low";
 
 /** LLM profile names — public, sent by frontend, never contains keys. */
-export type LLMProfile = "mock" | "deepseek" | "doubao";
+export type LLMProfile = "mock" | "deepseek" | "doubao" | "mimo";
 
 /** Supported locales — planned for i18n, not yet implemented. */
 export type Locale = "zh-CN" | "en-US";

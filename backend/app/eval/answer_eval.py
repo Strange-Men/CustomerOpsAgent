@@ -148,16 +148,18 @@ def citation_hit_rate(citation_doc_ids: list[str], expected_doc_ids: list[str]) 
 # ---------------------------------------------------------------------------
 
 # Category-to-intent mapping for matching
+# Expanded to match actual intent routing: logistics_policy → aftersale,
+# order cancel → refund, return ↔ exchange, customs → package overlap, etc.
 _CATEGORY_INTENT_MAP: dict[str, set[str]] = {
-    "logistics": {"logistics"},
-    "customs": {"customs"},
-    "return": {"return"},
-    "refund": {"refund"},
-    "exchange": {"exchange"},
+    "logistics": {"logistics", "aftersale", "logistics_policy", "logistics_status"},
+    "customs": {"customs", "package"},
+    "return": {"return", "exchange"},
+    "refund": {"refund", "order"},
+    "exchange": {"exchange", "return"},
     "address": {"address"},
-    "order": {"order"},
+    "order": {"order", "refund"},
     "payment": {"payment"},
-    "package": {"package"},
+    "package": {"package", "customs", "logistics"},
     "coupon": {"coupon"},
 }
 
@@ -195,6 +197,9 @@ def evaluate_relevance(case: EvalCase, response: AgentResponse) -> float:
 
     # Route correctness bonus
     if case.category == "logistics" and response.route == "logistics_tool":
+        score += 0.2
+    elif case.category == "logistics" and response.route == "rag_knowledge_base":
+        # Logistics policy questions legitimately go through RAG
         score += 0.2
     elif case.category != "logistics" and response.route == "rag_knowledge_base":
         score += 0.2

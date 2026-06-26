@@ -27,6 +27,11 @@ const PROFILE_OPTIONS: {
     label: "Doubao",
     description: "由后端 Render 环境变量配置，前端不保存 key",
   },
+  {
+    value: "mimo",
+    label: "Mimo",
+    description: "由后端 Render 环境变量配置，前端不保存 key",
+  },
 ];
 
 /**

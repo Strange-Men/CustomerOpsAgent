@@ -25,18 +25,57 @@ def detect_sensitive_order_query(query: str) -> bool:
     Detect if query contains sensitive information requests.
 
     Checks for requests for passwords, verification codes, full bank card numbers.
+    Uses word-boundary matching for short English patterns to avoid false positives
+    (e.g., "pin" inside "shipping" or "China").
     """
     if not query:
         return False
 
-    sensitive_patterns = [
-        "密码", "验证码", "银行卡号", "卡号", "cvv", "安全码",
+    import re
+
+    # CJK patterns: simple substring match
+    # "密码" and "验证码" are almost always sensitive requests
+    # "卡号" and "安全码" are kept but with context awareness below
+    cjk_patterns = ["密码", "验证码", "安全码"]
+
+    # English patterns that need word-boundary matching (short, prone to false positives)
+    short_en_patterns = ["pin", "cvv", "cvc", "cvv2"]
+
+    # English patterns that are long enough for simple substring match
+    long_en_patterns = [
         "password", "verification code", "bank card", "card number",
-        "pin", "security code", "cvv2", "cvc",
+        "security code",
     ]
 
     query_lower = query.lower()
-    return any(pattern in query_lower for pattern in sensitive_patterns)
+
+    # Check CJK patterns
+    for pat in cjk_patterns:
+        if pat in query_lower:
+            return True
+
+    # Context-aware check for card-related terms:
+    # Only trigger if the query is asking someone to PROVIDE card info,
+    # not when discussing card issues (e.g., "输入卡号和CVV都对但还是支付失败")
+    card_terms = ["卡号", "银行卡号"]
+    # Only these explicit request patterns trigger, not descriptive words like "输入"
+    provide_context = ["提供", "告诉", "发送", "给我", "分享"]
+    has_card = any(t in query_lower for t in card_terms)
+    has_provide = any(t in query_lower for t in provide_context)
+    if has_card and has_provide:
+        return True
+
+    # Check short English patterns with word boundary
+    for pat in short_en_patterns:
+        if re.search(r'\b' + re.escape(pat) + r'\b', query_lower):
+            return True
+
+    # Check long English patterns with substring
+    for pat in long_en_patterns:
+        if pat in query_lower:
+            return True
+
+    return False
 
 
 def detect_private_info_request(query: str) -> bool:
@@ -207,15 +246,15 @@ def build_fallback_answer(reason: str | None, intent: str) -> str:
     """
     fallback_answers = {
         "empty_query": "您好，请问有什么可以帮您的吗？",
-        "unknown_intent": "抱歉，我无法理解您的问题。建议您联系人工客服获取帮助。",
-        "missing_order_id": "您好，查询物流信息需要提供订单号。请您提供订单号，或登录账户查看订单状态。",
-        "logistics_tool_failed": "抱歉，物流查询系统暂时无法获取信息。建议您稍后重试，或联系人工客服。",
-        "no_evidence": "抱歉，当前知识库中未找到相关信息。建议您联系人工客服获取帮助。",
-        "low_evidence_confidence": "您的问题我找到了一些相关信息，但置信度不够高。建议您与人工客服确认。",
-        "out_of_scope": "您的问题超出了当前客服知识库的覆盖范围。建议您联系人工客服。",
-        "needs_clarification": "您提到了多个问题，请问您最想处理哪一个？",
-        "sensitive_info_request": "为了您的账户安全，请不要在对话中提供银行卡号、密码或验证码。如有需要，请联系人工客服。",
-        "trace_no_evidence": "抱歉，当前知识库中没有产品溯源或检测报告信息。建议您联系人工客服或查看产品包装。",
+        "unknown_intent": "您好，我是跨境电商客服助手，主要处理物流查询、退换货、支付、清关等问题。\n\n您的问题我暂时无法匹配到相关知识，建议您：\n1）尝试用更具体的描述重新提问；\n2）联系人工客服获取帮助。",
+        "missing_order_id": "您好，查询物流信息需要提供订单号。\n\n请您提供订单号，或登录账户在「我的订单」中查看订单状态。",
+        "logistics_tool_failed": "抱歉，物流查询系统暂时无法获取信息。\n\n建议您稍后重试，或登录账户查看最新物流状态，也可以联系人工客服协助查询。",
+        "no_evidence": "抱歉，当前知识库中没有找到与您问题直接相关的信息。\n\n建议您联系人工客服获取针对性帮助，或尝试换一种方式描述您的问题。",
+        "low_evidence_confidence": "您的问题我找到了一些参考信息，但匹配度不够高。\n\n建议您与人工客服确认具体政策，以确保信息准确。",
+        "out_of_scope": "您好，我是跨境电商客服助手，主要处理以下问题：\n• 物流配送与追踪\n• 退换货与退款\n• 清关与关税\n• 订单与支付\n• 包裹问题\n\n您的问题超出了我的服务范围，建议联系相关领域的专业人员。",
+        "needs_clarification": "您提到了多个问题，请问您最想优先处理哪一个？\n\n您可以选择：物流查询、退换货、退款、支付问题等。",
+        "sensitive_info_request": "为了您的账户安全，请不要在对话中提供银行卡号、密码或验证码。\n\n如有需要，请直接联系人工客服处理。",
+        "trace_no_evidence": "抱歉，当前知识库中没有产品溯源或检测报告相关信息。\n\n建议您查看产品包装上的溯源码，或联系人工客服获取帮助。",
     }
 
     answer = fallback_answers.get(reason, "抱歉，暂时无法处理您的问题。建议您联系人工客服获取帮助。")
@@ -224,6 +263,6 @@ def build_fallback_answer(reason: str | None, intent: str) -> str:
     if intent == "logistics" and reason != "missing_order_id":
         answer += "\n\n如需查询物流状态，建议您登录账户查看或提供订单号。"
     elif intent in ["aftersale", "trace"]:
-        answer += "\n\n如需进一步处理，建议您联系人工客服。"
+        answer += "\n\n如需进一步处理，建议您联系人工客服并提供相关订单号或问题详情。"
 
     return answer

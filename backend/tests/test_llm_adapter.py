@@ -356,11 +356,12 @@ def test_api_response_answer_source_in_all_routes():
 
 
 def test_profile_whitelist():
-    """ALLOWED_PROFILES contains exactly mock, deepseek, doubao."""
+    """ALLOWED_PROFILES contains exactly mock, deepseek, doubao, mimo."""
     assert "mock" in ALLOWED_PROFILES
     assert "deepseek" in ALLOWED_PROFILES
     assert "doubao" in ALLOWED_PROFILES
-    assert len(ALLOWED_PROFILES) == 3
+    assert "mimo" in ALLOWED_PROFILES
+    assert len(ALLOWED_PROFILES) == 4
 
 
 def test_load_config_for_profile_mock():
@@ -394,6 +395,20 @@ def test_load_config_for_profile_doubao_missing_config(monkeypatch: pytest.Monke
         monkeypatch.delenv(key, raising=False)
 
     config = load_llm_config_for_profile("doubao")
+    assert config.mode == "mock"
+    assert config.is_real_mode is False
+
+
+def test_load_config_for_profile_mimo_missing_config(monkeypatch: pytest.MonkeyPatch):
+    """mimo profile with missing env vars falls back to mock config."""
+    for key in [
+        "CUSTOMEROPS_LLM_MIMO_BASE_URL",
+        "CUSTOMEROPS_LLM_MIMO_API_KEY",
+        "CUSTOMEROPS_LLM_MIMO_MODEL",
+    ]:
+        monkeypatch.delenv(key, raising=False)
+
+    config = load_llm_config_for_profile("mimo")
     assert config.mode == "mock"
     assert config.is_real_mode is False
 

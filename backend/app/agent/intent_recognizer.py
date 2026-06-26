@@ -17,8 +17,8 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "到哪了", "到哪里了", "什么时候到", "什么时候送",
         "快递到", "包裹到", "在哪了", "在哪里了",
         "已发货", "未发货", "没发货", "已揽收", "运输中",
-        "在途中", "在路上", "派件中", "已签收", "未签收",
-        "查快递", "查物流", "查包裹", "查配送",
+        "在途中", "在路上", "派件中", "已签收", "未签收", "签收",
+        "查快递", "查包裹", "查配送",
         "快递进度", "物流进度", "包裹进度",
         # English - tracking queries
         "where is my", "where is the", "when will it arrive",
@@ -35,10 +35,17 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "从哪里发货", "发货地", "仓库", "配送方式",
         "标准物流", "快速物流", "经济物流",
         "物流政策", "配送政策", "物流规则",
+        "怎么查物流", "查物流", "物流追踪", "追踪", "追踪号",
         # Chinese - shipping delay expressions (not lost/damaged)
         "还没到", "还没收到", "多久了还没", "一个月了还没",
         "三周了还没", "两周了还没", "快一个月", "快三周",
         "太慢了", "为什么还没到", "怎么还没到", "比美国慢",
+        "卡住", "不动了", "停滞", "好几天不动", "好几天没动",
+        # Chinese - seasonal/special logistics
+        "黑五", "旺季", "双十一", "发货慢", "延迟多久",
+        "北欧", "瑞典", "挪威", "芬兰", "丹麦",
+        "英国脱欧", "脱欧", "加急服务", "快递加急",
+        "从仓库", "发货速度", "派送",
         # English - policy queries
         "shipping time", "delivery time", "how long does shipping",
         "how long does delivery", "shipping cost", "free shipping",
@@ -51,15 +58,18 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "still not arrived", "not arrived", "taking too long",
         "shipping delay", "delivery delay", "why hasn't",
         "package still hasn't", "still hasn't", "how long does it take",
+        # English - seasonal/special logistics
+        "black friday", "peak season", "brexit", "nordic", "sweden",
+        "express service", "rush shipping", "from warehouse",
     ],
     "customs": [
         # Chinese
         "清关", "海关", "报关", "通关", "关税", "税费", "缴税",
-        "清关延迟", "清关问题", "海关扣留", "海关检查",
+        "清关延迟", "清关问题", "海关扣留", "海关检查", "海关抽检",
         # English
         "customs", "clearance", "tariff", "duty", "tax",
         "customs delay", "customs hold", "customs inspection",
-        "import duty", "customs fee",
+        "import duty", "customs fee", "customs check",
     ],
     "return": [
         # Chinese
@@ -118,8 +128,9 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         "外包装", "内包装", "商品损坏", "商品破损",
         "碎了", "碎了怎么办", "赔偿", "理赔", "补发",
         "没收到包裹", "包裹没收到", "丢包",
-        "还没收到", "没收到货", "一个月了还没",
+        "还没收到", "没收到", "没收到货", "一个月了还没",
         "丢了", "包裹丢了", "找不到包裹", "包裹找不到",
+        "代签", "代签了", "不是本人签收", "被别人拿走",
         # English
         "package", "damaged", "broken", "lost", "missing",
         "package damaged", "package lost", "package broken",
@@ -131,16 +142,18 @@ INTENT_KEYWORDS: dict[str, list[str]] = {
         # Chinese
         "优惠券", "优惠码", "折扣", "促销", "满减", "折扣码",
         "优惠券不能用", "优惠码无效", "优惠券过期", "退款优惠券",
+        "不参与优惠", "不能用券", "用不了优惠", "优惠", "不打折",
         # English
         "coupon", "discount", "promo", "promo code", "coupon code",
         "coupon not working", "coupon expired", "discount code",
+        "not eligible", "excluded from discount",
     ],
     "trace": [
         # Chinese
         "溯源", "产地", "检测报告", "产品溯源", "原产地", "生产地",
         "检测", "认证", "质量检测", "产品认证", "来源", "来源证明",
         # English
-        "trace", "origin", "certificate", "inspection", "traceability",
+        "trace", "origin", "certificate", "traceability",
         "product origin", "country of origin", "quality certificate",
         "inspection report", "test report",
     ],
@@ -189,6 +202,8 @@ _PACKAGE_OVERRIDE_KEYWORDS = [
     "丢", "碎", "坏", "赔偿", "理赔", "没收到", "破损", "损坏",
     "少件", "漏发", "错发", "wrong", "damaged", "broken", "missing",
     "lost", "compensation", "claim", "never received", "not received",
+    "代签", "代签了", "没找到", "被别人拿走", "不是本人签收",
+    "fake sign", "signed but not received",
 ]
 
 # Policy-related keywords that indicate a policy question, not a status query
@@ -352,6 +367,45 @@ def recognize_intent(query: str) -> IntentResult:
                     matched_keywords=matched_keywords,
                     needs_clarification=False,
                 )
+
+    # Rule 2b: If logistics_status and address both match, check for address keywords
+    # "订单还没发货，我可以改一下收货地址吗" — "没发货" matches logistics_status,
+    # but "收货地址" matches address. Address intent should take precedence.
+    if "logistics_status" in matched_intents and "address" in matched_intents:
+        address_keywords = ["改地址", "修改地址", "收货地址", "收件地址", "配送地址",
+                           "change address", "shipping address", "delivery address"]
+        has_address = any(kw in query_lower for kw in address_keywords)
+        if has_address:
+            primary_intent = "address"
+            matched_keywords = matched_intents["address"]
+            route_intent = ROUTE_INTENT_MAP.get(primary_intent, "aftersale")
+            confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
+            return IntentResult(
+                route_intent=route_intent,
+                detail_intent=primary_intent,
+                confidence=confidence,
+                matched_keywords=matched_keywords,
+                needs_clarification=False,
+            )
+
+    # Rule 2c: If logistics_status and customs both match, check for customs keywords
+    # "The tracking says customs inspection" — "in transit" matches logistics_status,
+    # but "customs" matches customs. Customs intent should take precedence.
+    if "logistics_status" in matched_intents and "customs" in matched_intents:
+        customs_keywords = ["customs", "清关", "海关", "clearance", "tariff", "duty"]
+        has_customs = any(kw in query_lower for kw in customs_keywords)
+        if has_customs:
+            primary_intent = "customs"
+            matched_keywords = matched_intents["customs"]
+            route_intent = ROUTE_INTENT_MAP.get(primary_intent, "aftersale")
+            confidence = min(0.5 + len(matched_keywords) * 0.1, 0.9)
+            return IntentResult(
+                route_intent=route_intent,
+                detail_intent=primary_intent,
+                confidence=confidence,
+                matched_keywords=matched_keywords,
+                needs_clarification=False,
+            )
 
     # Rule 3: If logistics_status and order both match, check for tracking keywords
     if "logistics_status" in matched_intents and "order" in matched_intents:

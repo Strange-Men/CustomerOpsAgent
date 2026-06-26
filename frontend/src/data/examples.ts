@@ -1,7 +1,7 @@
 /**
  * Example questions for the chat UI.
  * Used as static placeholder suggestions — not connected to any API.
- * All content in Chinese for demo consistency.
+ * Selected to demonstrate RAG, logistics tool, and fallback capabilities.
  */
 
 import type { ExamplePrompt } from "../lib/types";
@@ -9,8 +9,8 @@ import type { ExamplePrompt } from "../lib/types";
 export const EXAMPLE_QUESTIONS: ExamplePrompt[] = [
   {
     id: "customs-delay",
-    label: "清关延迟怎么办？",
-    query: "清关延迟怎么办？",
+    label: "清关延迟一般是什么原因？",
+    query: "清关延迟一般是什么原因？",
     scenario: "customs",
     expectedRoute: "rag_knowledge_base",
   },
@@ -29,11 +29,11 @@ export const EXAMPLE_QUESTIONS: ExamplePrompt[] = [
     expectedRoute: "logistics_tool",
   },
   {
-    id: "package-status",
-    label: "我的快递到哪了？",
-    query: "我的快递到哪了？",
-    scenario: "logistics",
-    expectedRoute: "logistics_tool",
+    id: "payment-failed",
+    label: "支付失败怎么办？",
+    query: "支付失败怎么办？",
+    scenario: "payment",
+    expectedRoute: "rag_knowledge_base",
   },
   {
     id: "off-topic",

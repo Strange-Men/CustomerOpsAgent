@@ -70,7 +70,7 @@ The project follows a “core flow → core capabilities → safe adapter → fr
 - RAG evidence chain: retrieval returns citations and `retrieved_doc_ids`, addressing the “answer without evidence” problem.
 - Tool simulation: the mock logistics tool keeps the tool route demonstrable without connecting to a real logistics API.
 - Model adapter: the LLM Adapter defaults to mock, optionally supports OpenAI-compatible real LLMs, and falls back to mock when real config is missing.
-- Safe selection: the frontend sends only `llm_profile`; the backend restricts profiles to `mock`, `deepseek`, and `doubao`.
+- Safe selection: the frontend sends only `llm_profile`; the backend restricts profiles to `mock`, `deepseek`, `doubao`, and `mimo`.
 - Frontend display: React + Vite + TypeScript + Tailwind show Q&A, model profile, fallback, and metadata.
 - Deployment: backend on Render, frontend on Vercel; online smoke verified (M7).
 
@@ -78,7 +78,7 @@ The project follows a “core flow → core capabilities → safe adapter → fr
 
 - Engineering quality: backend tests 254 passed, Ruff All checks passed, and frontend build passed.
 - Retrieval result: Retrieval Eval 20 cases, Recall@5 90%, MRR 0.785. Recall@5 measures whether expected documents appear in the top-5 results, while MRR indicates how early relevant documents appear.
-- Answer result: Answer Eval 122 cases, citation hit rate 83.61%, pass rate 46.72%. The citation hit rate reflects evidence alignment; the 46.72% pass rate is a transparent baseline and improvement target, not a polished success claim.
+- Answer result: Answer Eval 122 cases, citation hit rate 95.90%, pass rate 60.66%, fallback rate 0.82%. v1.3.0 improved citation hit rate by +12.29pp and pass rate by +13.94pp over baseline.
 - Safety and demoability: local smoke passed for mock, deepseek fallback, and invalid profile 422; the full flow can run without real model keys.
 - Access: Render + Vercel demo links available; online smoke verified (M7).
 
@@ -105,7 +105,8 @@ Agent Workflow
   └── LLM Adapter
         ├── mock
         ├── deepseek profile
-        └── doubao profile
+        ├── doubao profile
+        └── mimo profile
 ```
 
 DeepSeek and Doubao are profiles only. Keys belong in backend environment variables, and the frontend does not call model services directly.
@@ -123,8 +124,8 @@ curl -X POST "https://customeropsagent.onrender.com/api/agent/chat" \
   }'
 ```
 
-- `llm_profile` options: `mock`, `deepseek`, `doubao`.
-- If real model env vars are not configured, `deepseek` and `doubao` fall back to mock.
+- `llm_profile` options: `mock`, `deepseek`, `doubao`, `mimo`.
+- If real model env vars are not configured, `deepseek`, `doubao`, and `mimo` fall back to mock.
 - Do not send API keys in requests.
 
 ## Local Development
@@ -174,7 +175,7 @@ Current results:
 - ruff: All checks passed
 - frontend build: passed
 - retrieval eval baseline: 20 cases, Recall@5 90%, MRR 0.785
-- answer eval baseline: 122 cases, citation hit rate 83.61%, pass rate 46.72%
+- answer eval: 122 cases, citation hit rate 95.90%, pass rate 60.66%, fallback rate 0.82%
 
 Metric notes:
 
@@ -198,9 +199,9 @@ Metric notes:
 
 Current status:
 
-- Backend: v1.2.0-demo.
+- Backend: v1.3.0-quality.
 - Frontend: M7 complete, online smoke verified.
-- Release tag: v1.2.0-demo.
+- Release tag: v1.2.0-demo (preserved), v1.3.0-quality (pending verification).
 
 Roadmap (completed):
 

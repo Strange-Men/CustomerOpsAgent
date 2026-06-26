@@ -225,7 +225,7 @@ class AgentResponse(BaseModel):
     )
     llm_profile: Optional[str] = Field(
         None,
-        description="LLM profile used: mock, deepseek, doubao",
+        description="LLM profile used: mock, deepseek, doubao, mimo",
     )
     llm_provider: Optional[str] = Field(
         None,
