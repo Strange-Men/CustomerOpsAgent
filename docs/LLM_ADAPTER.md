@@ -21,7 +21,7 @@ This document describes the **optional** real LLM adapter for CustomerOpsAgent.
 
 ### Profile-Based Configuration (M4+)
 
-The frontend sends only a public `llm_profile` name (mock / deepseek / doubao). The backend resolves it to the correct env vars.
+The frontend sends only a public `llm_profile` name (mock / deepseek / doubao / mimo). The backend resolves it to the correct env vars.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -31,6 +31,9 @@ The frontend sends only a public `llm_profile` name (mock / deepseek / doubao). 
 | `CUSTOMEROPS_LLM_DOUBAO_BASE_URL` | Doubao API base URL | None |
 | `CUSTOMEROPS_LLM_DOUBAO_API_KEY` | Doubao API key | None |
 | `CUSTOMEROPS_LLM_DOUBAO_MODEL` | Doubao model name | None |
+| `CUSTOMEROPS_LLM_MIMO_BASE_URL` | Mimo API base URL | None |
+| `CUSTOMEROPS_LLM_MIMO_API_KEY` | Mimo API key | None |
+| `CUSTOMEROPS_LLM_MIMO_MODEL` | Mimo model name | None |
 | `CUSTOMEROPS_LLM_TIMEOUT_SECONDS` | Request timeout in seconds | `20` |
 | `CUSTOMEROPS_ALLOWED_ORIGINS` | CORS allowed origins (comma-separated) | localhost + Vercel |
 
@@ -53,6 +56,9 @@ CUSTOMEROPS_LLM_DEEPSEEK_MODEL=deepseek-chat
 CUSTOMEROPS_LLM_DOUBAO_BASE_URL=<your-doubao-base-url>
 CUSTOMEROPS_LLM_DOUBAO_API_KEY=<your-key>
 CUSTOMEROPS_LLM_DOUBAO_MODEL=<your-model>
+CUSTOMEROPS_LLM_MIMO_BASE_URL=<your-mimo-base-url>
+CUSTOMEROPS_LLM_MIMO_API_KEY=<your-key>
+CUSTOMEROPS_LLM_MIMO_MODEL=<your-model>
 ```
 
 > **Note:** These are set in Render backend environment variables only. The frontend never sees these keys.
@@ -74,6 +80,7 @@ The system has multiple layers of fallback to ensure it always works:
 | `llm_profile=mock` or no profile | Uses mock adapter (default) |
 | `llm_profile=deepseek` but env vars missing | Falls back to mock, `llm_profile=deepseek` preserved |
 | `llm_profile=doubao` but env vars missing | Falls back to mock, `llm_profile=doubao` preserved |
+| `llm_profile=mimo` but env vars missing | Falls back to mock, `llm_profile=mimo` preserved |
 | Real LLM API returns error (timeout, HTTP error, network error) | Falls back to mock answer, marks `answer_source=real_llm_fallback_mock` |
 | Unknown profile name | Returns 422 error |
 | No env vars set (legacy) | Uses mock adapter (default) |
@@ -109,6 +116,11 @@ curl -X POST http://127.0.0.1:8000/api/agent/chat \
 curl -X POST http://127.0.0.1:8000/api/agent/chat \
   -H "Content-Type: application/json" \
   -d '{"user_query": "清关延迟怎么办？", "llm_profile": "deepseek"}'
+
+# Test with mimo profile (falls back to mock if not configured)
+curl -X POST http://127.0.0.1:8000/api/agent/chat \
+  -H "Content-Type: application/json" \
+  -d '{"user_query": "清关延迟怎么办？", "llm_profile": "mimo"}'
 ```
 
 The response will include `"answer_source": "mock"` and `"llm_profile": "mock"` by default.
@@ -131,6 +143,7 @@ Tested on Render: https://customeropsagent.onrender.com
 | Mock (default) | mock | ✅ answer_source=mock, llm_profile=mock |
 | DeepSeek (no key) | deepseek | ✅ Falls back to mock, llm_profile=deepseek preserved |
 | Doubao (no key) | doubao | ✅ Falls back to mock, llm_profile=doubao preserved |
+| Mimo (no key) | mimo | ✅ Falls back to mock, llm_profile=mimo preserved |
 | Invalid profile | openai | ✅ HTTP 422 |
 | No key leak in response | all | ✅ No API key in any response field |
 
