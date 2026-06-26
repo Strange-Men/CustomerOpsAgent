@@ -14,6 +14,40 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.6.1-final-polish] — 2026-06-26
+
+### Fixed
+- Fixed frontend version display: `v1.4.1-real-mimo` → `v1.6.1-final-polish` (constants.ts, project.ts)
+- Fixed answer citation leakage: customer-facing answers no longer contain `doc_id`, `payment_global_failure_001`, or internal citation references
+- Fixed prompt builder: removed instruction for LLM to include `doc_id` in answer text
+- Fixed mock answer generator: removed `citation_section` (doc_id list) from all answer templates
+- Added `sanitize_customer_answer()` post-processing to strip any residual internal fields from answers
+- Updated LLM system prompt to explicitly prohibit doc_id mentions in answers
+
+### Changed
+- Updated frontend copy: "引用证据" → "知识库依据" (AnswerCard, AnswerDetails)
+- Updated frontend copy: "查看引用详情" → "查看知识库依据"
+- Updated frontend copy: "RAG 知识库" route label → "知识库"
+- Updated `docs/DEV_STATUS.md` — current stage updated to v1.6.1-final-polish
+- Updated `docs/CHANGELOG.md` — added v1.6.1 entry
+
+### Added
+- Added `backend/app/agent/answer_sanitizer.py` — post-processing module to strip internal fields from answers
+- Added `backend/tests/test_answer_composer.py` — 15 sanitizer tests + 6 answer content safety tests
+
+### Verified
+- Answer text no longer contains `证据引用`, `doc_id`, `payment_global_failure_001`, or other internal IDs
+- Citations / retrieved_doc_ids still returned in structured response fields
+- Citation details panel still accessible in frontend
+- Mock profile works normally
+- Mimo real_llm profile works normally
+- Out-of-scope queries still rejected
+- pytest: all tests passed
+- ruff: all checks passed
+- frontend build: passed
+
+---
+
 ## [v1.6.0-final-docs] — 2026-06-26
 
 ### Changed

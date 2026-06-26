@@ -256,8 +256,10 @@ class TestMockAnswerCoverage:
 
         response = generate_mock_rag_answer("退款多久到账", intent, chunks)
 
-        # Answer should reference the document
-        assert "POL-REFUND-001" in response.answer
+        # Answer should NOT contain internal doc_id (v1.6.1 sanitization)
+        assert "POL-REFUND-001" not in response.answer
+        # But citations should still reference the document
+        assert any(c.doc_id == "POL-REFUND-001" for c in response.citations)
 
 
 # ============================================================

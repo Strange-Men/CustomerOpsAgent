@@ -2,7 +2,7 @@
  * Application-wide constants.
  */
 
-export const RELEASE_TAG = "v1.4.1-real-mimo";
+export const RELEASE_TAG = "v1.6.1-final-polish";
 
 export const APP_NAME = "CustomerOpsAgent";
 

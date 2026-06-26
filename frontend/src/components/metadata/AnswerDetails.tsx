@@ -64,7 +64,7 @@ export function AnswerDetails({ response }: AnswerDetailsProps) {
           className="flex items-center gap-1.5 text-[11px] text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
         >
           <span className="text-[9px]">{citationsOpen ? "▼" : "▶"}</span>
-          引用证据
+          知识库依据
           {response.citations.length > 0 && (
             <span className="text-[10px] text-slate-600">
               ({response.citations.length})
@@ -84,7 +84,7 @@ export function AnswerDetails({ response }: AnswerDetailsProps) {
                 ))}
                 {response.citations.length > 3 && (
                   <p className="text-[10px] text-slate-600">
-                    还有 {response.citations.length - 3} 条引用未显示
+                    还有 {response.citations.length - 3} 条依据未显示
                   </p>
                 )}
               </>

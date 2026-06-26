@@ -259,3 +259,31 @@ A visitor should understand within 1 minute:
 - No API key leakage in frontend, response, or docs
 
 **Status:** Real Mimo LLM verified. See `docs/REAL_MIMO_SMOKE_REPORT.md`.
+
+## 15. Final Polish (v1.6.1) ✅
+
+**Goal:** Fix answer citation leakage, UI version staleness, and customer-facing copy polish.
+
+**What changed:**
+
+- Frontend version display updated from `v1.4.1-real-mimo` to `v1.6.1-final-polish`
+- Version constant unified in `constants.ts` (`RELEASE_TAG`) and `project.ts`
+- Customer-facing answers no longer contain `doc_id`, `payment_global_failure_001`, or internal citation references
+- Prompt builder no longer instructs LLM to include doc_ids in answer text
+- Mock answer templates no longer append citation_section (doc_id list) to answers
+- Added `sanitize_customer_answer()` post-processing as safety net
+- LLM system prompt explicitly prohibits doc_id mentions
+- Frontend copy: "引用证据" → "知识库依据"
+- Frontend copy: "查看引用详情" → "查看知识库依据"
+- Frontend copy: "RAG 知识库" route label → "知识库"
+
+**What was preserved:**
+
+- Citations and retrieved_doc_ids still returned in structured response fields
+- Citation details panel still accessible in frontend
+- Mock profile works normally
+- Mimo real_llm profile works normally
+- Out-of-scope queries still rejected
+- All pytest tests pass
+- Ruff checks pass
+- Frontend build passes

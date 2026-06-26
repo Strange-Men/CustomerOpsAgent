@@ -145,15 +145,6 @@ def generate_mock_rag_answer(
     # Extract evidence from multiple chunks
     evidence_text = _extract_evidence_sentences(retrieved_chunks, max_chunks=3)
 
-    # Build citation references
-    citation_refs = []
-    seen_doc_ids = set()
-    for chunk in retrieved_chunks[:3]:
-        if chunk.doc_id not in seen_doc_ids:
-            seen_doc_ids.add(chunk.doc_id)
-            citation_refs.append(f"{chunk.doc_id} ({chunk.title})")
-    citation_section = "、".join(citation_refs) if citation_refs else "知识库"
-
     # Build answer based on intent with improved evidence coverage
     detail_intent = intent_result.detail_intent
 
@@ -162,16 +153,14 @@ def generate_mock_rag_answer(
             f"您好，关于清关问题，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
             f"清关延迟通常由海关抽检、申报信息不完整或节假日等因素导致，一般延迟 3-15 个工作日属正常范围。\n"
-            f"建议您：1）通过物流追踪号查看包裹状态；2）如超过 15 个工作日未放行，联系人工客服协助处理。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"建议您：1）通过物流追踪号查看包裹状态；2）如超过 15 个工作日未放行，联系人工客服协助处理。"
         )
     elif detail_intent == "return":
         answer = (
             f"您好，关于退货政策，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
             f"建议您在签收后规定时间内申请退货，保持商品原包装完好。\n"
-            f"如需操作，请登录账户在订单详情页提交退货申请，或联系人工客服协助。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"如需操作，请登录账户在订单详情页提交退货申请，或联系人工客服协助。"
         )
     elif detail_intent == "refund":
         answer = (
@@ -179,22 +168,19 @@ def generate_mock_rag_answer(
             f"{evidence_text}\n\n"
             f"退款到账时间取决于支付方式，一般为 3-10 个工作日。\n"
             f"如涉及退货退款，请先完成退货流程，退款将在商品验收后启动。\n"
-            f"如需查询退款进度，建议联系人工客服并提供订单号。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"如需查询退款进度，建议联系人工客服并提供订单号。"
         )
     elif detail_intent == "exchange":
         answer = (
             f"您好，关于换货政策，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
-            f"如需申请换货，建议您在签收后规定时间内登录账户操作，或联系人工客服协助处理。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"如需申请换货，建议您在签收后规定时间内登录账户操作，或联系人工客服协助处理。"
         )
     elif detail_intent == "address":
         answer = (
             f"您好，关于地址修改，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
-            f"如需修改收货地址，请尽快登录账户操作。已发货订单可能无法修改地址，建议联系人工客服确认。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"如需修改收货地址，请尽快登录账户操作。已发货订单可能无法修改地址，建议联系人工客服确认。"
         )
     elif detail_intent == "order":
         # Check if query also mentions refund (multi-intent: order cancel + refund)
@@ -204,45 +190,39 @@ def generate_mock_rag_answer(
                 f"您好，关于订单取消及退款，以下是相关信息：\n\n"
                 f"{evidence_text}\n\n"
                 f"订单取消后，退款将按原支付路径退回，具体到账时间以支付平台处理为准。\n"
-                f"如有其他问题，请联系人工客服并提供订单号。\n\n"
-                f"以上信息根据当前知识库（{citation_section}）。"
+                f"如有其他问题，请联系人工客服并提供订单号。"
             )
         else:
             answer = (
                 f"您好，关于订单问题，以下是相关信息：\n\n"
                 f"{evidence_text}\n\n"
-                f"如有其他问题，请联系人工客服并提供订单号以便查询。\n\n"
-                f"以上信息根据当前知识库（{citation_section}）。"
+                f"如有其他问题，请联系人工客服并提供订单号以便查询。"
             )
     elif detail_intent == "payment":
         answer = (
             f"您好，关于支付问题，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
-            f"如遇支付异常，建议您：1）检查支付方式是否支持跨境交易；2）确认扣款状态；3）如重复扣款，请联系人工客服并提供银行流水。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"如遇支付异常，建议您：1）检查支付方式是否支持跨境交易；2）确认扣款状态；3）如重复扣款，请联系人工客服并提供银行流水。"
         )
     elif detail_intent == "package":
         answer = (
             f"您好，关于包裹问题，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
             f"如包裹显示已签收但未收到，或存在损坏/丢失情况，建议您：\n"
-            f"1）检查是否由他人代收；2）联系物流方确认；3）如确认丢包或损坏，请联系人工客服申请理赔。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"1）检查是否由他人代收；2）联系物流方确认；3）如确认丢包或损坏，请联系人工客服申请理赔。"
         )
     elif detail_intent == "coupon":
         answer = (
             f"您好，关于优惠券问题，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
             f"如优惠券无法使用，请检查是否在有效期内、是否满足使用条件。\n"
-            f"如有其他问题，请联系人工客服。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"如有其他问题，请联系人工客服。"
         )
     elif detail_intent == "trace":
         answer = (
             f"您好，关于产品溯源信息，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
-            f"如需更详细的溯源或检测报告信息，建议您查看产品包装或联系人工客服。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"如需更详细的溯源或检测报告信息，建议您查看产品包装或联系人工客服。"
         )
     elif detail_intent == "logistics_policy":
         query_lower = query.lower()
@@ -256,22 +236,19 @@ def generate_mock_rag_answer(
                 f"您好，关于物流配送时效，以下是相关信息：\n\n"
                 f"{evidence_text}\n\n"
                 f"跨境物流受目的地、清关等因素影响，实际配送时间可能比标准时效延长 3-5 个工作日。\n"
-                f"如您的包裹长时间未到达，建议：1）通过物流追踪号查看最新状态；2）联系人工客服查询。\n\n"
-                f"以上信息根据当前知识库（{citation_section}）。"
+                f"如您的包裹长时间未到达，建议：1）通过物流追踪号查看最新状态；2）联系人工客服查询。"
             )
         else:
             answer = (
                 f"您好，关于物流配送，以下是相关信息：\n\n"
                 f"{evidence_text}\n\n"
-                f"如有其他物流问题，建议联系人工客服或提供订单号以便查询。\n\n"
-                f"以上信息根据当前知识库（{citation_section}）。"
+                f"如有其他物流问题，建议联系人工客服或提供订单号以便查询。"
             )
     else:
         answer = (
             f"您好，根据当前知识库，以下是相关信息：\n\n"
             f"{evidence_text}\n\n"
-            f"如有其他问题，请联系人工客服获取帮助。\n\n"
-            f"以上信息根据当前知识库（{citation_section}）。"
+            f"如有其他问题，请联系人工客服获取帮助。"
         )
 
     return AgentResponse(

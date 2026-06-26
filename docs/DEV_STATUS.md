@@ -2,9 +2,11 @@
 
 ## 1. 当前阶段
 
-**v1.6.0-final-docs: Final Docs and Delivery Summary ✅**
+**v1.6.1-final-polish: Final UI and Answer Polish ✅**
 
-最终文档收口。README 最终更新，同步英文版，质量指标对齐，Docker / Mimo / Bad Case Bank 状态统一。不改变业务逻辑、RAG、Bad Case Bank 或 eval 指标。
+修复前端版本显示、回答正文内部字段泄露、客服体验文案优化。不改变 RAG、eval 指标或核心能力。
+
+Previous: v1.6.0-final-docs (Final Docs and Delivery Summary)。
 
 Previous: v1.5.0-docker (Docker Compose Local Runtime)。
 
@@ -14,7 +16,7 @@ Previous: v1.4.0-badcase (120+ Bad Case Bank + Evaluation Harness).
 
 ## 2. 当前项目状态
 
-**状态：v1.6.0-final-docs — 最终文档收口完成**
+**状态：v1.6.1-final-polish — 最终体验修复完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）

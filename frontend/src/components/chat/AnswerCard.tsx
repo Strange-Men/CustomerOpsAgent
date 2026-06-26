@@ -9,7 +9,7 @@ const COLLAPSED_MAX_H = 220;
 
 /** Route display names (raw → friendly Chinese). */
 const ROUTE_LABELS: Record<string, string> = {
-  rag_knowledge_base: "RAG 知识库",
+  rag_knowledge_base: "知识库",
   logistics_tool: "Mock 物流工具",
   fallback: "兜底回复",
 };
@@ -45,14 +45,14 @@ export function AnswerCard({ response }: AnswerCardProps) {
             <div className="flex items-center gap-1.5 mb-2 px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
               <span className="text-emerald-400 text-xs">📚</span>
               <span className="text-[11px] text-emerald-300">
-                已命中知识库证据 · {response.citations.length} 条引用
+                已命中知识库依据 · {response.citations.length} 条参考
               </span>
             </div>
           ) : response.route === "rag_knowledge_base" ? (
             <div className="flex items-center gap-1.5 mb-2 px-2 py-1 rounded-lg bg-slate-700/30 border border-slate-600/20">
               <span className="text-slate-400 text-xs">📄</span>
               <span className="text-[11px] text-slate-400">
-                本次未返回引用证据
+                本次未命中知识库依据
               </span>
             </div>
           ) : null}
@@ -93,7 +93,7 @@ export function AnswerCard({ response }: AnswerCardProps) {
                 onClick={() => setCitationsOpen((v) => !v)}
                 className="text-[11px] text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
               >
-                {citationsOpen ? "收起引用详情" : `查看引用详情（${response.citations.length} 条）`}
+                {citationsOpen ? "收起知识库依据" : `查看知识库依据（${response.citations.length} 条）`}
               </button>
               {citationsOpen && (
                 <div className="mt-1.5 space-y-1">

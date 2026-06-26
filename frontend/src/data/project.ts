@@ -10,7 +10,7 @@ export const PROJECT_TAGLINE =
 export const PROJECT_DESCRIPTION =
   "基于 RAG + 工作流的智能客服 Agent 演示系统，覆盖物流查询、售后处理等场景。默认使用 Mock 数据，可选接入真实 LLM。";
 
-export const RELEASE_TAG_DISPLAY = "v1.2.0-demo";
+export const RELEASE_TAG_DISPLAY = "v1.6.1-final-polish";
 
 export const CAPABILITIES = [
   "RAG 知识库检索",
@@ -34,5 +34,5 @@ export const STATUS_BADGES = [
   { label: "默认 Mock", variant: "warning" as const },
   { label: "RAG 已启用", variant: "success" as const },
   { label: "可选 LLM", variant: "info" as const },
-  { label: "v1.2.0-demo", variant: "accent" as const },
+  { label: "v1.6.1-final-polish", variant: "accent" as const },
 ];
