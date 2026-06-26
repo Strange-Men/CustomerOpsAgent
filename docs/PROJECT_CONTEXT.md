@@ -37,7 +37,7 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 5. **FastAPI 后端工程能力**：规范的后端 API 设计和实现
 6. **前后端联调能力**：前端展示和后端处理的完整流程
 7. **Bad Case / Eval 评估迭代能力**：系统化的质量评估和改进机制
-8. **可写进简历、适合面试讲解的垂直业务型 MVP**
+8. **垂直业务型 RAG + Agent Demo MVP**
 
 ## 7. 和普通 AI 客服机器人的区别
 
@@ -51,10 +51,10 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（Frontend M4 - API Integration + Model Profile Selector）
+## 8. 当前交付状态（Frontend M7 - Online Smoke + Release Checklist + Tag）
 
-**Status:** Frontend M4 Complete
-**Previous:** M11.5 Final LLM Adapter Release Checklist
+**Status:** Frontend M7 Complete — v1.2.0-demo Release Ready
+**Previous:** Frontend M6.5 (long answer collapse + README polish)
 
 | 能力 | 状态 | 说明 |
 |------|------|------|
@@ -96,6 +96,14 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 - pytest: 233 passed
 - ruff: All checks passed
 - API smoke: 22 passed
+
+**Frontend (M7):**
+- pytest: 254 passed
+- ruff: All checks passed
+- Frontend build: passed (32 modules)
+- Render smoke: 7/7 API tests passed
+- Vercel smoke: page accessible, assets verified
+- Release tag: v1.2.0-demo
 
 ### Known Limitations
 

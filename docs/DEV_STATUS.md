@@ -2,15 +2,15 @@
 
 ## 1. 当前阶段
 
-**Frontend M4: Agent API Integration + Model Profile Selector**
+**Frontend M7: Online Smoke, Final Docs, Release Checklist, Tag**
 
-Frontend connected to backend API. Model selector sends only public profile names (mock / deepseek / doubao). No API keys in frontend. CORS configured. 254 tests pass.
+Online smoke verification complete. Render backend and Vercel frontend verified. All 254 tests pass. v1.2.0-demo release ready.
 
-Previous: M11.5 Final LLM Adapter Release Checklist.
+Previous: Frontend M6.5 (long answer collapse + README polish).
 
 ## 2. 当前项目状态
 
-**状态：Frontend M4 Complete**
+**状态：Frontend M7 Complete — v1.2.0-demo Release Ready**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -101,6 +101,40 @@ Previous: M11.5 Final LLM Adapter Release Checklist.
 - ✅ 轻量客服 Agent Workflow 设计文档（M6.5）
 
 ## 3. 已完成内容
+
+### M7 (Frontend)：Online Smoke, Final Docs, Release Checklist, Tag
+
+- ✅ 本地验证
+  - pytest 254 passed
+  - ruff check passed
+  - `npm run build` passed (32 modules, 157ms)
+- ✅ Render 后端线上 smoke
+  - `/docs` HTTP 200, Swagger UI loads
+  - Mock profile customs query: intent=customs, route=rag_knowledge_base, citations present
+  - Mock profile refund query: intent=refund, route=rag_knowledge_base
+  - Mock profile logistics with order_id: intent=logistics_status, route=logistics_tool
+  - DeepSeek fallback (no key): answer_source=mock, llm_profile=deepseek, no crash
+  - Doubao fallback (no key): answer_source=mock, llm_profile=doubao, no crash
+  - Invalid profile (openai): HTTP 422
+  - Non-business query: fallback triggered
+  - Response fields: all 15 fields present
+- ✅ CORS 验证
+  - allow-origin: https://customer-ops-agent.vercel.app
+  - allow-methods: POST, GET, OPTIONS
+  - allow-headers: Content-Type
+- ✅ Vercel 前端线上 smoke
+  - Page HTTP 200, React SPA loads
+  - JS bundle: 206,627 bytes, contains all features
+  - CSS bundle hash matches local build
+- ✅ 安全检查
+  - No API keys in frontend/src/
+  - No secrets in README/docs
+  - mystudy/ and .agents/ excluded
+- ✅ 文档收口
+  - docs/FINAL_FRONTEND_RELEASE_CHECKLIST.md
+  - docs/FINAL_DEPLOYMENT_SMOKE_REPORT.md
+  - Updated DEV_STATUS, CHANGELOG, PROJECT_CONTEXT, API_SMOKE_DEMO, LLM_ADAPTER, FRONTEND_BRIEF
+- ✅ Release tag: v1.2.0-demo
 
 ### M11.5：Final LLM Adapter Release Checklist（本轮）
 
@@ -444,15 +478,14 @@ Previous: M11.5 Final LLM Adapter Release Checklist.
 
 **下一步建议：**
 
-- **v1.1.0-demo fresh clone verification** — 从 GitHub 全新 clone，验证所有测试通过
 - **作品集展示材料** — 整理 demo 展示文档和截图
 - **可选：M12 Real Logistics Adapter** — 连接真实物流追踪 API（不建议马上做）
+- **可选：i18n** — 中英文切换（deferred）
 
 **当前已完成：**
-- ✅ M11.5 Final LLM Adapter Release Checklist
-- ✅ M11 Optional Real LLM Adapter
-- ✅ M10.5 Final Release Checklist
-- ✅ Release tag: v1.1.0-demo (pending tag)
+- ✅ Frontend M7 Online Smoke + Release Checklist + Tag
+- ✅ Release tag: v1.2.0-demo
+- ✅ Release tag: v1.1.0-demo (preserved)
 - ✅ Release tag: v1.0.1-demo (preserved)
 
 ## 6. 风险点

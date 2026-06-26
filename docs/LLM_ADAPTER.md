@@ -122,7 +122,19 @@ If you have configured the environment variables (see Section 3), you can test t
 3. Send a test query: `curl -X POST http://127.0.0.1:8000/api/agent/chat -H "Content-Type: application/json" -d '{"user_query": "清关延迟怎么办？"}'`
 4. Check the response: `answer_source` should be `"real_llm"` if successful, or `"real_llm_fallback_mock"` if the real LLM failed
 
-## 7. Limitations
+## 7. Online Smoke Results (2026-06-26)
+
+Tested on Render: https://customeropsagent.onrender.com
+
+| Test | Profile | Result |
+|------|---------|--------|
+| Mock (default) | mock | ✅ answer_source=mock, llm_profile=mock |
+| DeepSeek (no key) | deepseek | ✅ Falls back to mock, llm_profile=deepseek preserved |
+| Doubao (no key) | doubao | ✅ Falls back to mock, llm_profile=doubao preserved |
+| Invalid profile | openai | ✅ HTTP 422 |
+| No key leak in response | all | ✅ No API key in any response field |
+
+## 8. Limitations
 
 - **Text generation only**: The adapter generates text responses. It does not support streaming, tool calling, or multi-turn conversation persistence.
 - **Single provider**: Currently only supports OpenAI-compatible `/chat/completions` endpoints.

@@ -27,7 +27,7 @@ The primary readers are technical reviewers evaluating the Agent architecture, A
 - Backend API: https://customeropsagent.onrender.com
 - API Docs: https://customeropsagent.onrender.com/docs
 
-Frontend API integration is complete. Online smoke should still be judged by the upcoming M4.5 verification result. Render free instances may cold start and need a short wait.
+Online smoke verified (M7). Render free instances may cold start — first visit may need 30–90 seconds.
 
 ## Highlights
 
@@ -72,7 +72,7 @@ The project follows a “core flow → core capabilities → safe adapter → fr
 - Model adapter: the LLM Adapter defaults to mock, optionally supports OpenAI-compatible real LLMs, and falls back to mock when real config is missing.
 - Safe selection: the frontend sends only `llm_profile`; the backend restricts profiles to `mock`, `deepseek`, and `doubao`.
 - Frontend display: React + Vite + TypeScript + Tailwind show Q&A, model profile, fallback, and metadata.
-- Deployment: backend on Render, frontend on Vercel; full online M4.5 smoke is still pending.
+- Deployment: backend on Render, frontend on Vercel; online smoke verified (M7).
 
 ## Results
 
@@ -80,7 +80,7 @@ The project follows a “core flow → core capabilities → safe adapter → fr
 - Retrieval result: Retrieval Eval 20 cases, Recall@5 90%, MRR 0.785. Recall@5 measures whether expected documents appear in the top-5 results, while MRR indicates how early relevant documents appear.
 - Answer result: Answer Eval 122 cases, citation hit rate 83.61%, pass rate 46.72%. The citation hit rate reflects evidence alignment; the 46.72% pass rate is a transparent baseline and improvement target, not a polished success claim.
 - Safety and demoability: local smoke passed for mock, deepseek fallback, and invalid profile 422; the full flow can run without real model keys.
-- Access: Render + Vercel demo links are available, while online smoke should still be judged by M4.5 verification.
+- Access: Render + Vercel demo links available; online smoke verified (M7).
 
 Reader value:
 
@@ -198,16 +198,17 @@ Metric notes:
 
 Current status:
 
-- Backend: v1.1.0-demo + Frontend M4.
-- Frontend: API integration + model profile selector complete.
-- Next: M4.5 online smoke, then M5 Metadata + Citations display polish.
+- Backend: v1.2.0-demo.
+- Frontend: M7 complete, online smoke verified.
+- Release tag: v1.2.0-demo.
 
-Roadmap:
+Roadmap (completed):
 
-- M4.5: online Render + Vercel smoke verification.
-- M5: Metadata + Citations display polish.
-- M6: fallback / error / empty state polish.
-- M7: responsive and visual polish.
-- M7.5: zh-CN / en-US language toggle.
-- M8: final docs and release checklist.
-- M9: fresh clone + deployment final verification.
+- M0–M6: RAG + Eval + Agent Workflow + API + LLM Adapter.
+- Frontend M1–M6.5: React scaffold → single-column chat → API integration → responsive → long answer collapse.
+- Frontend M7: online smoke, final docs, release checklist, tag.
+
+Optional next:
+
+- zh-CN / en-US language toggle.
+- Real Logistics Adapter.

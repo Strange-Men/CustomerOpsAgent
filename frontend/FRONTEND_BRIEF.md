@@ -224,3 +224,19 @@ A visitor should understand within 1 minute:
 - Citations, metadata, fallback badges all intact
 - Model selector fully functional
 - Mobile responsive
+
+## 13. Frontend M7 — Online Smoke + Release
+
+**Goal:** Online smoke verification, final docs, release checklist, tag.
+
+**Smoke results (2026-06-26):**
+
+- Render backend: 7/7 API tests passed (mock customs, refund, logistics, deepseek fallback, doubao fallback, invalid 422, non-business fallback)
+- CORS: Verified for Vercel origin
+- Vercel frontend: Page accessible, JS/CSS assets verified
+- Security: No API keys in frontend or docs
+- All 254 pytest tests pass, ruff passes, `npm run build` passes
+
+**Release tag:** v1.2.0-demo
+
+**Known limitation:** Windows curl may not encode Chinese characters correctly for API testing. Use Python urllib for Chinese queries.

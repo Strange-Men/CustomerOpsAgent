@@ -14,6 +14,28 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [Frontend M7] — 2026-06-26
+
+### Added
+- Added `docs/FINAL_FRONTEND_RELEASE_CHECKLIST.md` — Frontend M0–M7 milestone summary, verification results, boundaries, release tag candidate
+- Added `docs/FINAL_DEPLOYMENT_SMOKE_REPORT.md` — Render/Vercel online smoke results, CORS verification, known limitations, conclusion
+
+### Changed
+- Updated `docs/DEV_STATUS.md` — Current phase updated to Frontend M7, added M7 completed content, updated next steps
+- Updated `docs/CHANGELOG.md` — Added M7 entry
+- Updated `docs/PROJECT_CONTEXT.md` — Updated delivery status to Frontend M7, removed interview/resume reference from capability list
+- Updated `docs/API_SMOKE_DEMO.md` — Added online deployment section with Render URL and smoke results
+- Updated `docs/LLM_ADAPTER.md` — Added online smoke results section
+- Updated `frontend/FRONTEND_BRIEF.md` — Added M7 section with smoke results and release tag
+
+### Verified
+- Local: 254 pytest passed, ruff passed, `npm run build` passed
+- Render: All 7 API smoke tests passed (mock/deepseek/doubao/invalid/non-business)
+- CORS: Verified for Vercel origin
+- Vercel: Page accessible, JS/CSS assets verified
+- Security: No secrets in frontend or docs
+- Release tag: v1.2.0-demo
+
 ## [Frontend M4] — 2026-06-25
 
 ### Added
