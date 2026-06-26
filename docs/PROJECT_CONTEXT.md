@@ -51,10 +51,10 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（Frontend M7 - Online Smoke + Release Checklist + Tag）
+## 8. 当前交付状态（v1.4.1 - Real Mimo Smoke Verification）
 
-**Status:** Frontend M7 Complete — v1.2.0-demo Release Ready
-**Previous:** Frontend M6.5 (long answer collapse + README polish)
+**Status:** v1.4.1 Real Mimo Smoke — API call attempted, infrastructure correct, API config needs verification
+**Previous:** v1.4.0-badcase (120+ Bad Case Bank + Evaluation Harness)
 
 | 能力 | 状态 | 说明 |
 |------|------|------|
@@ -68,6 +68,7 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | Answer quality evaluation | ✅ | 6 指标评估，122-case 全量评测 |
 | FastAPI API endpoint | ✅ | POST /api/agent/chat |
 | Optional real LLM adapter | ✅ | OpenAI-compatible adapter，环境变量配置，默认 mock |
+| Real Mimo LLM verified | ⚠️ | API adapter invoked, call failed (answer_source=real_llm_fallback_mock) |
 | Profile-based model selection | ✅ | mock / deepseek / doubao 白名单，fallback 保护 |
 | CORS | ✅ | localhost:5173 + Vercel 域名 |
 | Frontend API integration | ✅ | React 前端接入后端 API，loading/error 状态 |

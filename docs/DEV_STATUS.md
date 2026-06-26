@@ -2,7 +2,11 @@
 
 ## 1. 当前阶段
 
-**v1.4.0-badcase: 120+ Bad Case Bank + Evaluation Harness**
+**v1.4.1-real-mimo: Real Mimo LLM Smoke Verification**
+
+Attempted real Mimo API call via Render backend. The Mimo adapter was actually invoked (answer_source=real_llm_fallback_mock), confirming env vars are correctly read and the HTTP request is made. However, the Mimo API call failed (likely base_url/API key/model config issue), so answers fell back to mock templates. Infrastructure verified correct; API configuration needs user-side verification. See `docs/REAL_MIMO_SMOKE_REPORT.md`.
+
+Previous: v1.4.0-badcase (120+ Bad Case Bank + Evaluation Harness).
 
 Built 131-case Bad Case Bank covering 11 customer service scenarios (customs/refund/logistics/payment/order/package/return/exchange/address/coupon/out_of_scope). Implemented `bad_case_eval.py` evaluation harness with route/intent/citation/next_step checks. Bad case structural pass rate: 97.71% (128/131). Answer pass rate 60.66% (from v1.3.0), citation hit rate 95.90%, fallback rate 0.82%.
 

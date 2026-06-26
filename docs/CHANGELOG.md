@@ -14,6 +14,36 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.4.1-real-mimo] — 2026-06-26
+
+### Added
+- Added `docs/REAL_MIMO_SMOKE_REPORT.md` — Real Mimo LLM smoke test report with API results, Mock vs Mimo comparison, diagnosis, and recommendations
+
+### Verified
+- Render backend accessible: HTTP 200
+- Vercel frontend accessible: HTTP 200, title correct
+- Mimo profile env vars read by backend: config resolves to real mode
+- Mimo API adapter actually invoked: answer_source=real_llm_fallback_mock
+- Intent classification works correctly for all queries
+- RAG retrieval returns 5 citations per query
+- Mock logistics tool works for order tracking
+- Out-of-scope queries correctly rejected
+- Mock profile still works normally
+- Fallback on Mimo failure works seamlessly
+- No API key leakage in response, frontend, or docs
+- No .env committed to Git
+- pytest: 293 passed
+- ruff: all checks passed
+- frontend build: passed
+
+### Known Issues
+- Mimo API call failed (answer_source=real_llm_fallback_mock, not real_llm)
+- llm_model=None suggests CUSTOMEROPS_LLM_MIMO_MODEL may not be set
+- Likely cause: base_url format, API key validity, or model name mismatch on Render
+- Tag v1.4.1-real-mimo NOT created (real LLM response not obtained)
+
+---
+
 ## [v1.4.0-badcase] — 2026-06-26
 
 ### Added

@@ -147,6 +147,21 @@ Tested on Render: https://customeropsagent.onrender.com
 | Invalid profile | openai | ✅ HTTP 422 |
 | No key leak in response | all | ✅ No API key in any response field |
 
+### Real Mimo Smoke (2026-06-26)
+
+Mimo environment variables were configured on Render. The adapter was actually invoked and the HTTP request was made, but the API call failed (answer_source=real_llm_fallback_mock). See `docs/REAL_MIMO_SMOKE_REPORT.md` for details.
+
+| Test | Profile | Result |
+|------|---------|--------|
+| Customs query | mimo | ⚠️ answer_source=real_llm_fallback_mock, API call failed |
+| Refund query | mimo | ⚠️ answer_source=real_llm_fallback_mock, API call failed |
+| Order tracking | mimo | ⚠️ answer_source=real_llm_fallback_mock, API call failed |
+| Payment query | mimo | ⚠️ answer_source=real_llm_fallback_mock, API call failed |
+| Out-of-scope | mimo | ✅ answer_source=mock (correctly rejected, no API call) |
+| Mock still works | mock | ✅ answer_source=mock |
+
+**Diagnosis:** The Mimo env vars are correctly read (config resolves to real mode), but the API call fails. Likely cause: base_url format, API key validity, or model name mismatch. Check Render logs for the specific error.
+
 ## 8. Limitations
 
 - **Text generation only**: The adapter generates text responses. It does not support streaming, tool calling, or multi-turn conversation persistence.
