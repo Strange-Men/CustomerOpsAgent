@@ -51,10 +51,10 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（v1.5.0 - Docker Compose Local Runtime）
+## 8. 当前交付状态（v1.6.0 - Final Docs and Delivery Summary）
 
-**Status:** v1.5.0 Docker Compose Local Runtime ✅ — 新增 Docker Compose 本地一键运行能力
-**Previous:** v1.4.1-real-mimo (Real Mimo LLM Verified)
+**Status:** v1.6.0 Final Docs and Delivery Summary ✅ — 最终文档收口，README 最终更新
+**Previous:** v1.5.0-docker (Docker Compose Local Runtime)
 
 | 能力 | 状态 | 说明 |
 |------|------|------|
@@ -81,31 +81,27 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 
 ### Final Metrics
 
-**Retrieval (M6):**
-- Optimized Recall@5: 98.36%
-- Optimized MRR: 0.9108
-- Optimized failed_cases: 2
+**Retrieval (seed eval set):**
+- Recall@5: 90.00%
+- MRR: 0.7850
 
-**Answer (M9.5):**
-- answer_pass_rate: 46.72%
-- fallback_rate: 13.11%
-- citation_hit_rate: 83.61%
-- avg_relevance: 0.7566
-- avg_groundedness: 0.8328
-- avg_completeness: 0.5464
+**Answer (v1.3.0 optimized):**
+- answer_pass_rate: 60.66%（baseline 46.72%，相对提升约 30%）
+- citation_hit_rate: 95.90%（baseline 83.61%，+12.29pp）
+- fallback_rate: 0.82%（baseline 13.11%，-12.29pp）
 
-**API (M11):**
-- pytest: 233 passed
+**Bad Case Bank (v1.4.0):**
+- Total: 131 cases, 11 scenarios
+- Structural pass rate: 97.71% (128/131)
+- Citation coverage: 97.54%
+
+**Engineering:**
+- pytest: 293 passed
 - ruff: All checks passed
-- API smoke: 22 passed
-
-**Frontend (M7):**
-- pytest: 254 passed
-- ruff: All checks passed
-- Frontend build: passed (32 modules)
-- Render smoke: 7/7 API tests passed
-- Vercel smoke: page accessible, assets verified
-- Release tag: v1.2.0-demo
+- Frontend build: passed
+- Docker Compose: 本地验证通过
+- Render + Vercel: 线上部署验证通过
+- Mimo: 真实 LLM profile 验证通过
 
 ### Known Limitations
 

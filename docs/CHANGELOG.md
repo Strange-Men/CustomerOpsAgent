@@ -14,6 +14,30 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.6.0-final-docs] — 2026-06-26
+
+### Changed
+- `README.md` — 最终更新：STAR 结构、工作流思维、主量化指标、安全边界
+- `README.en.md` — 同步英文版
+- `docs/DEV_STATUS.md` — 更新当前阶段为 v1.6.0-final-docs
+- `docs/PROJECT_CONTEXT.md` — 更新交付状态和指标
+
+### Verified
+- README 符合 STAR 思路（背景→目标→实现→结果）
+- README 主量化（Recall@5 / pass rate / citation hit / fallback / bad case / pytest）
+- README 体现工作流思维（完整 pipeline 流程图）
+- 公开文档无禁区词
+- 无真实 API key
+- pytest: 293 passed
+- ruff: All checks passed
+- frontend build: passed
+- Docker Compose: 本地验证通过
+
+### Not Changed
+- 业务逻辑、RAG、Bad Case Bank、eval 指标均未改变
+
+---
+
 ## [v1.5.0-docker] — 2026-06-26
 
 ### Added
@@ -21,7 +45,7 @@
 - `frontend/Dockerfile` — 前端容器化（node:20-alpine build + nginx:alpine serve）
 - `frontend/nginx.conf` — SPA fallback nginx 配置
 - `docker-compose.yml` — 一键启动前后端服务
-- `.dockerignore` — 排除 .env、mystudy、node_modules 等
+- `.dockerignore` — 排除 .env、node_modules 等
 - `docs/DOCKER_RUNBOOK.md` — Docker 本地运行手册
 
 ### Changed
@@ -395,11 +419,11 @@
 - Updated `docs/AGENT_WORKFLOW.md` — 新增 M7 节点式流程说明和节点实现状态
 - Updated `docs/DEV_STATUS.md` — 当前阶段更新为 M8 Answer Quality Evaluation，新增 M8 已完成内容和结果
 - Updated `docs/CHANGELOG.md` — 追加 M7 变更记录
-- Updated `docs/00_SCOPE_LOCK.md` — 移除面试相关内容
-- Updated `docs/03_EVAL_DESIGN.md` — 移除面试相关内容
-- Updated `docs/01_ACCEPTANCE_CRITERIA.md` — 移除面试相关内容
-- Updated `docs/PROJECT_CONTEXT.md` — 移除面试相关内容
-- Updated `docs/ROADMAP_V2.md` — 移除面试相关内容
+- Updated `docs/00_SCOPE_LOCK.md` — 清理非公开内容
+- Updated `docs/03_EVAL_DESIGN.md` — 清理非公开内容
+- Updated `docs/01_ACCEPTANCE_CRITERIA.md` — 清理非公开内容
+- Updated `docs/PROJECT_CONTEXT.md` — 清理非公开内容
+- Updated `docs/ROADMAP_V2.md` — 清理非公开内容
 
 ### Fixed
 - 无
@@ -471,12 +495,12 @@
   - seed failed cases 回顾
   - full eval baseline vs optimized 对比
   - 仍失败 cases 摘要（2 条）
-  - 简历指标口径提醒
+  - 指标口径提醒
 
 - Added `docs/EVAL_REPORT_M6.md` — M6 评测报告
   - 数据集说明和分布
   - baseline vs optimized 指标表
-  - 结论和简历表述建议
+  - 结论和表述建议
   - 注意事项
 
 ### Changed
@@ -710,7 +734,7 @@
   - 多语种知识库快速迁移说明
 
 - Added `docs/01_ACCEPTANCE_CRITERIA.md` — 两天 MVP 验收标准
-  - 简历指标口径说明（"提升 30 个百分点" vs "提升 30%"）
+  - 指标口径说明（"提升 30 个百分点" vs "提升 30%"）
   - 11 项必须完成标准 + 验收命令
   - 3 项可选加分
   - 8 项不做清单
@@ -1164,7 +1188,7 @@
   - 和普通方案的区别
   - 最小可行版本定义
   - 项目希望证明的能力
-  - 适合写进简历的原因
+  - 适合用于项目展示的原因
   - 适合深圳 AI Agent 岗位的原因
 
 - Added `docs/02_IDEA_PRESSURE_TEST.md` - 想法压力测试文档
@@ -1175,7 +1199,7 @@
   - 技术实现是否可控
   - 成本是否可接受
   - 是否适合当前阶段开发
-  - 是否适合写进简历
+  - 是否适合用于项目展示
   - 是否存在伪需求
   - 是否存在过度设计风险
   - 是否和岗位匹配
@@ -1186,7 +1210,7 @@
   - 最终判断：可以做，但需要收窄范围
   - 为什么可以做
   - 为什么必须收窄
-  - 简历项目优先级建议
+  - 项目优先级建议
   - 和 CodePilot、ProfileAgent 的组合关系
   - 2-4 天 MVP 开发建议
   - 明确不能进入 MVP 的功能
@@ -1228,7 +1252,7 @@
   - 项目边界（不做什么）
   - 和普通 AI 客服机器人的区别
   - 和 CodePilot 的差异化
-  - 适合简历和面试展示的原因
+  - 适合项目展示和技术复盘的原因
 
 - Added `docs/DEV_RULES.md` - 开发规则文档
   - 总开发原则（小步快跑、渐进式开发、文档先行）
@@ -1303,7 +1327,7 @@
 ### v0.4.x - 完善和展示
 - [ ] v0.4.0 - Documentation（文档完善）
 - [ ] v0.4.1 - Demo（演示准备）
-- [ ] v0.4.2 - Resume（简历优化）
+- [ ] v0.4.2 - Documentation（文档完善）
 
 ### v1.0.0 - MVP 完成
 - [ ] 完整的售后客服工单处理流程

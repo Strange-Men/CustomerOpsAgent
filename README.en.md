@@ -5,130 +5,159 @@ Chinese version: [README.md](./README.md)
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-Build-646CFF?logo=vite&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)
-![Tailwind_CSS](https://img.shields.io/badge/Tailwind_CSS-UI-06B6D4?logo=tailwindcss&logoColor=white)
 ![RAG](https://img.shields.io/badge/RAG-Enabled-8A2BE2)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![Render](https://img.shields.io/badge/Render-Backend-46E3B7?logo=render&logoColor=black)
 ![Vercel](https://img.shields.io/badge/Vercel-Frontend-000000?logo=vercel&logoColor=white)
-![Mock_Default](https://img.shields.io/badge/Mock-Default-orange)
+![pytest](https://img.shields.io/badge/pytest-293_passed-0A9EDC?logo=pytest&logoColor=white)
 
 ## Project Overview
 
-CustomerOpsAgent is an AI Agent demo for cross-border e-commerce customer support. It handles common scenarios such as customs delays, refund timelines, and logistics questions with RAG retrieval, intent routing, a mock logistics tool, fallback behavior, and safe model profile selection.
+CustomerOpsAgent is an AI Agent system for cross-border e-commerce customer support. Rather than being a simple chatbot, it covers a complete engineering loop: **knowledge base construction → RAG retrieval → Agent routing → answer generation → automated evaluation → Bad Case optimization → real LLM integration → Docker delivery**.
 
-The frontend is a dark pink-purple Agent Console built with React/Vite, and the backend exposes a FastAPI API. The default mode is mock, so the demo can run without real model keys; DeepSeek and Doubao are optional backend-configured profiles.
+The project builds a layered knowledge base and RAG retrieval system, optimizes recall strategies and prompt templates, and achieves Recall@5 of 90.00% on a self-built evaluation set. It designs a RAG Evaluation Harness to automatically quantify answer quality across retrieval hit rate, citation coverage, answer pass rate, fallback rate, and Bad Case structural pass rate. A total of 131 structured Bad Cases covering customs, refunds, logistics, payments, returns, and other high-frequency scenarios have been built and optimized, improving the answer pass rate from 46.72% to 60.66% — a relative improvement of about 30%.
 
-The primary readers are technical reviewers evaluating the Agent architecture, AI application developers studying RAG + workflow patterns, and project visitors who want to try the demo quickly.
+## Live Demo
 
-## Demo Links
+| Entry | URL |
+|-------|-----|
+| Frontend Demo | https://customer-ops-agent.vercel.app/ |
+| Backend API | https://customeropsagent.onrender.com |
+| API Docs | https://customeropsagent.onrender.com/docs |
 
-- Frontend Demo: https://customer-ops-agent.vercel.app/
-- Backend API: https://customeropsagent.onrender.com
-- API Docs: https://customeropsagent.onrender.com/docs
+> Render free instances may cold start — first visit may need 30–90 seconds.
 
-Online smoke verified (M7). Render free instances may cold start — first visit may need 30–90 seconds.
+## Problem and Goal
 
-## Highlights
+Cross-border customer support faces repetitive daily inquiries: customs delays, refund timelines, logistics tracking, payment failures, return/exchange policies. These share three characteristics:
 
-- RAG retrieval with citations and `retrieved_doc_ids`.
-- Agent Workflow with intent, detail intent, routing, and fallback.
-- Safe model selector: the frontend sends only `llm_profile`, never API keys.
-- Mock-first demo: the full flow can run without real model keys.
-- Split frontend/backend stack: FastAPI + React/Vite.
-- Deployable demo links: Render backend + Vercel frontend.
-- Evaluation loop: retrieval eval, answer eval, pytest, and ruff.
+1. **Scattered knowledge**. Policy documents, logistics rules, and refund processes are spread across different systems.
+2. **Inconsistent replies**. Different agents explain the same issue differently, leading to inconsistent commitments.
+3. **Hard to quantify quality**. Traditional solutions have no evaluation loop — there's no way to measure "how good is the answer" or "how much did optimization help."
 
-## Background
-
-Cross-border customer support often involves customs delays, refunds, logistics lookup, package exceptions, and policy questions. These requests usually require intent detection, policy evidence, optional order context, and an explainable final answer.
-
-A plain chatbot can easily become untraceable free text: users cannot see the evidence, and developers cannot easily explain why the system selected RAG, a tool route, or fallback. This project therefore focuses on a demoable, explainable, and evaluable Agent workflow instead of presenting itself as a real business system.
-
-## Goal
-
-Build a demo customer support Agent that helps visitors understand the end-to-end decision flow within 1 minute, with four task types:
-
-- Business task: cover core support scenarios such as customs delays, refund timelines, and logistics questions.
-- Technical task: build an Agent Workflow with RAG retrieval, intent routing, tool usage, and fallback.
-- Experience task: let the frontend display answer, route, intent, citations, `retrieved_doc_ids`, and `answer_source`.
-- Constraint task: never store, input, or send real model keys from the frontend; keep the full mock flow runnable without real keys.
-
-The key questions are:
-
-- How a user question enters the Agent.
-- How the system routes to RAG, tool, or fallback.
-- How answers carry citations, metadata, and `answer_source`.
-- How model selection works without exposing keys.
-
-## Implementation
-
-The project follows a “core flow → core capabilities → safe adapter → frontend display → deployment verification” path:
-
-- Core flow: FastAPI exposes `/api/agent/chat`; the API wraps the workflow without duplicating Agent logic.
-- Intent and routing: the workflow handles `intent`, `detail_intent`, and `route`, choosing RAG, mock logistics, or fallback.
-- RAG evidence chain: retrieval returns citations and `retrieved_doc_ids`, addressing the “answer without evidence” problem.
-- Tool simulation: the mock logistics tool keeps the tool route demonstrable without connecting to a real logistics API.
-- Model adapter: the LLM Adapter defaults to mock, optionally supports OpenAI-compatible real LLMs, and falls back to mock when real config is missing.
-- Safe selection: the frontend sends only `llm_profile`; the backend restricts profiles to `mock`, `deepseek`, `doubao`, and `mimo`.
-- Frontend display: React + Vite + TypeScript + Tailwind show Q&A, model profile, fallback, and metadata.
-- Deployment: backend on Render, frontend on Vercel; online smoke verified (M7).
-
-## Results
-
-- Engineering quality: backend tests 254 passed, Ruff All checks passed, and frontend build passed.
-- Retrieval result: Retrieval Eval 20 cases, Recall@5 90%, MRR 0.785. Recall@5 measures whether expected documents appear in the top-5 results, while MRR indicates how early relevant documents appear.
-- Answer result: Answer Eval 122 cases, citation hit rate 95.90%, pass rate 60.66%, fallback rate 0.82%. v1.3.0 improved citation hit rate by +12.29pp and pass rate by +13.94pp over baseline.
-- Bad Case Bank: 131 structured bad cases across 11 scenarios (customs/refund/logistics/payment/order/package/return/exchange/address/coupon/out_of_scope). Bad case eval structural pass rate 97.71%, citation coverage 97.54%.
-- Safety and demoability: local smoke passed for mock, deepseek fallback, and invalid profile 422; the full flow can run without real model keys.
-- Real Mimo verification: Real Mimo LLM profile verified via Render backend env vars. Real key stored only in Render; frontend sends only `llm_profile`, no key exposure. answer_source=real_llm, llm_model=mimo-v2.5-pro, answers more natural than Mock.
-- Access: Render + Vercel demo links available; online smoke verified (M7).
-
-Reader value:
-
-- For developers: a reusable FastAPI + RAG + workflow + adapter structure.
-- For reviewers: observable route, intent, citations, `answer_source`, and evaluation metrics.
-- For visitors: a direct frontend demo of Agent Q&A and fallback behavior.
+A plain chatbot produces untraceable free text — users can't see evidence, and developers can't explain why the system chose RAG, a tool, or fallback. This project aims to build a **demoable, explainable, and evaluable** customer support Agent capability system.
 
 ## Architecture
 
 ```text
 User
   ↓
-React / Vite Frontend
+React / Vite / TypeScript Frontend
   ↓  POST /api/agent/chat
 FastAPI Backend
   ↓
 Agent Workflow
-  ├── Intent Routing
-  ├── RAG Retriever
-  ├── Mock Logistics Tool
-  ├── Fallback Handler
+  ├── Intent Recognition (11 intent categories)
+  ├── RAG Retriever (BM25 + query expansion + metadata boost)
+  ├── Mock Logistics Tool (simulated logistics queries)
+  ├── Fallback Rules (10 fallback rules)
+  ├── Answer Composer (structured templates)
   └── LLM Adapter
-        ├── mock
+        ├── mock (default)
         ├── deepseek profile
         ├── doubao profile
-        └── mimo profile
+        └── mimo profile (real LLM verified)
 ```
 
-DeepSeek and Doubao are profiles only. Keys belong in backend environment variables, and the frontend does not call model services directly.
+DeepSeek / Doubao / Mimo are profiles only. Keys belong in backend environment variables; the frontend never calls model services directly.
 
-## API Example
+## RAG Workflow
+
+### RAG Retrieval System
+
+- **Knowledge Base**: 14 JSONL knowledge documents covering customs/refund/logistics/payment/returns across 12 scenarios.
+- **Chunking**: Character-based splitting (max_chars=320, overlap=40) with chunk-level metadata preservation.
+- **Baseline Retriever**: Self-implemented BM25 with English tokenization + CJK character-level bigram.
+- **Optimized Retriever**: Cross-language synonym expansion, category/market/language inference, metadata-aware score adjustment, and doc-level diversity.
+
+### Agent Workflow
+
+```text
+Start → Entity Extraction → Intent Recognition → Route Decision
+  ↓
+  ├── RAG Route: Retrieval → Evidence Check → Prompt Builder → Answer Generator → Citation Check
+  ├── Logistics Route: Mock Tool → Answer Generator
+  └── Fallback Route: Fallback Rules → Fallback Answer
+  ↓
+Response (answer / route / intent / citations / answer_source / llm_model)
+```
+
+The workflow covers 11 intent categories (customs / refund / logistics_status / logistics_policy / return / exchange / address / order / payment / package / coupon) with rule-driven disambiguation for multi-intent conflicts.
+
+## Evaluation Results
+
+### Three-Layer Evaluation System
+
+| Layer | Tool | Metrics |
+|-------|------|---------|
+| Retrieval Eval | `retrieval_eval.py` | Recall@1/3/5, MRR |
+| Answer Eval | `answer_eval.py` | Relevance, Groundedness, Completeness, Citation Hit Rate, Answer Pass Rate, Fallback Rate |
+| Bad Case Eval | `bad_case_eval.py` | Structural Pass Rate, Citation Coverage, Fallback Rate |
+
+### Key Metrics
+
+| Metric | Value | Description |
+|--------|-------|-------------|
+| Recall@5 | **90.00%** | Top-5 retrieval hits expected document |
+| Answer Pass Rate | 46.72% → **60.66%** | Relative improvement about 30% |
+| Citation Hit Rate | 83.61% → **95.90%** | +12.29pp |
+| Fallback Rate | 13.11% → **0.82%** | -12.29pp |
+| Bad Case Bank | **131 cases** | 11 customer support scenarios |
+| Bad Case Pass | **128 / 131** | 97.71% structural pass rate |
+| pytest | **293 passed** | Full backend test suite |
+| ruff | **All checks passed** | Code quality |
+
+### Optimization Path
+
+- **v1.3.0 before (baseline)**: pass rate 46.72%, citation hit rate 83.61%, fallback rate 13.11%
+- **v1.3.0 after**: pass rate 60.66%, citation hit rate 95.90%, fallback rate 0.82%
+- **v1.4.0**: Built 131-case Bad Case Bank + bad_case_eval harness
+- **Reports**: [docs/RAG_QUALITY_IMPROVEMENT_REPORT.md](docs/RAG_QUALITY_IMPROVEMENT_REPORT.md) · [docs/BAD_CASE_BANK_REPORT.md](docs/BAD_CASE_BANK_REPORT.md)
+
+## Bad Case Bank
+
+| Scenario | Count | Description |
+|----------|-------|-------------|
+| logistics | 15 | Shipping, timelines, tracking |
+| customs | 15 | Customs delays, inspections, duties |
+| package | 15 | Damage, loss, claims |
+| mixed | 15 | Multi-intent compound scenarios |
+| payment | 10 | Payment failures, risk control |
+| coupon | 10 | Coupon usage, expiration |
+| exchange | 9 | Exchange process, timelines |
+| address | 9 | Address modifications |
+| out_of_scope | 9 | Out-of-scope questions |
+| return | 8 | Return conditions, process |
+| refund | 8 | Refund timelines, status |
+| order | 8 | Order cancellation, coupon refund |
+
+## Real LLM Profile
+
+The system supports real LLM integration via backend environment variables. Mimo profile has been verified:
+
+- `answer_source=real_llm`, `llm_model=mimo-v2.5-pro`
+- Real key stored only in Render backend env vars; frontend sends only `llm_profile`
+- Falls back to mock when real model is not configured
+- Report: [docs/REAL_MIMO_SMOKE_REPORT.md](docs/REAL_MIMO_SMOKE_REPORT.md)
+
+## Docker Compose
+
+Run both frontend and backend with Docker Compose — no manual Python/Node setup required:
 
 ```bash
-curl -X POST "https://customeropsagent.onrender.com/api/agent/chat" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "user_query": "清关延迟怎么办？",
-    "order_id": null,
-    "conversation_history": [],
-    "llm_profile": "mock"
-  }'
+docker compose build --no-cache
+docker compose up -d
 ```
 
-- `llm_profile` options: `mock`, `deepseek`, `doubao`, `mimo`.
-- If real model env vars are not configured, `deepseek`, `doubao`, and `mimo` fall back to mock.
-- Do not send API keys in requests.
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:8080 |
+| Backend API Docs | http://localhost:8000/docs |
+
+Default mode uses mock profile — no real LLM key needed. Stop: `docker compose down`.
+
+See [docs/DOCKER_RUNBOOK.md](docs/DOCKER_RUNBOOK.md) for details.
 
 ## Local Development
 
@@ -148,97 +177,59 @@ npm install
 npm run dev
 ```
 
-Frontend environment:
-
-```text
-VITE_API_BASE_URL=http://127.0.0.1:8000
-```
-
-Vercel environment:
-
-```text
-VITE_API_BASE_URL=https://customeropsagent.onrender.com
-```
-
-`VITE_API_BASE_URL` is a public API base URL. DeepSeek / Doubao keys must not be placed in Vercel; LLM keys belong only in Render backend environment variables.
-
-### Docker Local Runtime
-
-Run both frontend and backend with Docker Compose — no manual Python/Node setup required:
-
-```bash
-docker compose build --no-cache
-docker compose up -d
-```
-
-Access:
-
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:8080 |
-| Backend API Docs | http://localhost:8000/docs |
-
-Default mode uses mock profile — no real LLM key needed. Real LLM is verified via Render environment variables, not enabled in local Docker by default.
-
-Stop:
-
-```bash
-docker compose down
-```
-
-See [docs/DOCKER_RUNBOOK.md](docs/DOCKER_RUNBOOK.md) for details.
-
-## Evaluation
+## Testing
 
 ```powershell
-pytest
-ruff check
+$env:PYTHONPATH="backend"
+pytest -v
+ruff check backend/app/rag/schemas.py backend/app/rag/loader.py backend/app/rag/chunker.py backend/app/rag/retriever.py backend/app/rag/optimized_retriever.py backend/app/eval/retrieval_eval.py backend/app/eval/answer_eval.py backend/app/eval/bad_case_eval.py backend/app/eval/bad_case_schema.py backend/app/agent backend/app/api backend/app/llm backend/tests
 cd frontend
 npm run build
 ```
 
-Current results:
+Current results: pytest 293 passed, ruff All checks passed, frontend build passed, Docker Compose verified locally.
 
-- pytest: 254 passed
-- ruff: All checks passed
-- frontend build: passed
-- retrieval eval baseline: 20 cases, Recall@5 90%, MRR 0.785
-- answer eval: 122 cases, citation hit rate 95.90%, pass rate 60.66%, fallback rate 0.82%
-- bad case eval: 131 cases, pass rate 97.71%, citation coverage 97.54%, covering 11 scenarios
+## API Example
 
-Metric notes:
+```bash
+curl -X POST "https://customeropsagent.onrender.com/api/agent/chat" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_query": "清关延迟怎么办？",
+    "order_id": null,
+    "conversation_history": [],
+    "llm_profile": "mock"
+  }'
+```
 
-- Recall@5: whether the expected document appears in the top-5 retrieved documents.
-- MRR: mean reciprocal rank of the first matching document, used for ranking quality.
-- citation hit rate: whether cited documents match expected evidence.
-- answer pass rate: the pass rate under the current answer eval rules, used as the improvement baseline.
+`llm_profile` options: mock / deepseek / doubao / mimo. Falls back to mock when real model is not configured. Do not send API keys in requests.
 
 ## Security Boundaries
 
 - No LLM API key is stored in the frontend.
-- Users cannot input API keys in the frontend.
-- The frontend sends only `llm_profile`.
-- The backend restricts profiles through a whitelist.
+- The frontend sends only `llm_profile`; the backend restricts profiles through a whitelist.
 - Missing real model configuration falls back to mock.
-- No real logistics API is connected.
+- No real logistics API is connected — uses mock logistics tool.
 - No real order system is connected.
-- Default mock mode can run with no key.
+- `.env` is not committed to Git; real keys are configured via Render environment variables only.
 
 ## Status & Roadmap
 
-Current status:
+**Current version**: v1.6.0-final-docs
 
-- Backend: v1.3.0-quality.
-- Frontend: M7 complete, online smoke verified.
-- Release tag: v1.2.0-demo (preserved), v1.3.0-quality (pending verification).
-
-Roadmap (completed):
-
-- M0–M6: RAG + Eval + Agent Workflow + API + LLM Adapter.
-- Frontend M1–M6.5: React scaffold → single-column chat → API integration → responsive → long answer collapse.
-- Frontend M7: online smoke, final docs, release checklist, tag.
+| Phase | Status | Description |
+|-------|--------|-------------|
+| M0–M6 | ✅ | RAG + Eval + Agent Workflow + API + LLM Adapter |
+| Frontend M1–M7 | ✅ | React scaffold → single-column chat → API integration → online smoke |
+| v1.3.0-quality | ✅ | RAG quality optimization, pass rate +13.94pp |
+| v1.4.0-badcase | ✅ | 131 Bad Case Bank + evaluation harness |
+| v1.4.1-real-mimo | ✅ | Mimo real LLM profile verified |
+| v1.5.0-docker | ✅ | Docker Compose local runtime |
+| v1.6.0-final-docs | ✅ | Final docs and delivery summary |
 
 Optional next:
 
-- zh-CN / en-US language toggle.
-- Real Logistics Adapter.
+- Expand knowledge base document scale
+- Connect real logistics tool API
+- Case-level before/after tracking
+- Multilingual knowledge base migration

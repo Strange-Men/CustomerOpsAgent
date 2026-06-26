@@ -2,21 +2,19 @@
 
 ## 1. 当前阶段
 
-**v1.5.0-docker: Docker Compose Local Runtime ✅**
+**v1.6.0-final-docs: Final Docs and Delivery Summary ✅**
 
-新增 Docker Compose 本地运行能力。通过 `docker compose up --build` 一键启动前后端：前端 http://localhost:8080，后端 http://localhost:8000/docs。默认使用 mock profile，无需真实 LLM key。不改变业务逻辑、RAG、Bad Case Bank 或 eval 指标。
+最终文档收口。README 最终更新，同步英文版，质量指标对齐，Docker / Mimo / Bad Case Bank 状态统一。不改变业务逻辑、RAG、Bad Case Bank 或 eval 指标。
+
+Previous: v1.5.0-docker (Docker Compose Local Runtime)。
 
 Previous: v1.4.1-real-mimo (Real Mimo LLM Verified)。
 
 Previous: v1.4.0-badcase (120+ Bad Case Bank + Evaluation Harness).
 
-Built 131-case Bad Case Bank covering 11 customer service scenarios (customs/refund/logistics/payment/order/package/return/exchange/address/coupon/out_of_scope). Implemented `bad_case_eval.py` evaluation harness with route/intent/citation/next_step checks. Bad case structural pass rate: 97.71% (128/131). Answer pass rate 60.66% (from v1.3.0), citation hit rate 95.90%, fallback rate 0.82%.
-
-Previous: v1.3.0-quality (RAG quality + Mimo profile).
-
 ## 2. 当前项目状态
 
-**状态：Frontend M7 Complete — v1.2.0-demo Release Ready**
+**状态：v1.6.0-final-docs — 最终文档收口完成**
 
 - ✅ 项目方向重锁为 RAG + Eval（M0）
 - ✅ 前端冻结为 legacy/static demo（M0）
@@ -92,7 +90,7 @@ Previous: v1.3.0-quality (RAG quality + Mimo profile).
 - ✅ Agent API Smoke Demo（M10）
   - ✅ FastAPI endpoint: POST /api/agent/chat
   - ✅ AgentChatRequest / AgentChatResponse Pydantic schemas
-  - ✅ API router 只包装 workflow，不复制逻辑
+  - ✅ API router 只封装 workflow，不复制逻辑
   - ✅ API 测试（test_agent_api.py, 9 个测试用例）
   - ✅ docs/API_SMOKE_DEMO.md — API smoke demo 文档
   - ✅ README 更新（Features / API Smoke Demo / Evaluation / Limitations）
@@ -135,7 +133,7 @@ Previous: v1.3.0-quality (RAG quality + Mimo profile).
 - ✅ 安全检查
   - No API keys in frontend/src/
   - No secrets in README/docs
-  - mystudy/ and .agents/ excluded
+  - Private study directories excluded from Git
 - ✅ 文档收口
   - docs/FINAL_FRONTEND_RELEASE_CHECKLIST.md
   - docs/FINAL_DEPLOYMENT_SMOKE_REPORT.md
@@ -342,12 +340,12 @@ Previous: v1.3.0-quality (RAG quality + Mimo profile).
   - seed failed cases 回顾
   - full eval baseline vs optimized 对比
   - 仍失败 cases 摘要（2 条）
-  - 简历指标口径提醒
+  - 指标口径提醒
 
 - ✅ 创建 `docs/EVAL_REPORT_M6.md`
   - 数据集说明和分布
   - baseline vs optimized 指标表
-  - 结论和简历表述建议
+  - 结论和表述建议
   - 注意事项
 
 - ✅ Full eval baseline vs optimized 结果
@@ -518,7 +516,7 @@ Previous: v1.3.0-quality (RAG quality + Mimo profile).
 | 为指标修改 answer_eval | 美化结果 | 评测规则固定，不针对 workflow 调整 |
 | 规则过拟合 full eval set | 通用性下降 | 通用规则，不针对 case_id 写死 |
 | mock answer 被误认为真实 LLM | 结果不代表 LLM 质量 | EVAL_REPORT 明确标注 mock |
-| API 被误认为接了真实 LLM | API 只包装 mock workflow | API_SMOKE_DEMO.md 明确标注 mock |
+| API 被误认为接了真实 LLM | API 只封装 mock workflow | API_SMOKE_DEMO.md 明确标注 mock |
 | mock logistics tool 被误认为真实物流 API | 物流数据是模拟的 | API_SMOKE_DEMO.md 明确标注 mock |
 | local-only study notes 被提交 | RAG_HANDS_ON_REVIEW.md 不应进入 Git | .git/info/exclude + 静态检查 |
 | public docs 混入非公开内容 | 违反公开文档规范 | 静态测试扫描禁用关键词 |
@@ -526,7 +524,7 @@ Previous: v1.3.0-quality (RAG quality + Mimo profile).
 ## 7. 当前禁止事项
 
 - ❌ 不碰前端
-- ❌ 不把 optional LLM adapter 包装成生产级上线
+- ❌ 不把 optional LLM adapter 当作生产级上线
 - ❌ 不实现 6 Agent 工单编排
 - ❌ 不实现 LangGraph 多 Agent
 - ❌ 不实现登录/权限/多租户
