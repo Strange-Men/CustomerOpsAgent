@@ -79,6 +79,7 @@ The project follows a “core flow → core capabilities → safe adapter → fr
 - Engineering quality: backend tests 254 passed, Ruff All checks passed, and frontend build passed.
 - Retrieval result: Retrieval Eval 20 cases, Recall@5 90%, MRR 0.785. Recall@5 measures whether expected documents appear in the top-5 results, while MRR indicates how early relevant documents appear.
 - Answer result: Answer Eval 122 cases, citation hit rate 95.90%, pass rate 60.66%, fallback rate 0.82%. v1.3.0 improved citation hit rate by +12.29pp and pass rate by +13.94pp over baseline.
+- Bad Case Bank: 131 structured bad cases across 11 scenarios (customs/refund/logistics/payment/order/package/return/exchange/address/coupon/out_of_scope). Bad case eval structural pass rate 97.71%, citation coverage 97.54%.
 - Safety and demoability: local smoke passed for mock, deepseek fallback, and invalid profile 422; the full flow can run without real model keys.
 - Access: Render + Vercel demo links available; online smoke verified (M7).
 
@@ -176,6 +177,7 @@ Current results:
 - frontend build: passed
 - retrieval eval baseline: 20 cases, Recall@5 90%, MRR 0.785
 - answer eval: 122 cases, citation hit rate 95.90%, pass rate 60.66%, fallback rate 0.82%
+- bad case eval: 131 cases, pass rate 97.71%, citation coverage 97.54%, covering 11 scenarios
 
 Metric notes:
 

@@ -14,6 +14,34 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.4.0-badcase] — 2026-06-26
+
+### Added
+- Added `backend/app/eval/bad_case_schema.py` — BadCase structured schema with 11 scenarios, 11 failure types, baseline/after status tracking
+- Added `backend/app/eval/bad_cases.jsonl` — 131 structured bad cases covering customs/refund/logistics/payment/order/package/return/exchange/address/coupon/out_of_scope
+- Added `backend/app/eval/bad_case_eval.py` — Bad Case Evaluation Harness (route/intent/citation/next_step/out_of_scope checks)
+- Added `docs/BAD_CASE_BANK_REPORT.md` — Bad Case Bank detailed report with scenario distribution, failure types, evaluation results
+- Added `docs/BAD_CASE_OPTIMIZATION_SUMMARY.md` — Optimization summary with before/after metrics and resume-statement guidance
+
+### Quality Results
+- Bad Case Bank: 131 cases, 11 scenarios
+- Bad Case Eval Pass Rate: 97.71% (128/131 structural pass)
+- Bad Case Citation Coverage: 97.54%
+- Bad Case Fallback Rate: 7.63%
+- Answer Pass Rate: 60.66% (unchanged from v1.3.0)
+- Citation Hit Rate: 95.90% (unchanged from v1.3.0)
+- Retrieval Recall@5: 90.00% (unchanged)
+
+### Verified
+- pytest: all tests passed
+- ruff: all checks passed
+- frontend build: passed
+- No real API keys committed
+- No eval data modified
+- No failed cases deleted
+
+---
+
 ## [v1.3.0-quality] — 2026-06-26
 
 ### Added

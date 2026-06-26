@@ -2,11 +2,11 @@
 
 ## 1. 当前阶段
 
-**v1.3.0-quality: RAG Quality Enhancement + Mimo Profile**
+**v1.4.0-badcase: 120+ Bad Case Bank + Evaluation Harness**
 
-RAG answer quality improved: pass rate 46.72% → 60.66%, citation hit rate 83.61% → 95.90%, fallback rate 13.11% → 0.82%. Added Mimo model profile, .env.example, knowledge base inventory, and RAG quality report.
+Built 131-case Bad Case Bank covering 11 customer service scenarios (customs/refund/logistics/payment/order/package/return/exchange/address/coupon/out_of_scope). Implemented `bad_case_eval.py` evaluation harness with route/intent/citation/next_step checks. Bad case structural pass rate: 97.71% (128/131). Answer pass rate 60.66% (from v1.3.0), citation hit rate 95.90%, fallback rate 0.82%.
 
-Previous: Frontend M7 (online smoke + release checklist + v1.2.0-demo tag).
+Previous: v1.3.0-quality (RAG quality + Mimo profile).
 
 ## 2. 当前项目状态
 
