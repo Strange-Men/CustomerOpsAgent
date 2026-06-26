@@ -123,7 +123,36 @@ A visitor should understand within 1 minute:
 - No backend changes for i18n
 - Frontend display copy switch only
 
-## 9. Acceptance Criteria for M4
+## 9. Frontend M5 Changes
+
+**Goal:** Simplify from three-panel debug layout to single-column chat-first demo.
+
+**Why:** The three-column layout (InfoPanel + ChatWorkspace + MetadataPanel/CitationPanel) was too heavy for project visitors — it looked like a developer debug console, not a demo page.
+
+**What changed:**
+
+- Removed fixed left InfoPanel and right MetadataPanel/CitationPanel
+- Single-column layout, max-width 1100px, centered
+- Chat console is the primary visual focus
+- Hero intro: 2-line project description above chat
+- Answer details (route/intent/confidence/source/profile) shown as compact badges below the chat
+- Citations in a collapsible section below the chat
+- Limitations reduced to a single footer line
+- Fixed duplicate answer display (MessageBubble + AnswerCard showing same text)
+- Header compacted; StatusBar replaced with inline footer
+
+**What was preserved:**
+
+- Model selector (Mock / DeepSeek / Doubao)
+- Real API call to `/api/agent/chat`
+- `sendAgentMessage` only sends `llm_profile`, never keys
+- Answer metadata: `answer_source`, `llm_profile`, `route`, `intent`, `confidence`
+- Citations and `retrieved_doc_ids`
+- Loading / error / fallback states
+- Dark + pink-purple visual theme
+- Mobile responsive
+
+## 10. Acceptance Criteria for M4
 
 - `npm run build` passes
 - Frontend sends real requests to `/api/agent/chat`

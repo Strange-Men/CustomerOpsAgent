@@ -8,8 +8,8 @@ interface MessageListProps {
 
 /**
  * Renders a list of chat messages.
- * Supports user, assistant, and system roles.
- * No API calls — static display only.
+ * Assistant messages with response data show only the AnswerCard (no duplicate bubble).
+ * Pending/error assistant messages show a plain bubble.
  */
 export function MessageList({ messages }: MessageListProps) {
   return (
@@ -36,20 +36,12 @@ export function MessageList({ messages }: MessageListProps) {
           );
         }
 
-        // assistant role
+        // assistant with full response — show AnswerCard only (no duplicate bubble)
         if (msg.response) {
-          return (
-            <div key={msg.id} className="space-y-2">
-              <MessageBubble
-                role="assistant"
-                text={msg.content}
-                timestamp={msg.createdAt}
-              />
-              <AnswerCard response={msg.response} />
-            </div>
-          );
+          return <AnswerCard key={msg.id} response={msg.response} />;
         }
 
+        // assistant pending or error — show plain bubble
         return (
           <MessageBubble
             key={msg.id}

@@ -1,5 +1,3 @@
-import { Card } from "../common/Card";
-import { Badge } from "../common/Badge";
 import type { AgentResponse } from "../../lib/types";
 
 interface AnswerCardProps {
@@ -7,48 +5,39 @@ interface AnswerCardProps {
 }
 
 /**
- * Displays the agent's answer with route, confidence, answer source,
- * llm_profile, and other metadata.
+ * Displays the agent's answer as the primary assistant message card.
+ * Shows answer text with inline metadata badges below.
  */
 export function AnswerCard({ response }: AnswerCardProps) {
   return (
-    <Card glow>
-      <div className="space-y-3">
-        {/* Answer text */}
-        <p className="text-sm text-slate-200 leading-relaxed">
-          {response.answer}
-        </p>
+    <div className="flex justify-start">
+      <div className="max-w-[90%] w-full">
+        <div className="rounded-2xl rounded-bl-md px-4 py-3 text-sm leading-relaxed bg-slate-800/80 text-slate-200 border border-slate-700/40">
+          {/* Answer text */}
+          <p>{response.answer}</p>
 
-        {/* Meta row */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-700/30">
-          <Badge label={`Profile: ${response.llm_profile ?? "mock"}`} variant="accent" />
-          <Badge label={`路由: ${response.route}`} variant="info" />
-          <Badge label={`置信度: ${response.confidence}`} variant="success" />
-          <Badge label={`来源: ${response.answer_source}`} variant="muted" />
-          {response.order_id && (
-            <Badge label={`订单: ${response.order_id}`} variant="accent" />
-          )}
-        </div>
-
-        {/* Fallback warning */}
-        {response.fallback_triggered && (
-          <div className="flex items-center gap-2 pt-2 border-t border-slate-700/30">
-            <Badge label="已触发 Fallback" variant="warning" />
-            {response.fallback_reason && (
-              <span className="text-xs text-amber-400/80">
-                原因: {response.fallback_reason}
+          {/* Inline metadata */}
+          <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-2.5 border-t border-slate-700/30">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-500/15 text-fuchsia-300 border border-fuchsia-500/25">
+              {response.llm_profile ?? "mock"}
+            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/25">
+              {response.route}
+            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">
+              {response.confidence}
+            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-500/15 text-slate-400 border border-slate-500/25">
+              {response.answer_source}
+            </span>
+            {response.fallback_triggered && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/25">
+                fallback
               </span>
             )}
           </div>
-        )}
-
-        {/* Citation hint */}
-        <div className="pt-2 border-t border-slate-700/30">
-          <p className="text-[10px] text-slate-600">
-            引用见右侧 Evidence Panel
-          </p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

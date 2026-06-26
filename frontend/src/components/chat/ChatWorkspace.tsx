@@ -8,12 +8,12 @@ import { DEFAULT_LLM_PROFILE } from "../../lib/constants";
 import type { AgentResponse, ChatMessage, LLMProfile } from "../../lib/types";
 
 interface ChatWorkspaceProps {
-  onResponseChange?: (response: AgentResponse) => void;
+  onResponseChange?: (response: AgentResponse | null) => void;
 }
 
 /**
  * Central chat workspace — manages real chat state and API calls.
- * Sends user queries to the backend with the selected llm_profile.
+ * Wrapped in a card container; the visual core of the page.
  */
 export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -29,6 +29,13 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
       .slice(-5)
       .map((m) => m.content);
   }, []);
+
+  /** Clear all messages and reset response. */
+  const handleClear = useCallback(() => {
+    setMessages([]);
+    setErrorMessage(null);
+    onResponseChange?.(null);
+  }, [onResponseChange]);
 
   /** Send a message to the backend. */
   const handleSend = useCallback(
@@ -81,7 +88,7 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
           )
         );
 
-        // Notify parent of new response for metadata/citation panels
+        // Notify parent of new response for details section
         onResponseChange?.(response);
       } catch (err) {
         const msg =
@@ -100,7 +107,7 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
         setIsLoading(false);
       }
     },
-    [isLoading, messages, selectedProfile, buildHistory]
+    [isLoading, messages, selectedProfile, buildHistory, onResponseChange]
   );
 
   /** Handle example prompt click — sends directly. */
@@ -112,28 +119,27 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
   );
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="flex-none pb-4 border-b border-slate-700/30">
-        <h2 className="text-lg font-semibold text-slate-100">
-          客服 Agent 对话
-        </h2>
-        <p className="text-xs text-slate-500 mt-1">
-          已接入后端 API · 模型选择只传 profile，不传 key
-        </p>
-      </div>
-
-      {/* Model selector */}
-      <div className="flex-none py-3 border-b border-slate-700/30">
+    <div className="rounded-xl border border-purple-500/15 bg-slate-900/80 flex flex-col" style={{ minHeight: "520px" }}>
+      {/* Top bar: model selector + clear */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30">
         <ModelSelector
           selected={selectedProfile}
           onSelect={setSelectedProfile}
           disabled={isLoading}
         />
+        {messages.length > 0 && (
+          <button
+            onClick={handleClear}
+            disabled={isLoading}
+            className="px-3 py-1.5 text-xs text-slate-400 bg-slate-800/40 border border-slate-700/30 rounded-lg hover:bg-slate-700/60 hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+          >
+            清空
+          </button>
+        )}
       </div>
 
       {/* Chat messages area */}
-      <div className="flex-1 overflow-y-auto py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-sm text-slate-600">
@@ -143,23 +149,33 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
         ) : (
           <MessageList messages={messages} />
         )}
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex items-center gap-2 text-xs text-sky-400">
+            <div className="w-2 h-2 bg-sky-400 rounded-full animate-pulse" />
+            Agent 正在分析...
+          </div>
+        )}
       </div>
 
       {/* Error banner */}
       {errorMessage && (
-        <div className="flex-none px-3 py-2 bg-red-900/20 border border-red-500/20 rounded-lg">
+        <div className="mx-4 mb-2 px-3 py-2 bg-red-900/20 border border-red-500/20 rounded-lg">
           <p className="text-xs text-red-400">{errorMessage}</p>
         </div>
       )}
 
       {/* Example prompts */}
-      <div className="flex-none pt-3 border-t border-slate-700/30">
-        <p className="text-xs text-slate-500 mb-2">示例问题：</p>
-        <ExamplePrompts onSelect={handleExampleSelect} />
-      </div>
+      {messages.length === 0 && (
+        <div className="px-4 py-3 border-t border-slate-700/30">
+          <p className="text-xs text-slate-500 mb-2">示例问题：</p>
+          <ExamplePrompts onSelect={handleExampleSelect} />
+        </div>
+      )}
 
       {/* Chat input */}
-      <div className="flex-none pt-4">
+      <div className="px-4 py-3 border-t border-slate-700/30">
         <ChatInput onSend={handleSend} disabled={isLoading} />
       </div>
     </div>
