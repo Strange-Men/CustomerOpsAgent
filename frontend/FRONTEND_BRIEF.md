@@ -287,3 +287,34 @@ A visitor should understand within 1 minute:
 - All pytest tests pass
 - Ruff checks pass
 - Frontend build passes
+
+## 16. Markdown Rendering Fix (v1.6.2) ✅
+
+**Goal:** Fix answer Markdown rendering — `**xxx**` showing as raw syntax instead of bold.
+
+**Problem:**
+
+- Backend returns answers with Markdown bold syntax (e.g., `**退款处理时间**`)
+- Frontend rendered answer as plain text in `<p>` tag
+- Raw `**` symbols displayed instead of bold text
+
+**Solution (Option A: Safe Markdown Rendering):**
+
+- Installed `react-markdown` and `remark-gfm` dependencies
+- Created `SafeMarkdown.tsx` component with security restrictions:
+  - Supports: bold, lists, line breaks
+  - Blocks: raw HTML, scripts, iframes
+  - Styled for dark card theme
+- Updated `AnswerCard.tsx` to use `SafeMarkdown` for answer text rendering
+- Backend sanitizer preserves Markdown bold while still removing internal leaks
+
+**What was preserved:**
+
+- Citations and retrieved_doc_ids still returned in structured response fields
+- Citation details panel still accessible in frontend
+- Answer text still clean: no doc_id, no internal citation references
+- Mock profile works normally
+- Out-of-scope queries still rejected
+- All pytest tests pass
+- Ruff checks pass
+- Frontend build passes

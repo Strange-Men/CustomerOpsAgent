@@ -14,6 +14,41 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.6.2-readme-ui-polish] — 2026-06-26
+
+### Fixed
+- Fixed frontend answer Markdown rendering: `**xxx**` now renders as bold instead of showing raw syntax
+- Added `SafeMarkdown` component using react-markdown with security restrictions (no raw HTML)
+- Backend sanitizer now preserves Markdown bold syntax while still removing internal leaks
+
+### Changed
+- `README.md` — restructured with explicit STAR breakdown, Quick Start moved up, added FAQ, Glossary, Mermaid workflow, milestones
+- `README.en.md` — synced with same structure
+- `docs/DEV_STATUS.md` — updated current stage to v1.6.2-readme-ui-polish
+- `docs/CHANGELOG.md` — added v1.6.2 entry
+
+### Added
+- `frontend/src/components/common/SafeMarkdown.tsx` — secure Markdown renderer (react-markdown + remark-gfm)
+- `frontend/package.json` — added react-markdown and remark-gfm dependencies
+- Added 3 new tests to `backend/tests/test_answer_composer.py` for Markdown bold preservation
+
+### Verified
+- Answer text with `**退款处理时间**` renders as bold in frontend
+- Answer text still clean: no doc_id, no internal citation references
+- Citations / retrieved_doc_ids still returned in structured response fields
+- Citation details panel still accessible in frontend
+- Mock profile works normally
+- Out-of-scope queries still rejected
+- pytest: all tests passed
+- ruff: all checks passed
+- frontend build: passed
+- Docker Compose: local verification passed
+
+### Not Changed
+- 业务逻辑、RAG、Bad Case Bank、eval 指标均未改变
+
+---
+
 ## [v1.6.1-final-polish] — 2026-06-26
 
 ### Fixed

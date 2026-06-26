@@ -130,6 +130,32 @@ class TestSanitizeCustomerAnswer:
         result = sanitize_customer_answer(raw)
         assert result == raw
 
+    def test_preserves_markdown_bold(self):
+        """Markdown bold syntax should NOT be treated as internal leak."""
+        raw = "您好，**退款处理时间**一般为 3-10 个工作日。"
+        result = sanitize_customer_answer(raw)
+        assert "**退款处理时间**" in result
+        assert "3-10 个工作日" in result
+
+    def test_preserves_markdown_bold_with_citation_removal(self):
+        """Markdown bold should be preserved while citation tails are removed."""
+        raw = (
+            "您好，**退款处理时间**一般为 3-10 个工作日。\n\n"
+            "证据引用：refund_eu_policy_001"
+        )
+        result = sanitize_customer_answer(raw)
+        assert "**退款处理时间**" in result
+        assert "3-10 个工作日" in result
+        assert "证据引用" not in result
+        assert "refund_eu_policy_001" not in result
+
+    def test_preserves_multiple_markdown_bold(self):
+        """Multiple markdown bold instances should all be preserved."""
+        raw = "您好，**支付方式**包括信用卡和**支付宝**。"
+        result = sanitize_customer_answer(raw)
+        assert "**支付方式**" in result
+        assert "**支付宝**" in result
+
 
 class TestAnswerContentSafety:
     """Tests that verify answers don't contain forbidden internal terms."""

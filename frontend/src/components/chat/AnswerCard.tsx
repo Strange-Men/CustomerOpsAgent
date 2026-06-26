@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { AgentResponse } from "../../lib/types";
+import { SafeMarkdown } from "../common/SafeMarkdown";
 
 /** Answers longer than this threshold show a collapse/expand button. */
 const COLLAPSE_THRESHOLD = 280;
@@ -66,7 +67,7 @@ export function AnswerCard({ response }: AnswerCardProps) {
                 : undefined
             }
           >
-            <p>{response.answer}</p>
+            <SafeMarkdown content={response.answer} />
 
             {/* Bottom fade when collapsed */}
             {isLong && !expanded && (
