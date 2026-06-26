@@ -51,10 +51,10 @@ CustomerOps Agent 是一个面向跨境电商 / 3C 售后客服工单的垂直 A
 | 质量保证 | 无 | QA Agent 质检，Bad Case 评估 |
 | 可解释性 | 黑盒 | 每个 Agent 决策可追溯 |
 
-## 8. 当前交付状态（v1.6.2 - Markdown Rendering Fix + README Structure Optimization）
+## 8. 当前交付状态（v1.6.3 - README Language Consistency）
 
-**Status:** v1.6.2-readme-ui-polish ✅ — Markdown 渲染修复 + README 结构优化
-**Previous:** v1.6.1-final-polish (Final UI and Answer Polish)
+**Status:** v1.6.3-readme-language-polish ✅ — README 语言一致性与术语规范化
+**Previous:** v1.6.2-readme-ui-polish (Markdown Rendering Fix + README Structure Optimization)
 
 | 能力 | 状态 | 说明 |
 |------|------|------|

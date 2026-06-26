@@ -14,6 +14,30 @@
 - **Fixed** - Bug 修复
 - **Security** - 安全相关变更
 
+## [v1.6.3-readme-language-polish] — 2026-06-26
+
+### Changed
+- `README.md` — 优化中英文混杂：核心术语首次出现统一使用"中文（English）"格式
+- `README.md` — 章节标题本地化：Quick Start → 快速上手，STAR → STAR 项目拆解，FAQ → 常见问题，Glossary → 术语表，Milestones → 版本里程碑
+- `README.md` — Mermaid 工作流节点改为中英双标（如"用户查询 / User Query"）
+- `README.md` — 指标表格列名补充中文说明（如"回答合格率（Answer Pass Rate）"）
+- `README.md` — 术语表从 8 项扩展到 15 项，覆盖 RAG / LLM / Agent / Profile / BM25 / Query Expansion 等
+- `README.md` — FAQ 参数名和文档路径补充中文说明
+- `README.md` — 版本里程碑表格增加中文说明列
+- `README.md` — STAR Action 按链路优化表述，Result 保留真实指标并注明百分点含义
+- `README.en.md` — 同步结构变化（Glossary 扩展、Milestones 格式、FAQ 不变），保持自然英文
+- `docs/DEV_STATUS.md` — 更新当前阶段为 v1.6.3-readme-language-polish
+- `docs/CHANGELOG.md` — 新增 v1.6.3 变更记录
+- `docs/PROJECT_CONTEXT.md` — 更新交付状态版本
+
+### Not Changed
+- 业务逻辑、RAG、Bad Case Bank、eval 指标均未改变
+- 前端 UI 未改变
+- 未写入真实 API key
+- 未提交 .env、mystudy/、.agents/
+
+---
+
 ## [v1.6.2-readme-ui-polish] — 2026-06-26
 
 ### Fixed

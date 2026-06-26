@@ -65,30 +65,24 @@ npm run dev
 
 ### Situation
 
-Cross-border customer support faces repetitive daily inquiries: customs delays, refund timelines, logistics tracking, payment failures, return/exchange policies. These share three characteristics:
+Cross-border customer support faces scattered knowledge, inconsistent replies, and difficulty quantifying service quality. A plain chatbot can answer questions, but struggles to prove whether answers are accurate, evidence-backed, or continuously improvable.
+
+Specifically:
 
 1. **Scattered knowledge**. Policy documents, logistics rules, and refund processes are spread across different systems.
 2. **Inconsistent replies**. Different agents explain the same issue differently.
-3. **Hard to quantify quality**. Traditional solutions have no evaluation loop.
-
-A plain chatbot produces untraceable free text — users can't see evidence, and developers can't explain why the system chose RAG, a tool, or fallback.
+3. **Hard to quantify quality**. Traditional solutions have no evaluation loop — they can't answer "how much better did it get after optimization."
 
 ### Task
 
-Build a **demoable, explainable, evaluable, and continuously optimizable** cross-border customer support Agent supporting:
-
-- RAG retrieval with evidence binding
-- Agent intent recognition and routing
-- Mock tools and fallback rules
-- Real LLM profile secure integration
-- Automated evaluation and Bad Case iteration
+Build a **demoable, explainable, evaluable, and continuously optimizable** cross-border customer support Agent that solves the full pipeline of knowledge retrieval, intent routing, answer generation, automated evaluation, and Bad Case iteration.
 
 ### Action
 
 | # | Action | Purpose |
 |---|--------|---------|
 | 1 | Layered knowledge base | 14 JSONL documents covering 12 scenarios, structured data source for RAG |
-| 2 | RAG retrieval with evidence binding | Self-implemented BM25 + query expansion + metadata boost, answers backed by evidence |
+| 2 | RAG retrieval with evidence binding | Self-implemented BM25 + Query Expansion + metadata boost, answers backed by evidence |
 | 3 | Agent intent recognition & routing | 11 intent categories + rule-driven disambiguation, auto-select RAG/tool/fallback path |
 | 4 | Answer Composer | Structured template: conclusion → evidence → action suggestions, unified answer format |
 | 5 | Evaluation Harness | Retrieval + answer + Bad Case evaluation, quantifying answer quality |
@@ -100,15 +94,17 @@ Build a **demoable, explainable, evaluable, and continuously optimizable** cross
 
 | Metric | Before | After | Change |
 |--------|-------:|------:|-------:|
-| Answer Pass Rate | 46.72% | 60.66% | +13.94pp / ~30% relative |
+| Answer Pass Rate | 46.72% | 60.66% | +13.94pp / ~30% relative improvement |
 | Citation Hit Rate | 83.61% | 95.90% | +12.29pp |
 | Fallback Rate | 13.11% | 0.82% | -12.29pp |
-| Recall@5 | — | 90.00% | top-5 retrieval hit |
+| Recall@5 | — | 90.00% | Met 85%+ target |
 | Bad Case Bank | — | 131 cases | 11 customer support scenarios |
 | Bad Case Pass | — | 128/131 | 97.71% structural pass rate |
 | pytest | — | 293 passed | Full backend test suite |
 | Docker Compose | — | verified | Local one-click runtime |
 | Mimo real LLM | — | verified | Real LLM profile validated |
+
+> Note: "pp" means percentage points. "~30% relative improvement" means the pass rate rose from 46.72% to 60.66%, an absolute gain of 13.94 percentage points.
 
 ## Why It Is Not Just Another Chatbot
 
@@ -124,9 +120,9 @@ Build a **demoable, explainable, evaluable, and continuously optimizable** cross
 flowchart LR
   A[User Query] --> B[Intent & Route]
   B --> C{Route}
-  C -->|RAG| D[Knowledge Retrieval]
-  C -->|Tool| E[Mock Logistics Tool]
-  C -->|Fallback| F[Safe Fallback]
+  C -->|Knowledge Q&A| D[RAG Retrieval]
+  C -->|Tool Query| E[Mock Logistics Tool]
+  C -->|Out of Scope| F[Safe Fallback]
   D --> G[Evidence Binding]
   E --> G
   F --> G
@@ -141,7 +137,7 @@ flowchart LR
 |-------|------------|
 | Frontend | React 19 + TypeScript + Tailwind CSS |
 | Backend | FastAPI + Python 3.11+ |
-| RAG | Self-implemented BM25 + query expansion + metadata boost |
+| RAG | Self-implemented BM25 + Query Expansion + metadata boost |
 | LLM | Profile-based adapter (mock / deepseek / doubao / mimo) |
 | Eval | Self-built Evaluation Harness (retrieval + answer + bad case) |
 | Deploy | Docker Compose + Render + Vercel |
@@ -248,24 +244,32 @@ A: Modify port mappings in `docker-compose.yml`, or stop the services occupying 
 | Term | Description |
 |------|-------------|
 | RAG | Retrieval-Augmented Generation, generates answers based on knowledge base retrieval results |
+| LLM | Large Language Model, e.g. Mimo, DeepSeek |
+| Agent | Autonomous system that handles intent recognition, routing, retrieval, and answer generation |
+| Profile | Model configuration identifier — frontend sends name only, backend resolves to specific model and key |
+| Evaluation Harness | Multi-dimensional automated evaluation toolset covering retrieval, answer, and Bad Case quality |
+| Answer Composer | Assembles retrieval results and intent info into structured answers |
+| Bad Case Bank | Structured typical case library for automated evaluation and iteration |
 | Recall@5 | Top-5 retrieval hit rate, measures retrieval quality |
 | MRR | Mean Reciprocal Rank, measures retrieval ranking quality |
 | Citation Hit Rate | Whether the answer contains knowledge base evidence |
 | Fallback Rate | Ratio of degraded generic responses when the system cannot give a valid answer |
-| Bad Case Bank | Structured typical case library for automated evaluation and iteration |
-| LLM Profile | Model configuration identifier, frontend sends name only, backend resolves to specific model and key |
-| Answer Composer | Answer generator, assembles retrieval results and intent info into structured answers |
+| BM25 | Best Matching 25, classic keyword retrieval algorithm (self-implemented in this project) |
+| Query Expansion | Expands user queries with synonyms to improve retrieval recall |
+| `llm_profile` | API request parameter specifying which LLM configuration to use |
+| `answer_source` | API response field indicating whether the answer came from Mock or real LLM |
 
 ## Milestones
 
-| Version | Status | Description |
-|---------|--------|-------------|
-| v1.4.0-badcase | ✅ | 131 Bad Case Bank + evaluation harness |
-| v1.4.1-real-mimo | ✅ | Mimo real LLM profile verified |
-| v1.5.0-docker | ✅ | Docker Compose local runtime |
-| v1.6.0-final-docs | ✅ | Final docs and delivery summary |
-| v1.6.1-final-polish | ✅ | UI answer display polish |
-| v1.6.2-readme-ui-polish | ✅ | Markdown rendering fix + README structure optimization |
+| Version | Description | Key Changes |
+|---------|-------------|-------------|
+| v1.4.0-badcase | Bad Case Bank release | 131 Bad Case Bank + Evaluation Harness |
+| v1.4.1-real-mimo | Real Mimo integration | Mimo real LLM profile verified |
+| v1.5.0-docker | Docker engineering | Docker Compose local one-click runtime |
+| v1.6.0-final-docs | Final docs | README and project delivery summary |
+| v1.6.1-final-polish | Final UI polish | Fixed version display and answer field leakage |
+| v1.6.2-readme-ui-polish | README & rendering polish | Markdown rendering fix + README structure optimization |
+| v1.6.3-readme-language-polish | Language consistency | Terminology glossary, bilingual readability, Chinese section titles |
 
 Optional next:
 

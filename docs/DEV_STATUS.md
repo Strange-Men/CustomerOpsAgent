@@ -2,9 +2,11 @@
 
 ## 1. 当前阶段
 
-**v1.6.2-readme-ui-polish: Markdown Rendering Fix + README Structure Optimization ✅**
+**v1.6.3-readme-language-polish: README 语言一致性与术语规范化 ✅**
 
-修复前端回答 Markdown 粗体显示问题（`**xxx**` 原样显示），采用 react-markdown 安全渲染。优化 README 为显性 STAR 结构，新增 Quick Start 前置、FAQ、术语表、Mermaid 工作流图。
+优化 README 中英文混杂问题，统一核心术语首次出现的中文解释，本地化 STAR 标题和 Mermaid 工作流节点，补全术语表，优化指标表格和 FAQ 参数说明。
+
+Previous: v1.6.2-readme-ui-polish (Markdown Rendering Fix + README Structure Optimization)。
 
 Previous: v1.6.1-final-polish (Final UI and Answer Polish)。
 
