@@ -19,6 +19,8 @@ CustomerOpsAgent is an AI Agent demo for cross-border e-commerce customer suppor
 
 The frontend is a dark pink-purple Agent Console built with React/Vite, and the backend exposes a FastAPI API. The default mode is mock, so the demo can run without real model keys; DeepSeek and Doubao are optional backend-configured profiles.
 
+The primary readers are technical reviewers evaluating the Agent architecture, AI application developers studying RAG + workflow patterns, and project visitors who want to try the demo quickly.
+
 ## Demo Links
 
 - Frontend Demo: https://customer-ops-agent.vercel.app/
@@ -39,11 +41,20 @@ Frontend API integration is complete. Online smoke should still be judged by the
 
 ## Background
 
-Cross-border customer support often involves customs delays, refunds, logistics lookup, and policy questions. A plain chatbot is hard to evaluate because answers may lack evidence and the routing process is invisible.
+Cross-border customer support often involves customs delays, refunds, logistics lookup, package exceptions, and policy questions. These requests usually require intent detection, policy evidence, optional order context, and an explainable final answer.
+
+A plain chatbot can easily become untraceable free text: users cannot see the evidence, and developers cannot easily explain why the system selected RAG, a tool route, or fallback. This project therefore focuses on a demoable, explainable, and evaluable Agent workflow instead of presenting itself as a real business system.
 
 ## Goal
 
-Build a demo customer support Agent that helps visitors understand within 1 minute:
+Build a demo customer support Agent that helps visitors understand the end-to-end decision flow within 1 minute, with four task types:
+
+- Business task: cover core support scenarios such as customs delays, refund timelines, and logistics questions.
+- Technical task: build an Agent Workflow with RAG retrieval, intent routing, tool usage, and fallback.
+- Experience task: let the frontend display answer, route, intent, citations, `retrieved_doc_ids`, and `answer_source`.
+- Constraint task: never store, input, or send real model keys from the frontend; keep the full mock flow runnable without real keys.
+
+The key questions are:
 
 - How a user question enters the Agent.
 - How the system routes to RAG, tool, or fallback.
@@ -52,26 +63,30 @@ Build a demo customer support Agent that helps visitors understand within 1 minu
 
 ## Implementation
 
-- Backend API: FastAPI endpoint `/api/agent/chat`.
-- RAG retrieval: knowledge base lookup with citation support.
-- Workflow: `intent`, `detail_intent`, and `route` handling.
-- Tool route: mock logistics lookup.
-- LLM Adapter: mock default plus OpenAI-compatible real LLM option.
-- Model profiles: `mock`, `deepseek`, and `doubao` through `llm_profile`.
-- Frontend: React + Vite + TypeScript + Tailwind Agent Console.
-- Deployment: Render backend and Vercel frontend.
+The project follows a “core flow → core capabilities → safe adapter → frontend display → deployment verification” path:
+
+- Core flow: FastAPI exposes `/api/agent/chat`; the API wraps the workflow without duplicating Agent logic.
+- Intent and routing: the workflow handles `intent`, `detail_intent`, and `route`, choosing RAG, mock logistics, or fallback.
+- RAG evidence chain: retrieval returns citations and `retrieved_doc_ids`, addressing the “answer without evidence” problem.
+- Tool simulation: the mock logistics tool keeps the tool route demonstrable without connecting to a real logistics API.
+- Model adapter: the LLM Adapter defaults to mock, optionally supports OpenAI-compatible real LLMs, and falls back to mock when real config is missing.
+- Safe selection: the frontend sends only `llm_profile`; the backend restricts profiles to `mock`, `deepseek`, and `doubao`.
+- Frontend display: React + Vite + TypeScript + Tailwind show Q&A, model profile, fallback, and metadata.
+- Deployment: backend on Render, frontend on Vercel; full online M4.5 smoke is still pending.
 
 ## Results
 
-- Backend tests: 254 passed.
-- Ruff: All checks passed.
-- Retrieval Eval: 20 cases, Recall@5 90%, MRR 0.785.
-- Answer Eval: 122 cases, citation hit rate 83.61%, pass rate 46.72%.
-- Local smoke: mock / deepseek fallback / invalid profile 422 passed.
-- Frontend build: passed.
-- Render + Vercel demo preview links are available.
+- Engineering quality: backend tests 254 passed, Ruff All checks passed, and frontend build passed.
+- Retrieval result: Retrieval Eval 20 cases, Recall@5 90%, MRR 0.785. Recall@5 measures whether expected documents appear in the top-5 results, while MRR indicates how early relevant documents appear.
+- Answer result: Answer Eval 122 cases, citation hit rate 83.61%, pass rate 46.72%. The citation hit rate reflects evidence alignment; the 46.72% pass rate is a transparent baseline and improvement target, not a polished success claim.
+- Safety and demoability: local smoke passed for mock, deepseek fallback, and invalid profile 422; the full flow can run without real model keys.
+- Access: Render + Vercel demo links are available, while online smoke should still be judged by M4.5 verification.
 
-The Answer Eval pass rate of 46.72% is the current baseline, shown transparently as a quality signal and improvement target.
+Reader value:
+
+- For developers: a reusable FastAPI + RAG + workflow + adapter structure.
+- For reviewers: observable route, intent, citations, `answer_source`, and evaluation metrics.
+- For visitors: a direct frontend demo of Agent Q&A and fallback behavior.
 
 ## Architecture
 
@@ -160,6 +175,13 @@ Current results:
 - frontend build: passed
 - retrieval eval baseline: 20 cases, Recall@5 90%, MRR 0.785
 - answer eval baseline: 122 cases, citation hit rate 83.61%, pass rate 46.72%
+
+Metric notes:
+
+- Recall@5: whether the expected document appears in the top-5 retrieved documents.
+- MRR: mean reciprocal rank of the first matching document, used for ranking quality.
+- citation hit rate: whether cited documents match expected evidence.
+- answer pass rate: the pass rate under the current answer eval rules, used as the improvement baseline.
 
 ## Security Boundaries
 

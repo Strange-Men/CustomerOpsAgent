@@ -200,3 +200,27 @@ A visitor should understand within 1 minute:
 **Next steps:**
 
 - M7: online smoke verification, final docs, release checklist, tag
+
+## 12. Frontend M6.5 Changes
+
+**Goal:** README merge commit + long answer collapse/compact badges.
+
+**Why:** RAG long answers stretched the chat area vertically, hurting readability. README bilingual improvements from the previous round needed to be committed together.
+
+**What changed:**
+
+- Long answers (>280 chars) default to collapsed state with max-height 220px
+- Bottom gradient fade indicates truncated content
+- "展开全文 / 收起" toggle button for long answers
+- Short answers show no expand button — unaffected by collapse logic
+- Badge row already minimal (profile, route, confidence, fallback-only-when-triggered)
+- No new dependencies, no complex animations
+- README.md and README.en.md bilingual improvements committed together
+
+**What was preserved:**
+
+- All API calls unchanged (`/api/agent/chat`)
+- Response data not truncated — only UI folding
+- Citations, metadata, fallback badges all intact
+- Model selector fully functional
+- Mobile responsive
