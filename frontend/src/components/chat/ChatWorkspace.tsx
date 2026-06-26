@@ -91,8 +91,11 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
         // Notify parent of new response for details section
         onResponseChange?.(response);
       } catch (err) {
-        const msg =
-          err instanceof Error ? err.message : "请求失败，请稍后重试";
+        const rawMsg = err instanceof Error ? err.message : "";
+        // Show user-friendly error — hide internal details
+        const msg = rawMsg.includes("无法连接")
+          ? rawMsg
+          : "无法连接后端服务，请稍后重试。";
         setErrorMessage(msg);
 
         // Mark pending message as error
@@ -119,9 +122,9 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
   );
 
   return (
-    <div className="rounded-xl border border-purple-500/15 bg-slate-900/80 flex flex-col" style={{ minHeight: "520px" }}>
+    <div className="rounded-xl border border-purple-500/15 bg-slate-900/80 flex flex-col" style={{ minHeight: "460px" }}>
       {/* Top bar: model selector + clear */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-700/30">
         <ModelSelector
           selected={selectedProfile}
           onSelect={setSelectedProfile}
@@ -131,7 +134,7 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
           <button
             onClick={handleClear}
             disabled={isLoading}
-            className="px-3 py-1.5 text-xs text-slate-400 bg-slate-800/40 border border-slate-700/30 rounded-lg hover:bg-slate-700/60 hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+            className="px-2.5 py-1 text-[11px] text-slate-500 bg-transparent border border-slate-700/20 rounded-md hover:bg-slate-800/60 hover:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
           >
             清空
           </button>
@@ -139,11 +142,11 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
       </div>
 
       {/* Chat messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-sm text-slate-600">
-              输入问题或点击示例开始对话
+              选择示例问题，或输入跨境电商客服问题。
             </p>
           </div>
         ) : (
@@ -152,30 +155,30 @@ export function ChatWorkspace({ onResponseChange }: ChatWorkspaceProps) {
 
         {/* Loading indicator */}
         {isLoading && (
-          <div className="flex items-center gap-2 text-xs text-sky-400">
-            <div className="w-2 h-2 bg-sky-400 rounded-full animate-pulse" />
-            Agent 正在分析...
+          <div className="flex items-center gap-2 text-xs text-sky-400/80">
+            <div className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse" />
+            Agent 正在分析问题…
           </div>
         )}
       </div>
 
       {/* Error banner */}
       {errorMessage && (
-        <div className="mx-4 mb-2 px-3 py-2 bg-red-900/20 border border-red-500/20 rounded-lg">
-          <p className="text-xs text-red-400">{errorMessage}</p>
+        <div className="mx-4 mb-1.5 px-3 py-2 bg-red-900/15 border border-red-500/15 rounded-lg">
+          <p className="text-[11px] text-red-400/80">{errorMessage}</p>
         </div>
       )}
 
       {/* Example prompts */}
       {messages.length === 0 && (
-        <div className="px-4 py-3 border-t border-slate-700/30">
-          <p className="text-xs text-slate-500 mb-2">示例问题：</p>
+        <div className="px-4 py-2.5 border-t border-slate-700/20">
+          <p className="text-[11px] text-slate-600 mb-1.5">示例问题：</p>
           <ExamplePrompts onSelect={handleExampleSelect} />
         </div>
       )}
 
       {/* Chat input */}
-      <div className="px-4 py-3 border-t border-slate-700/30">
+      <div className="px-4 py-2.5 border-t border-slate-700/30">
         <ChatInput onSend={handleSend} disabled={isLoading} />
       </div>
     </div>

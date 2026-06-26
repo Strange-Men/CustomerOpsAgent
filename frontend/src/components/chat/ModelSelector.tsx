@@ -40,11 +40,11 @@ export function ModelSelector({
   disabled = false,
 }: ModelSelectorProps) {
   return (
-    <div className="space-y-2">
-      <p className="text-[10px] text-slate-500 uppercase tracking-wider">
-        模型档案
-      </p>
-      <div className="flex flex-wrap gap-2">
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] text-slate-600 uppercase tracking-wider shrink-0">
+        模型
+      </span>
+      <div className="flex flex-wrap gap-1.5">
         {PROFILE_OPTIONS.map((opt) => {
           const isSelected = selected === opt.value;
           return (
@@ -54,7 +54,7 @@ export function ModelSelector({
               disabled={disabled}
               title={opt.description}
               className={`
-                px-3 py-1.5 text-xs rounded-lg transition-colors duration-150 cursor-pointer
+                px-2.5 py-1 text-[11px] rounded-md transition-colors duration-150 cursor-pointer
                 disabled:opacity-50 disabled:cursor-not-allowed
                 ${
                   isSelected
@@ -68,9 +68,6 @@ export function ModelSelector({
           );
         })}
       </div>
-      <p className="text-[10px] text-slate-600">
-        {PROFILE_OPTIONS.find((o) => o.value === selected)?.description}
-      </p>
     </div>
   );
 }

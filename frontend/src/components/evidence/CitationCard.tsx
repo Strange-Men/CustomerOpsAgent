@@ -6,29 +6,24 @@ interface CitationCardProps {
 }
 
 /**
- * Single citation card showing document metadata.
+ * Single citation card — compact document metadata.
  */
 export function CitationCard({ citation, className = "" }: CitationCardProps) {
   return (
     <div
       className={`
-        rounded-lg border border-purple-500/10 bg-slate-800/50 p-3
+        rounded-md border border-purple-500/10 bg-slate-800/40 px-3 py-2
         ${className}
       `.trim()}
     >
-      <p className="text-xs font-medium text-slate-200 mb-1.5">
+      <p className="text-[11px] font-medium text-slate-300 mb-1">
         {citation.title}
       </p>
-      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-500">
-        <span>doc: {citation.doc_id}</span>
-        <span>chunk: {citation.chunk_id}</span>
-        <span>cat: {citation.category}</span>
-        <span>market: {citation.market}</span>
-        <span>lang: {citation.language}</span>
+      <div className="flex flex-wrap gap-x-2.5 gap-y-0.5 text-[10px] text-slate-500">
+        <span>{citation.doc_id}</span>
+        <span>{citation.category}</span>
+        <span>{citation.market}</span>
       </div>
-      <p className="text-[11px] text-slate-600 mt-1.5 truncate">
-        {citation.source}
-      </p>
     </div>
   );
 }

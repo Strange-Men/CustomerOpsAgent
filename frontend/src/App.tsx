@@ -15,14 +15,14 @@ function App() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
-        {/* Hero intro */}
-        <section className="text-center space-y-2 py-2">
-          <p className="text-sm text-slate-300 leading-relaxed max-w-[700px] mx-auto">
-            跨境电商客服 Agent Demo：支持 RAG 知识库检索、意图路由、Mock 工具调用与安全模型 profile 选择。
+      <div className="space-y-4">
+        {/* Hero intro — compact */}
+        <section className="text-center space-y-1 pt-1 pb-0">
+          <p className="text-sm text-slate-300 leading-relaxed max-w-[680px] mx-auto">
+            跨境电商客服 Agent Demo：RAG 检索、意图路由、Mock 工具调用与安全模型 profile 选择。
           </p>
-          <p className="text-xs text-slate-500">
-            默认使用 Mock 数据，可选择 DeepSeek / Doubao profile；真实 API key 只配置在后端。
+          <p className="text-[11px] text-slate-600">
+            默认 Mock 可运行；DeepSeek / Doubao 仅作为后端 profile，前端不保存 key。
           </p>
         </section>
 

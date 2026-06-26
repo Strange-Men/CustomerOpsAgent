@@ -162,3 +162,41 @@ A visitor should understand within 1 minute:
 - Metadata panel shows llm_profile, answer_source, llm_provider, llm_model
 - Unconfigured profiles fall back to mock gracefully
 - `mystudy/` directory not committed
+
+## 11. Frontend M6 Changes
+
+**Goal:** Status feedback, responsive polish, and final visual cleanup.
+
+**Why:** M5 simplified the layout to single-column chat-first, but spacing was loose, version numbers inconsistent, and mobile needed a pass.
+
+**What changed:**
+
+- Reduced top whitespace: main padding-top tightened, Hero section compressed
+- ChatConsole internal spacing tightened: model selector, message area, input area, example prompts
+- ModelSelector compacted: removed description line, inline horizontal layout
+- ChatInput reduced from 3 rows to 2, smaller buttons and help text
+- AnswerDetails made lighter: compact badge row, collapsible citations limited to 3, fallback hints more concise
+- AnswerCard inline badges compacted: removed answer_source duplicate
+- Citations card simplified: fewer metadata fields, tighter padding
+- Version numbers unified to v1.2.0-demo across constants.ts and project.ts
+- Error messages made user-friendly: no stack traces, no internal details
+- Loading state text: "Agent 正在分析问题…"
+- Empty state: "选择示例问题，或输入跨境电商客服问题。"
+- Fallback: "已触发兜底回答" with reason; profile mismatch: "该模型档案未启用或未配置，已降级 Mock"
+- Header: flex-wrap for mobile, smaller padding
+- Footer: lighter text, smaller font
+- Mobile: 375px width no horizontal overflow
+
+**What was preserved:**
+
+- Model selector (Mock / DeepSeek / Doubao)
+- Real API call to `/api/agent/chat`
+- `sendAgentMessage` only sends `llm_profile`, never keys
+- Answer metadata: `answer_source`, `llm_profile`, `route`, `intent`, `confidence`
+- Citations and `retrieved_doc_ids`
+- Loading / error / fallback states
+- Dark + pink-purple visual theme
+
+**Next steps:**
+
+- M7: online smoke verification, final docs, release checklist, tag
